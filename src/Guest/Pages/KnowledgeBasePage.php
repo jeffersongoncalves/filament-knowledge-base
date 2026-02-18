@@ -15,7 +15,7 @@ class KnowledgeBasePage extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-magnifying-glass';
 
-    protected static string $view = 'filament-knowledge-base::pages.knowledge-base';
+    protected string $view = 'filament-knowledge-base::pages.knowledge-base';
 
     protected static ?int $navigationSort = 1;
 

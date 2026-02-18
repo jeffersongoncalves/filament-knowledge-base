@@ -4,8 +4,8 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource;
-use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\CategoryResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Categories\CategoryResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Widgets\KnowledgeBaseOverviewWidget;
 use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasKnowledgeBasePluginConfig;
 

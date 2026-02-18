@@ -6,7 +6,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasKnowledgeBasePluginConfig;
 use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Pages\KnowledgeBasePage;
-use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Resources\ArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Resources\Articles\ArticleResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Widgets\PopularArticlesWidget;
 
 class KnowledgeBaseGuestPlugin implements Plugin

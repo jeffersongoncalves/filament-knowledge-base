@@ -2,7 +2,7 @@
 
 namespace JeffersonGoncalves\FilamentKnowledgeBase\User\Widgets;
 
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
@@ -33,12 +33,12 @@ class PopularArticlesWidget extends BaseWidget
                     ->limit(5)
             )
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.title'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('category.name')
+                TextColumn::make('category.name')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.category')),
-                Tables\Columns\TextColumn::make('view_count')
+                TextColumn::make('view_count')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.view_count'))
                     ->numeric()
                     ->sortable(),

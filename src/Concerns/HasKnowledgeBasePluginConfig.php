@@ -2,6 +2,8 @@
 
 namespace JeffersonGoncalves\FilamentKnowledgeBase\Concerns;
 
+use BackedEnum;
+
 trait HasKnowledgeBasePluginConfig
 {
     protected bool $versioningEnabled = true;
@@ -16,7 +18,7 @@ trait HasKnowledgeBasePluginConfig
 
     protected ?int $navigationSort = null;
 
-    protected ?string $navigationIcon = null;
+    protected string|BackedEnum|null $navigationIcon = null;
 
     public function versioning(bool $enabled = true): static
     {
@@ -90,14 +92,14 @@ trait HasKnowledgeBasePluginConfig
         return $this->navigationSort;
     }
 
-    public function navigationIcon(string $icon): static
+    public function navigationIcon(string|BackedEnum $icon): static
     {
         $this->navigationIcon = $icon;
 
         return $this;
     }
 
-    public function getNavigationIcon(): ?string
+    public function getNavigationIcon(): string|BackedEnum|null
     {
         return $this->navigationIcon;
     }
