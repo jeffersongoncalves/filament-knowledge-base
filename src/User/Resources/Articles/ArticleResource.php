@@ -9,7 +9,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseUserPlugin;
-use JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\Articles\Pages;
 use JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\Articles\Schemas\ArticleInfolist;
 use JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\Articles\Tables\ArticlesTable;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;

@@ -8,7 +8,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Resources\Articles\Pages;
 use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Resources\Articles\Schemas\ArticleInfolist;
 use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Resources\Articles\Tables\ArticlesTable;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseGuestPlugin;

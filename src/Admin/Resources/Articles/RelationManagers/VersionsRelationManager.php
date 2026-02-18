@@ -5,7 +5,6 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Rela
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
