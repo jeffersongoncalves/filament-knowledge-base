@@ -2,7 +2,7 @@
 
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
 
-it('can be instantiated', function () {
+it('can be instantiated via make', function () {
     $plugin = KnowledgeBasePlugin::make();
 
     expect($plugin)->toBeInstanceOf(KnowledgeBasePlugin::class);
@@ -63,9 +63,15 @@ it('can disable seo', function () {
 });
 
 it('can set navigation group', function () {
-    $plugin = KnowledgeBasePlugin::make()->navigationGroup('Custom KB');
+    $plugin = KnowledgeBasePlugin::make()->navigationGroup('Custom Group');
 
-    expect($plugin->getNavigationGroup())->toBe('Custom KB');
+    expect($plugin->getNavigationGroup())->toBe('Custom Group');
+});
+
+it('has null navigation group by default', function () {
+    $plugin = KnowledgeBasePlugin::make();
+
+    expect($plugin->getNavigationGroup())->toBeNull();
 });
 
 it('can set navigation sort', function () {
@@ -80,10 +86,18 @@ it('can set navigation icon', function () {
     expect($plugin->getNavigationIcon())->toBe('heroicon-o-book-open');
 });
 
-it('respects config-level feature overrides', function () {
+it('respects config-level feature toggle for versioning', function () {
     config(['filament-knowledge-base.features.versioning' => false]);
 
-    $plugin = KnowledgeBasePlugin::make();
+    $plugin = KnowledgeBasePlugin::make()->versioning(true);
 
     expect($plugin->hasVersioning())->toBeFalse();
+});
+
+it('respects config-level feature toggle for feedback', function () {
+    config(['filament-knowledge-base.features.feedback' => false]);
+
+    $plugin = KnowledgeBasePlugin::make()->feedback(true);
+
+    expect($plugin->hasFeedback())->toBeFalse();
 });

@@ -1,32 +1,46 @@
 <?php
 
-it('loads the filament-knowledge-base config', function () {
+it('loads filament-knowledge-base config file', function () {
     expect(config('filament-knowledge-base'))->toBeArray();
 });
 
-it('has navigation config for admin', function () {
-    expect(config('filament-knowledge-base.navigation.admin'))->toBeArray()
+it('has default navigation config for admin', function () {
+    $config = config('filament-knowledge-base.navigation.admin');
+
+    expect($config)->toBeArray()
         ->toHaveKeys(['group', 'sort', 'icon']);
+
+    expect($config['group'])->toBe('Knowledge Base');
+    expect($config['sort'])->toBeNull();
+    expect($config['icon'])->toBe('heroicon-o-book-open');
 });
 
-it('has navigation config for user', function () {
-    expect(config('filament-knowledge-base.navigation.user'))->toBeArray()
+it('has default navigation config for user', function () {
+    $config = config('filament-knowledge-base.navigation.user');
+
+    expect($config)->toBeArray()
         ->toHaveKeys(['group', 'sort', 'icon']);
+
+    expect($config['group'])->toBe('Knowledge Base');
 });
 
-it('has navigation config for guest', function () {
-    expect(config('filament-knowledge-base.navigation.guest'))->toBeArray()
+it('has default navigation config for guest', function () {
+    $config = config('filament-knowledge-base.navigation.guest');
+
+    expect($config)->toBeArray()
         ->toHaveKeys(['group', 'sort', 'icon']);
+
+    expect($config['group'])->toBe('Knowledge Base');
 });
 
-it('has features config', function () {
-    expect(config('filament-knowledge-base.features'))->toBeArray()
+it('has feature toggles config', function () {
+    $features = config('filament-knowledge-base.features');
+
+    expect($features)->toBeArray()
         ->toHaveKeys(['versioning', 'feedback', 'related_articles', 'seo']);
-});
 
-it('has correct default feature values', function () {
-    expect(config('filament-knowledge-base.features.versioning'))->toBeTrue()
-        ->and(config('filament-knowledge-base.features.feedback'))->toBeTrue()
-        ->and(config('filament-knowledge-base.features.related_articles'))->toBeTrue()
-        ->and(config('filament-knowledge-base.features.seo'))->toBeTrue();
+    expect($features['versioning'])->toBeTrue();
+    expect($features['feedback'])->toBeTrue();
+    expect($features['related_articles'])->toBeTrue();
+    expect($features['seo'])->toBeTrue();
 });

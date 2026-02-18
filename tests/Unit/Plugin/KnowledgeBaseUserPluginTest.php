@@ -2,7 +2,7 @@
 
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseUserPlugin;
 
-it('can be instantiated', function () {
+it('can be instantiated via make', function () {
     $plugin = KnowledgeBaseUserPlugin::make();
 
     expect($plugin)->toBeInstanceOf(KnowledgeBaseUserPlugin::class);
@@ -27,7 +27,7 @@ it('can disable feedback', function () {
 });
 
 it('can set navigation group', function () {
-    $plugin = KnowledgeBaseUserPlugin::make()->navigationGroup('User Support');
+    $plugin = KnowledgeBaseUserPlugin::make()->navigationGroup('Support');
 
-    expect($plugin->getNavigationGroup())->toBe('User Support');
+    expect($plugin->getNavigationGroup())->toBe('Support');
 });

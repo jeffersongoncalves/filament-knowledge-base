@@ -2,7 +2,7 @@
 
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseGuestPlugin;
 
-it('can be instantiated', function () {
+it('can be instantiated via make', function () {
     $plugin = KnowledgeBaseGuestPlugin::make();
 
     expect($plugin)->toBeInstanceOf(KnowledgeBaseGuestPlugin::class);
