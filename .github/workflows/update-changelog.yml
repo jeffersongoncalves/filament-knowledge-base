@@ -1,0 +1,49 @@
+# .github/workflows/update-changelog.yaml
+name: "Update Changelog"
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.release.target_commitish }}
+
+      - name: Extract release date from git tag
+        id: release_date
+        run: |
+          echo "date=$(git log -1 --date=short --format=%ad '${{ github.event.release.tag_name }}')" >> $GITHUB_OUTPUT;
+
+      - name: Update Changelog
+        uses: stefanzweifel/changelog-updater-action@v1
+        with:
+          release-date: ${{ steps.release_date.outputs.date }}
+          release-notes: ${{ github.event.release.body }}
+          latest-version: ${{ github.event.release.tag_name }}
+          compare-url-target-revision: ${{ github.event.release.target_commitish }}
+
+      - name: "release_compare_url"
+        run: "echo ${{ steps.changelog-updater.outputs.release_compare_url }}"
+
+      - name: "release_url_fragment"
+        run: "echo ${{ steps.changelog-updater.outputs.release_url_fragment }}"
+
+      - name: "unreleased_compare_url"
+        run: "echo ${{ steps.changelog-updater.outputs.unreleased_compare_url }}"
+
+      - name: Commit updated CHANGELOG
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          branch: ${{ github.event.release.target_commitish }}
+          commit_message: Update CHANGELOG
+          file_pattern: CHANGELOG.md
