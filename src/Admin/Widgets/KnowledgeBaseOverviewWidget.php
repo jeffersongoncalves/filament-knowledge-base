@@ -52,7 +52,7 @@ class KnowledgeBaseOverviewWidget extends StatsOverviewWidget
             ),
             Stat::make(
                 __('filament-knowledge-base::knowledge-base.admin.widgets.overview.helpful_rate'),
-                $helpfulPercentage . '%'
+                $helpfulPercentage.'%'
             )
                 ->color($helpfulPercentage >= 70 ? 'success' : ($helpfulPercentage >= 40 ? 'warning' : 'danger')),
         ];
