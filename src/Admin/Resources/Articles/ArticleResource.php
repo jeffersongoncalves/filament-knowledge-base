@@ -9,8 +9,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages;
-use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\RelationManagers;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\ArticleForm;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\ArticleInfolist;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Tables\ArticlesTable;
