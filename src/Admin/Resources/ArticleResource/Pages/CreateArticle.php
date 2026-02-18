@@ -3,7 +3,6 @@
 namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource;
 
 class CreateArticle extends CreateRecord
@@ -17,10 +16,6 @@ class CreateArticle extends CreateRecord
         if ($user) {
             $data['author_type'] = get_class($user);
             $data['author_id'] = $user->getKey();
-        }
-
-        if (empty($data['uuid'])) {
-            $data['uuid'] = (string) Str::uuid();
         }
 
         return $data;
