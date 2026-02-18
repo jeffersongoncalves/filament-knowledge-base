@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Rela
 
 use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -26,8 +27,8 @@ class FeedbackRelationManager extends RelationManager
                 IconColumn::make('is_helpful')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.relation_managers.feedback.is_helpful'))
                     ->boolean()
-                    ->trueIcon('heroicon-o-hand-thumb-up')
-                    ->falseIcon('heroicon-o-hand-thumb-down')
+                    ->trueIcon(Heroicon::OutlinedHandThumbUp)
+                    ->falseIcon(Heroicon::OutlinedHandThumbDown)
                     ->trueColor('success')
                     ->falseColor('danger'),
                 TextColumn::make('comment')

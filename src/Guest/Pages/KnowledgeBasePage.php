@@ -2,7 +2,9 @@
 
 namespace JeffersonGoncalves\FilamentKnowledgeBase\Guest\Pages;
 
+use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseGuestPlugin;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
@@ -13,7 +15,7 @@ use Livewire\Attributes\Url;
 
 class KnowledgeBasePage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-magnifying-glass';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMagnifyingGlass;
 
     protected string $view = 'filament-knowledge-base::pages.knowledge-base';
 

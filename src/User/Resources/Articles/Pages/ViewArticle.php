@@ -5,6 +5,7 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\Articles\Pages
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Icons\Heroicon;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseUserPlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\Articles\ArticleResource;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\ArticleContract;
@@ -38,7 +39,7 @@ class ViewArticle extends ViewRecord
         if ($hasFeedback) {
             $actions[] = Actions\Action::make('helpful')
                 ->label(__('filament-knowledge-base::knowledge-base.user.articles.feedback.helpful'))
-                ->icon('heroicon-o-hand-thumb-up')
+                ->icon(Heroicon::OutlinedHandThumbUp)
                 ->color('success')
                 ->action(function () {
                     $this->submitFeedback(true);
@@ -46,7 +47,7 @@ class ViewArticle extends ViewRecord
 
             $actions[] = Actions\Action::make('not_helpful')
                 ->label(__('filament-knowledge-base::knowledge-base.user.articles.feedback.not_helpful'))
-                ->icon('heroicon-o-hand-thumb-down')
+                ->icon(Heroicon::OutlinedHandThumbDown)
                 ->color('danger')
                 ->action(function () {
                     $this->submitFeedback(false);
