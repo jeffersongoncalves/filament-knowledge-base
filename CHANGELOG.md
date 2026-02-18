@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.0 - 2026-02-18
+
+Initial release for Filament v3
+
+### Features
+
+- **KnowledgeBasePlugin** (Admin) - Full CRUD for categories and articles with versioning, feedback, related articles, and SEO
+- **KnowledgeBaseUserPlugin** (User) - Read-only access to published articles with feedback capability
+- **KnowledgeBaseGuestPlugin** (Guest) - Public read-only access without authentication
+- Feature toggles via fluent API and config
+- Knowledge Base Overview widget with stats
+- Popular Articles widget
+- Search and browse page
+- Translations: English and Brazilian Portuguese
+
+### Requirements
+
+- PHP ^8.1
+- Laravel ^10.0
+- Filament ^3.0
+
 ## [Unreleased]
 
 ## [1.0.0] - YYYY-MM-DD
