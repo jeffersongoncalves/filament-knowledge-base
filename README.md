@@ -149,3 +149,9 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
+
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/jeffersongoncalves/filakit" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" aria-label="Star jeffersongoncalves/filakit on GitHub">Star</a>
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
