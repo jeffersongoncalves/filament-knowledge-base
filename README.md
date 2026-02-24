@@ -1,3 +1,9 @@
+<div class="filament-hidden">
+
+![Filament Knowledge Base](https://raw.githubusercontent.com/jeffersongoncalves/filament-knowledge-base/3.x/art/jeffersongoncalves-filament-knowledge-base.png)
+
+</div>
+
 # Filament Knowledge Base
 
 A Filament plugin for [jeffersongoncalves/laravel-knowledge-base](https://github.com/jeffersongoncalves/laravel-knowledge-base) that provides Admin, User, and Guest panels for complete knowledge base management.
