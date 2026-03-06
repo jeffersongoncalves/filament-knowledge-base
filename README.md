@@ -18,6 +18,8 @@ A Filament plugin for [jeffersongoncalves/laravel-knowledge-base](https://github
 
 ## Installation
 
+You can install the package via composer:
+
 ```bash
 composer require jeffersongoncalves/filament-knowledge-base:"^3.0"
 ```
@@ -147,6 +149,10 @@ php artisan vendor:publish --tag="filament-knowledge-base-translations"
 ```bash
 composer test
 ```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Contributing
 
