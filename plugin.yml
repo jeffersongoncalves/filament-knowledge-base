@@ -1,0 +1,50 @@
+# ============================================
+# Filament Plugin - Create Plugin Form
+# jeffersongoncalves - filamentphp.com
+# ============================================
+
+# --- Details ---
+name: "Knowledge Base"
+slug: "knowledge-base"
+github_repository: "jeffersongoncalves/filament-knowledge-base"
+description: "Filament plugin for Knowledge Base management with Admin, User, and Guest panels."
+
+# --- Images ---
+# Anexe os arquivos de imagem junto com este YAML no chat
+image: "jeffersongoncalves-filament-knowledge-base.jpg"
+thumbnail: ""
+
+# --- Compatibility & Features ---
+versions:
+  - "v3"
+  - "v4"
+  - "v5"
+
+categories:
+  - "Panels"
+
+dark_theme_support: true
+translation_support: true
+
+# --- Documentation ---
+documentation_url: ""
+
+versioned_documentation:
+  - version: "v3"
+    url: "https://raw.githubusercontent.com/jeffersongoncalves/filament-knowledge-base/1.x/README.md"
+  - version: "v4"
+    url: "https://raw.githubusercontent.com/jeffersongoncalves/filament-knowledge-base/2.x/README.md"
+  - version: "v5"
+    url: "https://raw.githubusercontent.com/jeffersongoncalves/filament-knowledge-base/3.x/README.md"
+
+documentation_content: ""
+
+# --- URLs ---
+website: ""
+discord: ""
+
+# --- Pricing ---
+anystack_product_id: ""
+
+# --- Acao Final ---
+action: "draft"
