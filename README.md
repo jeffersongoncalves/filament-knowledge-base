@@ -1,6 +1,6 @@
 <div class="filament-hidden">
 
-![Filament Knowledge Base](https://raw.githubusercontent.com/jeffersongoncalves/filament-knowledge-base/1.x/art/jeffersongoncalves-filament-knowledge-base.jpg)
+![Filament Knowledge Base](https://raw.githubusercontent.com/jeffersongoncalves/filament-knowledge-base/1.x/art/jeffersongoncalves-filament-knowledge-base.png)
 
 </div>
 
