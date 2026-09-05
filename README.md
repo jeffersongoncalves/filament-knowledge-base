@@ -5,6 +5,8 @@
 </div>
 
 # Filament Knowledge Base
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/jeffersongoncalves)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/jeffersongoncalves/filament-knowledge-base.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/filament-knowledge-base)[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/filament-knowledge-base/tests.yml?branch=3.x&label=tests&style=flat-square)](https://github.com/jeffersongoncalves/filament-knowledge-base/actions?query=workflow%3Atests+branch%3A3.x)[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/filament-knowledge-base/fix-php-code-style-issues.yml?branch=3.x&label=code%20style&style=flat-square)](https://github.com/jeffersongoncalves/filament-knowledge-base/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3A3.x)[![Total Downloads](https://img.shields.io/packagist/dt/jeffersongoncalves/filament-knowledge-base.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/filament-knowledge-base)[![License](https://img.shields.io/packagist/l/jeffersongoncalves/filament-knowledge-base.svg?style=flat-square)](LICENSE.md)
 
 A Filament plugin for [jeffersongoncalves/laravel-knowledge-base](https://github.com/jeffersongoncalves/laravel-knowledge-base) that provides Admin, User, and Guest panels for complete knowledge base management.
