@@ -5,6 +5,7 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\Articles\Pages
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Model;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseUserPlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\Articles\ArticleResource;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\ArticleContract;
@@ -18,7 +19,7 @@ class ViewArticle extends ViewRecord
     {
         parent::mount($record);
 
-        /** @var ArticleContract $article */
+        /** @var Model&ArticleContract $article */
         $article = $this->getRecord();
         $article->incrementViewCount();
     }
@@ -58,7 +59,7 @@ class ViewArticle extends ViewRecord
 
     protected function submitFeedback(bool $isHelpful): void
     {
-        /** @var ArticleContract $article */
+        /** @var Model&ArticleContract $article */
         $article = $this->getRecord();
         $user = auth()->user();
 

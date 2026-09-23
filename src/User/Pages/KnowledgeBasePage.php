@@ -2,6 +2,7 @@
 
 namespace JeffersonGoncalves\FilamentKnowledgeBase\User\Pages;
 
+use BackedEnum;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseUserPlugin;
@@ -13,7 +14,7 @@ use Livewire\Attributes\Url;
 
 class KnowledgeBasePage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-magnifying-glass';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-magnifying-glass';
 
     protected string $view = 'filament-knowledge-base::pages.knowledge-base';
 
