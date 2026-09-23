@@ -11,7 +11,7 @@ use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class PopularArticlesWidget extends BaseWidget
 {
-    protected ?string $heading = null;
+    protected static ?string $heading = null;
 
     protected int|string|array $columnSpan = 'full';
 
