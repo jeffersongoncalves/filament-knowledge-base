@@ -356,7 +356,7 @@ class ArticleResource extends Resource
             ]);
     }
 
-    protected static function hasSeo(): bool
+    public static function hasSeo(): bool
     {
         try {
             return KnowledgeBasePlugin::get()->hasSeo();
