@@ -3,10 +3,8 @@
 namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Pages\Concerns\ManagesArticleTranslations;
-use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 
 class CreateArticle extends CreateRecord
 {
@@ -28,25 +26,5 @@ class CreateArticle extends CreateRecord
         }
 
         return $data;
-    }
-
-    /**
-     * Create the article with the chosen authoritative language already set,
-     * so the core's mirror writes the first version in that language rather
-     * than the configured default.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    protected function handleRecordCreation(array $data): Model
-    {
-        if (! TranslationForm::isMultiLocale() || $this->submittedSourceLocale === null) {
-            return parent::handleRecordCreation($data);
-        }
-
-        $article = new (static::getModel())($data);
-        $article->setAttribute('source_locale', $this->submittedSourceLocale);
-        $article->save();
-
-        return $article;
     }
 }

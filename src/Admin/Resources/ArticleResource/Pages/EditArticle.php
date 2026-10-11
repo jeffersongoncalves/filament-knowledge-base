@@ -5,6 +5,7 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResour
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Actions\ViewOnSiteAction;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Pages\Concerns\ManagesArticleTranslations;
 
 class EditArticle extends EditRecord
@@ -16,6 +17,7 @@ class EditArticle extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ViewOnSiteAction::make(),
             Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),

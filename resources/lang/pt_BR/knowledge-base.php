@@ -41,6 +41,9 @@ return [
             'navigation_label' => 'Artigos',
             'model_label' => 'Artigo',
             'plural_model_label' => 'Artigos',
+            'actions' => [
+                'view_on_site' => 'Ver no site',
+            ],
             'form' => [
                 'section_content' => 'Conteúdo',
                 'section_settings' => 'Configurações',
@@ -122,6 +125,40 @@ return [
                 'not_visible' => 'Os clientes não veem este artigo.',
             ],
         ],
+        'assets' => [
+            'scope' => [
+                'shared' => 'Compartilhado',
+            ],
+            'usage' => [
+                'used_in' => 'Usado em :languages',
+                'unused' => 'Não usado',
+            ],
+            'delete' => [
+                'used' => 'Este arquivo ainda é usado em :languages.',
+                'unused' => 'Este arquivo não é usado em nenhum lugar.',
+            ],
+            'save_first' => [
+                'heading' => 'Adicione imagens e arquivos depois de salvar',
+                'description' => 'Salve o artigo primeiro para adicionar imagens e arquivos.',
+            ],
+            'broken' => [
+                'heading' => 'O conteúdo se refere a arquivos ausentes',
+                'message' => 'Parte do conteúdo se refere a imagens ou arquivos que não existem mais (:details). Remova-os ou substitua-os para limpar este aviso.',
+                'images' => '{1} 1 imagem excluída|[2,*] :count imagens excluídas',
+                'badge' => 'Arquivo ausente',
+            ],
+            'manager' => [
+                'title' => 'Arquivos',
+                'preview' => 'Pré-visualização',
+                'name' => 'Nome',
+                'size' => 'Tamanho',
+                'scope' => 'Escopo',
+                'usage' => 'Uso',
+                'upload' => 'Enviar',
+                'file' => 'Arquivo',
+                'kind' => 'Tipo',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Total de Artigos',
@@ -133,7 +170,6 @@ return [
             ],
         ],
         'localization' => [
-            'source_locale' => 'Idioma de referência',
             'language' => 'Idioma',
             'language_label' => ':language',
             'version_status' => 'Status da versão',

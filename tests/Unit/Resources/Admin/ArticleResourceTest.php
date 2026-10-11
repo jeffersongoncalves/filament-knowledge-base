@@ -1,6 +1,7 @@
 <?php
 
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\RelationManagers;
 use JeffersonGoncalves\KnowledgeBase\Models\Article;
 
 it('resolves the correct model', function () {
@@ -39,17 +40,19 @@ it('has relation managers when features enabled', function () {
 
     $relations = ArticleResource::getRelations();
 
-    expect($relations)->toHaveCount(3);
+    // The assets manager is always present; the three feature managers are on.
+    expect($relations)->toHaveCount(4)
+        ->toContain(RelationManagers\AssetsRelationManager::class);
 });
 
-it('has no relation managers when features disabled', function () {
+it('keeps the assets manager when other features are disabled', function () {
     config(['filament-knowledge-base.features.versioning' => false]);
     config(['filament-knowledge-base.features.feedback' => false]);
     config(['filament-knowledge-base.features.related_articles' => false]);
 
     $relations = ArticleResource::getRelations();
 
-    expect($relations)->toHaveCount(0);
+    expect($relations)->toBe([RelationManagers\AssetsRelationManager::class]);
 });
 
 it('has seo feature check', function () {
