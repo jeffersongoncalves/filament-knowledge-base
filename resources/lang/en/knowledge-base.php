@@ -98,6 +98,23 @@ return [
                 'helpful_rate' => 'Helpful Rate',
             ],
         ],
+        'localization' => [
+            'source_locale' => 'Authoritative language',
+            'language' => 'Language',
+            'language_label' => ':language',
+            'version_status' => 'Version status',
+            'version_status_helper' => 'The authoritative version follows the article status; each other language is published on its own.',
+            'flag_other_locales_outdated' => 'Mark other languages outdated',
+            'flag_other_locales_outdated_helper' => 'Tick when this change means the other languages need retranslating.',
+            'outdated_filter' => 'Outdated in language',
+            'mark_up_to_date' => 'Mark up to date',
+            'state' => [
+                'missing' => 'Missing',
+                'draft' => 'Draft',
+                'published' => 'Published',
+                'outdated' => 'Outdated',
+            ],
+        ],
     ],
 
     'user' => [
