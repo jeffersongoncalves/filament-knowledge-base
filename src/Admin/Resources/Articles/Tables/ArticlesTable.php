@@ -7,6 +7,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 
@@ -27,22 +28,13 @@ class ArticlesTable
                 TextColumn::make('status')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.status'))
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        ArticleStatus::Draft->value => 'gray',
-                        ArticleStatus::Published->value => 'success',
-                        ArticleStatus::Archived->value => 'danger',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state): string => ArticleStatus::from($state)->label()),
+                    ->color(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusColor($state))
+                    ->formatStateUsing(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusLabel($state)),
                 TextColumn::make('visibility')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.visibility'))
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        ArticleVisibility::Public->value => 'success',
-                        ArticleVisibility::Internal->value => 'warning',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state): string => ArticleVisibility::from($state)->label())
+                    ->color(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityColor($state))
+                    ->formatStateUsing(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityLabel($state))
                     ->toggleable(),
                 TextColumn::make('view_count')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.view_count'))

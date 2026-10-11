@@ -6,7 +6,9 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
+use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 
 class ArticleInfolist
 {
@@ -35,20 +37,13 @@ class ArticleInfolist
                     TextEntry::make('status')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.status'))
                         ->badge()
-                        ->color(fn (string $state): string => match ($state) {
-                            ArticleStatus::Draft->value => 'gray',
-                            ArticleStatus::Published->value => 'success',
-                            ArticleStatus::Archived->value => 'danger',
-                            default => 'gray',
-                        }),
+                        ->color(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusColor($state))
+                        ->formatStateUsing(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusLabel($state)),
                     TextEntry::make('visibility')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.visibility'))
                         ->badge()
-                        ->color(fn (string $state): string => match ($state) {
-                            'public' => 'success',
-                            'internal' => 'warning',
-                            default => 'gray',
-                        }),
+                        ->color(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityColor($state))
+                        ->formatStateUsing(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityLabel($state)),
                     TextEntry::make('published_at')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.published_at'))
                         ->dateTime(),

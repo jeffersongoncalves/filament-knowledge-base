@@ -7,7 +7,9 @@ use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 
 class RelatedArticlesRelationManager extends RelationManager
@@ -30,18 +32,14 @@ class RelatedArticlesRelationManager extends RelationManager
                 TextColumn::make('status')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.status'))
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        ArticleStatus::Draft->value => 'gray',
-                        ArticleStatus::Published->value => 'success',
-                        ArticleStatus::Archived->value => 'danger',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state): string => ArticleStatus::from($state)->label()),
+                    ->color(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusColor($state))
+                    ->formatStateUsing(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusLabel($state)),
                 TextColumn::make('pivot.sort_order')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.categories.table.sort_order'))
-                    ->sortable(),
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->orderBy($this->pivotSortColumn(), $direction)),
             ])
-            ->defaultSort('pivot.sort_order')
+            // Sort on the qualified pivot column: 'pivot.sort_order' is read as a JSON path on a "pivot" column.
+            ->defaultSort(fn (Builder $query): Builder => $query->orderBy($this->pivotSortColumn()))
             ->headerActions([
                 Actions\AttachAction::make()
                     ->preloadRecordSelect()
@@ -61,5 +59,10 @@ class RelatedArticlesRelationManager extends RelationManager
                     Actions\DetachBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected function pivotSortColumn(): string
+    {
+        return $this->getRelationship()->getTable().'.sort_order';
     }
 }
