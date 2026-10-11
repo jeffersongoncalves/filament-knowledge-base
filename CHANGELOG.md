@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.2.0 - 2026-10-11
+
+### What's new
+
+- **Requires `jeffersongoncalves/laravel-knowledge-base` ^1.1** (#51).
+- **Content localization in the admin** (#46): with more than one language configured, the article and category forms get a tab per language, an authoritative-language select and a per-language version status; the article list gets a state per language (missing / draft / published / outdated), a **Mark up to date** action and an **Outdated in language** filter. Single-language installs are unchanged.
+- **Collections admin** (#48): curated, ordered lists of articles (e.g. an FAQ) with a per-language name, slug and description, a drag-to-reorder article picker, and a warning (with the reason) for every article customers cannot currently see.
+
+### Fixed
+
+- **Guest and User panels show only publicly visible content** (#47): a public article in an internal, inactive or deleted category (or under such an ancestor) is no longer shown in the article list, on its page, in the category counts or in the popular-articles widget.
+
+### Upgrading
+
+Requires laravel-knowledge-base ^1.1. Re-publish the core migrations and run `add_kb_content_localization` and `add_kb_collections`; **set `knowledge-base.default_locale` to the language your existing content is written in before migrating**, since the upgrade tags all existing content with it.
+
+Thanks @rcoenen for #46, #47 and #48.
+
 ## 3.1.1 - 2026-10-10
 
 ### What's Changed
