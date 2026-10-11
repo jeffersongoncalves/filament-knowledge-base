@@ -1,6 +1,9 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\DB;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\CreateArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
@@ -92,25 +95,16 @@ it('saves the article and its language versions in one transaction', function ()
         ->and(Livewire::test(CreateArticle::class)->instance()->hasDatabaseTransactions())->toBeTrue();
 });
 
-it('saves the chosen authoritative language', function () {
+it('offers no way to choose the authoritative language', function () {
     editArticle($this->article)
-        ->fillForm([
-            'source_locale' => 'de',
-            'translations' => [
-                'de' => [
-                    'title' => 'Passwort zurücksetzen',
-                    'slug' => 'passwort-zuruecksetzen',
-                    'content' => 'So setzt du dein Passwort zurück.',
-                ],
-            ],
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->assertOk()
+        ->assertFormFieldDoesNotExist('source_locale');
+});
 
-    $article = $this->article->fresh();
-
-    expect($article->source_locale)->toBe('de')
-        ->and($article->title)->toBe('Passwort zurücksetzen');
+it('marks the default language tab as required', function () {
+    editArticle($this->article)
+        ->assertFormFieldExists('translations.en.title', fn (TextInput $field): bool => $field->isRequired())
+        ->assertFormFieldExists('translations.en.slug', fn (TextInput $field): bool => $field->isRequired());
 });
 
 it('publishes the German version on its own', function () {
@@ -276,16 +270,20 @@ it('does not create a version for an untouched language tab', function () {
     expect($this->article->fresh()->translations)->toHaveCount(1);
 });
 
-it('creates an article in a chosen authoritative language', function () {
+it('creates an article in the default language even when another tab is filled', function () {
     Livewire::test(CreateArticle::class)
         ->fillForm([
-            'source_locale' => 'de',
             'visibility' => 'public',
             'category_id' => $this->category->id,
             'translations' => [
+                'en' => [
+                    'title' => 'Password reset',
+                    'slug' => 'password-reset-new',
+                    'content' => 'How to reset it.',
+                ],
                 'de' => [
                     'title' => 'Passwort zurücksetzen',
-                    'slug' => 'passwort-zuruecksetzen',
+                    'slug' => 'passwort-zuruecksetzen-neu',
                     'content' => 'So setzt du dein Passwort zurück.',
                 ],
             ],
@@ -293,10 +291,10 @@ it('creates an article in a chosen authoritative language', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    $article = Article::where('slug', 'passwort-zuruecksetzen')->firstOrFail();
+    $article = Article::where('slug', 'password-reset-new')->firstOrFail();
 
-    expect($article->source_locale)->toBe('de')
-        ->and($article->title)->toBe('Passwort zurücksetzen')
+    expect($article->authoritativeLocale())->toBe('en')
+        ->and($article->title)->toBe('Password reset')
         ->and($article->translation('de'))->not->toBeNull();
 });
 
@@ -363,4 +361,45 @@ it('shows the language states in the list without a query per row', function () 
 
     // One eager load for all rows, not one per row and language (6 rows x 2 languages).
     expect($translationQueries)->toBeLessThan(4);
+});
+
+it('stores files added in every language tab in the knowledge base attachments directory', function () {
+    config(['knowledge-base.attachments' => ['disk' => 'public', 'directory' => 'knowledge-base/attachments']]);
+
+    $usesKnowledgeBaseDirectory = fn (RichEditor $field): bool => $field->getFileAttachmentsDiskName() === 'public'
+        && $field->getFileAttachmentsDirectory() === 'knowledge-base/attachments';
+
+    editArticle($this->article)
+        ->assertFormFieldExists('translations.en.content', $usesKnowledgeBaseDirectory)
+        ->assertFormFieldExists('translations.de.content', $usesKnowledgeBaseDirectory);
+});
+
+it('styles the language tabs as tabs with the plugin stylesheet', function () {
+    editArticle($this->article)->assertSeeHtml('kb-language-tabs');
+
+    expect(collect(FilamentAsset::getStyles())->map(fn ($style) => $style->getId()))
+        ->toContain('filament-knowledge-base');
+});
+
+it('sets the article\'s files, history and feedback apart from the edit form', function () {
+    editArticle($this->article)
+        ->assertSeeHtml('kb-article-tools')
+        ->assertSeeInOrder(['Save changes', 'Files, history and feedback']);
+});
+
+it('offers Save and Cancel only once the article has changes', function () {
+    editArticle($this->article)
+        ->assertSet('savedDataHash', fn (?string $hash): bool => filled($hash))
+        ->assertSeeHtml('x-bind:data-kb-unchanged')
+        ->assertSeeHtml('$wire.savedDataHash');
+});
+
+it('accepts edits inside a list in a language tab with the nesting depth Filament documents', function () {
+    // Filament documents raising Livewire's max_nesting_depth for rich text;
+    // a bullet list in a language tab needs more than the default of 10.
+    config(['livewire.payload.max_nesting_depth' => 32]);
+
+    editArticle($this->article)
+        ->set('data.translations.de.content.content.2.content.0.content.0.content.0.text', 'Gießen')
+        ->assertOk();
 });

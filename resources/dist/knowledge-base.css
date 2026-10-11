@@ -1,0 +1,113 @@
+/*
+ * Small additions to Filament's look for the knowledge base admin.
+ *
+ * Language tabs (EN, DE, …) in the article, category and collection forms, and
+ * the choose/upload tabs in the editor dialogs:
+ * flat tabs with a line under the active language instead of Filament's pill
+ * buttons, because they switch between versions of the same text.
+ */
+:is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs {
+    gap: 0.25rem;
+    padding-bottom: 0;
+}
+
+:is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item {
+    border-radius: 0;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding-bottom: 0.75rem;
+}
+
+:is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item:hover {
+    background: transparent;
+    border-bottom-color: var(--gray-300);
+}
+
+:is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item.fi-active {
+    background: transparent;
+    border-bottom-color: var(--primary-600);
+}
+
+.dark :is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item:hover {
+    border-bottom-color: var(--gray-600);
+}
+
+.dark :is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item.fi-active {
+    border-bottom-color: var(--primary-400);
+}
+
+/*
+ * The article's files, history and feedback below the edit form: a separate
+ * area, set apart from the form and its Save button by a line and a heading.
+ */
+.kb-article-tools {
+    margin-top: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.dark .kb-article-tools {
+    border-top-color: rgb(255 255 255 / 0.1);
+}
+
+/* Line the section tabs up with the area's heading instead of centring them. */
+.kb-article-tools .fi-sc-tabs > .fi-tabs {
+    margin-inline: 0;
+}
+
+/* The choose/upload tabs in the editor dialogs: a plain tab row, left aligned. */
+.kb-dialog-tabs > .fi-tabs {
+    margin-inline: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.dark .kb-dialog-tabs > .fi-tabs {
+    border-bottom-color: rgb(255 255 255 / 0.1);
+}
+
+/* Nothing changed since the last save: no floating Save / Cancel bar (the
+   buttons stay, disabled, at the end of the form). */
+.fi-sc-actions.fi-sticky:has([data-kb-unchanged]) {
+    display: none;
+}
+
+/*
+ * The article's view page: labels as small grey captions, values in full
+ * text colour, the title larger, so a label never reads like its value.
+ */
+.kb-article-view .fi-in-entry-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+}
+
+.kb-article-view .fi-in-text-item {
+    font-size: 0.9375rem;
+    color: var(--gray-950);
+}
+
+.dark .kb-article-view .fi-in-text-item {
+    color: var(--gray-50);
+}
+
+.kb-article-view .kb-entry-title .fi-in-text-item,
+.kb-article-view .kb-entry-title.fi-in-text-item {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* Images in the article text: some room around them, never wider than the text. */
+.kb-article-view .fi-prose img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-block: 1rem;
+    border-radius: 0.5rem;
+}

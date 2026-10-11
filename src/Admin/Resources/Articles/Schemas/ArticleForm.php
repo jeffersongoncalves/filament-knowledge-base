@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -17,6 +18,8 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\BrokenReferences;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\LocalizationState;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
@@ -29,20 +32,26 @@ class ArticleForm
 {
     public static function configure(Schema $schema): Schema
     {
+        // Uploads need an existing article to belong to, so on the create page
+        // the tools are left out and a "save first" hint is shown (design D10).
+        $allowUploads = $schema->getOperation() !== 'create';
+
         if (! TranslationForm::isMultiLocale()) {
-            return static::configureSingleLocale($schema);
+            return static::configureSingleLocale($schema, $allowUploads);
         }
 
-        return static::configureMultiLocale($schema);
+        return static::configureMultiLocale($schema, $allowUploads);
     }
 
     /**
      * One configured language: the form binds to the article columns exactly
      * as before localization (task 6.3).
      */
-    protected static function configureSingleLocale(Schema $schema): Schema
+    protected static function configureSingleLocale(Schema $schema, bool $allowUploads = true): Schema
     {
         $components = [
+            static::brokenReferencesNotice(),
+            ...($allowUploads ? [] : [static::saveFirstNotice()]),
             Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_content'))
                 ->schema([
                     TextInput::make('title')
@@ -66,7 +75,7 @@ class ArticleForm
                         ->searchable()
                         ->preload()
                         ->required(),
-                    RichEditor::make('content')
+                    ContentAttachments::configure(RichEditor::make('content'), $allowUploads)
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
                         ->required()
                         ->columnSpanFull(),
@@ -112,24 +121,14 @@ class ArticleForm
 
     /**
      * More than one language: a tab per language bound to the core's
-     * translation rows, an authoritative-language select and the
-     * "flag other languages outdated" option (design D9).
+     * translation rows and the "flag other languages outdated" option (design
+     * D9). The authoritative language is always the configured default, so the
+     * form offers no choice of it.
      */
-    protected static function configureMultiLocale(Schema $schema): Schema
+    protected static function configureMultiLocale(Schema $schema, bool $allowUploads = true): Schema
     {
         $locales = TranslationForm::locales();
         $default = Locales::default();
-
-        $localeOptions = collect($locales)
-            ->mapWithKeys(fn (string $locale): array => [$locale => strtoupper($locale)])
-            ->all();
-
-        $sourceSelect = Select::make('source_locale')
-            ->label(__('filament-knowledge-base::knowledge-base.admin.localization.source_locale'))
-            ->options($localeOptions)
-            ->default($default)
-            ->required()
-            ->live();
 
         $tabs = [];
 
@@ -150,7 +149,7 @@ class ArticleForm
                     ->required(fn (Get $get): bool => static::requiresVersion($get, $default, $locale))
                     ->maxLength(255)
                     ->rule(TranslationForm::uniqueSlugRule(ModelResolver::articleTranslation(), 'article_id')),
-                RichEditor::make("translations.{$locale}.content")
+                ContentAttachments::configure(RichEditor::make("translations.{$locale}.content"), $allowUploads)
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
                     ->required(fn (Get $get): bool => static::requiresVersion($get, $default, $locale))
                     ->columnSpanFull(),
@@ -170,7 +169,7 @@ class ArticleForm
                     $status->value => $status->label(),
                 ]))
                 ->default(TranslationStatus::Draft->value)
-                ->visible(fn (Get $get): bool => ! static::isAuthoritative($get, $default, $locale))
+                ->visible($locale !== $default)
                 ->helperText(__('filament-knowledge-base::knowledge-base.admin.localization.version_status_helper'));
 
             $tabs[] = Tab::make(strtoupper($locale))
@@ -188,10 +187,14 @@ class ArticleForm
         }
 
         $components = [
-            Tabs::make('translations')->tabs($tabs)->persistTabInQueryString(),
+            static::brokenReferencesNotice(),
+            ...($allowUploads ? [] : [static::saveFirstNotice()]),
+            Tabs::make('translations')
+                ->tabs($tabs)
+                ->persistTabInQueryString()
+                ->extraAttributes(['class' => 'kb-language-tabs']),
             Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_settings'))
                 ->schema([
-                    $sourceSelect,
                     Toggle::make('flag_other_locales_outdated')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.localization.flag_other_locales_outdated'))
                         ->helperText(__('filament-knowledge-base::knowledge-base.admin.localization.flag_other_locales_outdated_helper'))
@@ -226,20 +229,41 @@ class ArticleForm
             ->components($components);
     }
 
-    protected static function isAuthoritative(Get $get, string $default, string $locale): bool
-    {
-        return ($get('data.source_locale', isAbsolute: true) ?: $default) === $locale;
-    }
-
     /**
-     * A tab's required fields apply to the authoritative language and to any
-     * other language with content, so a partly filled tab is a form error
-     * instead of a failed insert.
+     * A tab's required fields apply to the default (authoritative) language
+     * and to any other language with content, so a partly filled tab is a form
+     * error instead of a failed insert.
      */
     protected static function requiresVersion(Get $get, string $default, string $locale): bool
     {
-        return static::isAuthoritative($get, $default, $locale)
+        return $locale === $default
             || TranslationForm::isFilled($get("data.translations.{$locale}", isAbsolute: true), TranslationForm::articleFields());
+    }
+
+    /**
+     * A banner shown while the article still refers to a deleted or unknown
+     * asset in any language; it disappears once the content is fixed (design
+     * D10).
+     */
+    protected static function brokenReferencesNotice(): Callout
+    {
+        return Callout::make(__('filament-knowledge-base::knowledge-base.admin.assets.broken.heading'))
+            ->description(fn (?Model $record): string => BrokenReferences::message($record))
+            ->color('warning')
+            ->icon('heroicon-o-exclamation-triangle')
+            ->visible(fn (?Model $record): bool => BrokenReferences::has($record));
+    }
+
+    /**
+     * The create page has no article yet, so the image and file tools are left
+     * out; this tells the editor why (design D10).
+     */
+    protected static function saveFirstNotice(): Callout
+    {
+        return Callout::make(__('filament-knowledge-base::knowledge-base.admin.assets.save_first.heading'))
+            ->description(__('filament-knowledge-base::knowledge-base.admin.assets.save_first.description'))
+            ->color('info')
+            ->icon('heroicon-o-information-circle');
     }
 
     /**

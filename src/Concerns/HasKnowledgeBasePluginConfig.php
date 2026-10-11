@@ -3,6 +3,8 @@
 namespace JeffersonGoncalves\FilamentKnowledgeBase\Concerns;
 
 use BackedEnum;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasKnowledgeBasePluginConfig
 {
@@ -19,6 +21,9 @@ trait HasKnowledgeBasePluginConfig
     protected ?int $navigationSort = null;
 
     protected string|BackedEnum|null $navigationIcon = null;
+
+    /** @var (Closure(Model, string): ?string)|null */
+    protected ?Closure $publicUrlUsing = null;
 
     public function versioning(bool $enabled = true): static
     {
@@ -102,5 +107,30 @@ trait HasKnowledgeBasePluginConfig
     public function getNavigationIcon(): string|BackedEnum|null
     {
         return $this->navigationIcon;
+    }
+
+    /**
+     * How an article's public page is reached, for the "View on site" button:
+     * a callback receiving the article and a language that returns the URL
+     * (or null when there is none). The package has no public pages of its
+     * own, so the app that renders them provides this.
+     *
+     * @param  (Closure(Model, string): ?string)|null  $callback
+     */
+    public function publicUrlUsing(?Closure $callback): static
+    {
+        $this->publicUrlUsing = $callback;
+
+        return $this;
+    }
+
+    public function hasPublicUrls(): bool
+    {
+        return $this->publicUrlUsing !== null;
+    }
+
+    public function getPublicUrl(Model $article, string $locale): ?string
+    {
+        return $this->publicUrlUsing ? ($this->publicUrlUsing)($article, $locale) : null;
     }
 }

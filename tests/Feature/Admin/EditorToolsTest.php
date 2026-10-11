@@ -1,0 +1,284 @@
+<?php
+
+use Filament\Actions\Testing\TestAction;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\ViewField;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\RichEditor\Actions\AttachFileAction;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\RichEditor\Actions\InsertImageAction;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
+use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\User;
+use JeffersonGoncalves\KnowledgeBase\Models\Article;
+use JeffersonGoncalves\KnowledgeBase\Models\ArticleAsset;
+use JeffersonGoncalves\KnowledgeBase\Models\Category;
+use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
+use Livewire\Livewire;
+
+beforeEach(function () {
+    config([
+        'knowledge-base.locales' => ['en', 'de'],
+        'knowledge-base.default_locale' => 'en',
+        'knowledge-base.attachments' => [
+            'disk' => 'public',
+            'directory' => 'knowledge-base',
+            'images' => ['accepted_types' => ['image/jpeg', 'image/png', 'image/webp'], 'max_size' => 5120],
+            'files' => ['accepted_types' => ['application/pdf'], 'max_size' => 10240],
+        ],
+    ]);
+
+    Storage::fake('public');
+
+    User::createTable();
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+
+    $user = User::create(['name' => 'Editor', 'email' => 'editor@example.com']);
+    $category = Category::create(['name' => 'Plant care', 'slug' => 'plant-care', 'visibility' => 'public']);
+
+    /** @var Article $article */
+    $article = app(KnowledgeBaseService::class)->createArticle([
+        'category_id' => $category->id,
+        'title' => 'Fern leaf care',
+        'slug' => 'fern-leaf-care',
+        'content' => 'How to care for a fern.',
+        'visibility' => 'public',
+    ], $user);
+
+    $this->article = $article;
+});
+
+function editorFor(Article $article, string $statePath): RichEditor
+{
+    return RichEditor::make('content')->model($article)->statePath($statePath);
+}
+
+function editorImage(Article $article, string $name = 'fern.jpg', ?string $locale = null): ArticleAsset
+{
+    $uuid = ContentAttachments::store(editorFor($article, 'content'), UploadedFile::fake()->image($name));
+    $asset = ArticleAsset::where('uuid', $uuid)->firstOrFail();
+
+    if ($locale !== null) {
+        $asset->update(['locale' => $locale]);
+    }
+
+    return $asset;
+}
+
+it('replaces the paperclip with the image and file tools', function () {
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->assertFormFieldExists('translations.en.content', fn (RichEditor $field): bool => ! $field->hasToolbarButton('attachFiles')
+            && $field->hasToolbarButton(InsertImageAction::NAME)
+            && $field->hasToolbarButton(AttachFileAction::NAME)
+            && $field->hasAction(InsertImageAction::NAME)
+            && $field->hasAction(AttachFileAction::NAME));
+});
+
+it('offers the shared images and the tab language images for reuse', function () {
+    $shared = editorImage($this->article, 'shared.jpg');
+    $german = editorImage($this->article, 'farn.jpg', 'de');
+    $english = editorImage($this->article, 'english.jpg', 'en');
+
+    $germanChoices = ContentAttachments::imageChoices(editorFor($this->article, 'translations.de.content'));
+    $englishChoices = ContentAttachments::imageChoices(editorFor($this->article, 'translations.en.content'));
+
+    expect(array_keys($germanChoices))->toContain((string) $shared->getAttribute('uuid'))
+        ->and(array_keys($germanChoices))->toContain((string) $german->getAttribute('uuid'))
+        ->and(array_keys($englishChoices))->toContain((string) $shared->getAttribute('uuid'))
+        ->and(array_keys($englishChoices))->not->toContain((string) $german->getAttribute('uuid'))
+        ->and(array_keys($germanChoices))->not->toContain((string) $english->getAttribute('uuid'));
+});
+
+it('offers only the article\'s own assets', function () {
+    $other = app(KnowledgeBaseService::class)->createArticle([
+        'category_id' => $this->article->category_id,
+        'title' => 'Other article',
+        'slug' => 'other-article',
+        'content' => 'Other.',
+        'visibility' => 'public',
+    ], User::first());
+
+    $foreign = editorImage($other, 'foreign.jpg');
+
+    $choices = ContentAttachments::imageChoices(editorFor($this->article, 'content'));
+
+    expect(array_keys($choices))->not->toContain((string) $foreign->getAttribute('uuid'));
+});
+
+it('lists files for the attach tool separately from images', function () {
+    editorImage($this->article, 'fern.jpg');
+
+    $editor = editorFor($this->article, 'content');
+    $uuid = ContentAttachments::store($editor, UploadedFile::fake()->createWithContent('warranty.pdf', "%PDF-1.4\ntrailer<</Root 1 0 R>>\n%%EOF"));
+
+    expect(ContentAttachments::fileChoices($editor))->toHaveKey($uuid)
+        ->and(ContentAttachments::imageChoices($editor))->not->toHaveKey($uuid);
+});
+
+it('accepts only the configured image and file types', function () {
+    expect(ContentAttachments::imageTypes())->toBe(['image/jpeg', 'image/png', 'image/webp'])
+        ->and(ContentAttachments::fileTypes())->toBe(['application/pdf'])
+        ->and(ContentAttachments::imageTypes())->not->toContain('application/pdf');
+});
+
+it('inserts an existing image without uploading it again', function () {
+    $this->actingAs(User::first());
+    $shared = editorImage($this->article);
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->callAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            data: ['existing' => $shared->uuid, 'alt' => 'A fern leaf'],
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertHasNoActionErrors()
+        ->assertDispatched('run-rich-editor-commands');
+
+    expect(ArticleAsset::count())->toBe(1);
+});
+
+it('attaches an existing file without uploading it again', function () {
+    $this->actingAs(User::first());
+    $guide = ArticleAsset::where('uuid', ContentAttachments::store(
+        editorFor($this->article, 'content'),
+        UploadedFile::fake()->create('care-guide.pdf', 20, 'application/pdf'),
+    ))->firstOrFail();
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->callAction(
+            TestAction::make(AttachFileAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            data: ['existing' => $guide->uuid],
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertHasNoActionErrors()
+        ->assertDispatched('run-rich-editor-commands');
+
+    expect(ArticleAsset::count())->toBe(1);
+});
+
+it('ignores an existing image or file the tab does not offer', function () {
+    $this->actingAs(User::first());
+
+    $other = app(KnowledgeBaseService::class)->createArticle([
+        'category_id' => $this->article->category_id,
+        'title' => 'Cactus care',
+        'slug' => 'cactus-care',
+        'content' => 'How to care for a cactus.',
+        'visibility' => 'public',
+    ], User::first());
+    $foreignImage = editorImage($other);
+    $germanImage = editorImage($this->article, 'farn.jpg', 'de');
+    $foreignFile = ArticleAsset::where('uuid', ContentAttachments::store(
+        editorFor($other, 'content'),
+        UploadedFile::fake()->create('cactus-guide.pdf', 20, 'application/pdf'),
+    ))->firstOrFail();
+
+    $page = Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()]);
+    $selection = ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]];
+
+    // Another article's image, and a German image in the English tab.
+    foreach ([$foreignImage, $germanImage] as $image) {
+        $page->callAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.en.content', schema: 'form'),
+            data: ['existing' => $image->uuid],
+            arguments: $selection,
+        )->assertNotDispatched('run-rich-editor-commands');
+    }
+
+    $page->callAction(
+        TestAction::make(AttachFileAction::NAME)->schemaComponent('translations.en.content', schema: 'form'),
+        data: ['existing' => $foreignFile->uuid],
+        arguments: $selection,
+    )->assertNotDispatched('run-rich-editor-commands');
+});
+
+it('tells the asset manager when the editor stores a new image', function () {
+    $this->actingAs(User::first());
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->callAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.en.content', schema: 'form'),
+            data: ['file' => UploadedFile::fake()->image('fern.jpg'), 'alt' => 'A fern leaf'],
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertHasNoActionErrors()
+        ->assertDispatched(ContentAttachments::ASSETS_CHANGED_EVENT);
+
+    expect(ArticleAsset::count())->toBe(1);
+});
+
+it('offers the article\'s images and a new upload in two tabs', function () {
+    $this->actingAs(User::first());
+    $shared = editorImage($this->article, 'fern-leaf.jpg');
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->mountAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertSchemaComponentExists('existing', 'mountedActionSchema0', function (ViewField $field) use ($shared): bool {
+            $choice = $field->getViewData()['choices'][$shared->uuid] ?? null;
+            $tabs = $field->getContainer()->getParentComponent()?->getContainer()->getParentComponent();
+
+            return $tabs instanceof Tabs
+                && collect($tabs->getChildComponents())->map(fn (Tab $tab) => $tab->getLabel())->all() === ['In this article (1)', 'Upload new']
+                && $field->getView() === ContentAttachments::ASSET_PICKER_VIEW
+                && $choice['name'] === 'fern-leaf.jpg'
+                && $choice['scope'] === 'Shared'
+                && filled($choice['url']);
+        })
+        ->assertSchemaComponentExists('file', 'mountedActionSchema0')
+        ->assertSchemaComponentExists('alt', 'mountedActionSchema0');
+});
+
+it('asks for an upload only when the article has no images yet', function () {
+    $this->actingAs(User::first());
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->mountAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertSchemaComponentExists('file', 'mountedActionSchema0', fn (FileUpload $field): bool => $field->getLabel() === 'Upload an image')
+        ->assertSchemaComponentDoesNotExist('existing', 'mountedActionSchema0');
+});
+
+it('keeps the Insert button disabled until an image is chosen', function () {
+    $this->actingAs(User::first());
+    $shared = editorImage($this->article, 'fern-leaf.jpg');
+
+    $page = Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->mountAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        );
+
+    $submit = fn () => $page->instance()->getMountedAction()->getModalSubmitAction();
+
+    expect($submit()->getName())->toBe('submit')
+        ->and($submit()->getLabel())->toBe('Insert')
+        ->and($submit()->isDisabled())->toBeTrue();
+
+    $page->set('mountedActions.0.data.existing', $shared->uuid);
+
+    expect($submit()->isDisabled())->toBeFalse();
+});
+
+it('inserts the chosen image when Insert is clicked, without reopening the dialog', function () {
+    $this->actingAs(User::first());
+    $shared = editorImage($this->article, 'fern-leaf.jpg');
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->mountAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->set('mountedActions.0.data.existing', $shared->uuid)
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertSet('mountedActions', []);
+});

@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\BrokenReferences;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\LocalizationState;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
@@ -24,6 +25,15 @@ class ArticlesTable
     {
         return $table
             ->columns([
+                TextColumn::make('assets_warning')
+                    ->label('')
+                    ->badge()
+                    ->color('warning')
+                    ->icon('heroicon-o-exclamation-triangle')
+                    ->state(fn (Article $record): string => BrokenReferences::has($record)
+                        ? __('filament-knowledge-base::knowledge-base.admin.assets.broken.badge')
+                        : '')
+                    ->toggleable(),
                 TextColumn::make('title')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.title'))
                     ->searchable()

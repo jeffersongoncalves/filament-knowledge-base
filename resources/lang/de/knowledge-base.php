@@ -39,6 +39,18 @@ return [
             'navigation_label' => 'Artikel',
             'model_label' => 'Artikel',
             'plural_model_label' => 'Artikel',
+            'actions' => [
+                'view_on_site' => 'Auf der Website ansehen',
+            ],
+            'details' => [
+                'heading' => 'Über diesen Artikel',
+                'description' => 'Status, Sichtbarkeit und Statistiken, Bilder und Dateien, frühere Versionen, Feedback von Lesern und verwandte Artikel.',
+                'details_tab' => 'Details',
+            ],
+            'tools' => [
+                'heading' => 'Dateien, Verlauf und Feedback',
+                'description' => 'Bilder und Dateien dieses Artikels, frühere Versionen, Feedback von Lesern und verwandte Artikel.',
+            ],
             'form' => [
                 'section_content' => 'Inhalt',
                 'section_settings' => 'Einstellungen',
@@ -84,6 +96,68 @@ return [
                 'related_articles' => [
                     'title' => 'Verwandte Artikel',
                 ],
+            ],
+        ],
+        'assets' => [
+            'insert_image' => [
+                'label' => 'Bild einfügen',
+                'modal' => [
+                    'heading' => 'Bild einfügen',
+                    'tab_existing' => 'In diesem Artikel (:count)',
+                    'tab_upload' => 'Neu hochladen',
+                    'existing' => 'Bilder in diesem Artikel',
+                    'existing_help' => 'Geteilte Bilder und Bilder für diese Sprache. Wähle eins aus und klicke auf Einfügen.',
+                    'submit' => 'Einfügen',
+                    'file' => 'Oder ein neues Bild hochladen',
+                    'file_only' => 'Bild hochladen',
+                    'alt' => 'Alternativtext',
+                    'alt_help' => 'Beschreibt das Bild für Menschen, die es nicht sehen können, in dieser Sprache.',
+                ],
+            ],
+            'attach_file' => [
+                'label' => 'Datei anhängen',
+                'modal' => [
+                    'heading' => 'Datei anhängen',
+                    'tab_existing' => 'In diesem Artikel (:count)',
+                    'tab_upload' => 'Neu hochladen',
+                    'existing' => 'Dateien in diesem Artikel',
+                    'existing_help' => 'Geteilte Dateien und Dateien für diese Sprache. Wähle eine aus und klicke auf Anhängen.',
+                    'submit' => 'Anhängen',
+                    'file' => 'Oder eine neue Datei hochladen',
+                    'file_only' => 'Datei hochladen',
+                ],
+            ],
+            'scope' => [
+                'shared' => 'Geteilt',
+            ],
+            'usage' => [
+                'used_in' => 'Verwendet in :languages',
+                'unused' => 'Nicht verwendet',
+            ],
+            'delete' => [
+                'used' => 'Diese Datei wird noch in :languages verwendet.',
+                'unused' => 'Diese Datei wird nirgends verwendet.',
+            ],
+            'save_first' => [
+                'heading' => 'Bilder und Dateien nach dem Speichern hinzufügen',
+                'description' => 'Speichere den Artikel zuerst, um Bilder und Dateien hinzuzufügen.',
+            ],
+            'broken' => [
+                'heading' => 'Inhalt verweist auf fehlende Dateien',
+                'message' => 'Einige Inhalte verweisen auf Bilder oder Dateien, die es nicht mehr gibt (:details). Entferne oder ersetze sie, um diese Warnung zu entfernen.',
+                'images' => '{1} 1 gelöschtes Bild|[2,*] :count gelöschte Bilder',
+                'badge' => 'Fehlende Datei',
+            ],
+            'manager' => [
+                'title' => 'Dateien',
+                'preview' => 'Vorschau',
+                'name' => 'Name',
+                'size' => 'Größe',
+                'scope' => 'Geltungsbereich',
+                'usage' => 'Verwendet',
+                'upload' => 'Hochladen',
+                'file' => 'Datei',
+                'kind' => 'Art',
             ],
         ],
         'widgets' => [
