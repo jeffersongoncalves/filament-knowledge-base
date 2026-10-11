@@ -121,7 +121,8 @@ return [
             ],
             'broken' => [
                 'heading' => 'Inhalt verweist auf fehlende Dateien',
-                'message' => 'Einige Inhalte verweisen auf Dateien, die es nicht mehr gibt (:details). Korrigiere den Inhalt, um diese Warnung zu entfernen.',
+                'message' => 'Einige Inhalte verweisen auf Bilder oder Dateien, die es nicht mehr gibt (:details). Entferne oder ersetze sie, um diese Warnung zu entfernen.',
+                'images' => '{1} 1 gelöschtes Bild|[2,*] :count gelöschte Bilder',
                 'badge' => 'Fehlende Datei',
             ],
             'manager' => [

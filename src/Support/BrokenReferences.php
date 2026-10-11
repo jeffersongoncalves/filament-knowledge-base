@@ -42,11 +42,37 @@ class BrokenReferences
         $parts = [];
 
         foreach (self::references($article) as $locale => $assets) {
-            $parts[] = strtoupper($locale).': '.implode(', ', $assets);
+            $parts[] = strtoupper($locale).': '.self::describe($assets);
         }
 
         return __('filament-knowledge-base::knowledge-base.admin.assets.broken.message', [
             'details' => implode('; ', $parts),
         ]);
+    }
+
+    /**
+     * Readable names for missing references: a deleted image is only known by
+     * its id, so images are counted; a file link still carries its file name.
+     *
+     * @param  list<string>  $references
+     */
+    protected static function describe(array $references): string
+    {
+        $images = 0;
+        $files = [];
+
+        foreach ($references as $reference) {
+            if (str_contains($reference, '/') || str_contains($reference, '.')) {
+                $files[] = basename($reference);
+            } else {
+                $images++;
+            }
+        }
+
+        $parts = $images > 0
+            ? [trans_choice('filament-knowledge-base::knowledge-base.admin.assets.broken.images', $images)]
+            : [];
+
+        return implode(', ', [...$parts, ...$files]);
     }
 }
