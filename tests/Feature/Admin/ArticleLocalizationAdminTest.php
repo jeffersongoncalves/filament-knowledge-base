@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\DB;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\CreateArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\ListArticles;
@@ -276,4 +277,69 @@ it('creates an article in a chosen authoritative language', function () {
     expect($article->source_locale)->toBe('de')
         ->and($article->title)->toBe('Passwort zurücksetzen')
         ->and($article->translation('de'))->not->toBeNull();
+});
+
+it('shows a form error instead of failing when a language tab uses a slug of another article', function () {
+    $other = $this->service->createArticle([
+        'category_id' => $this->category->id,
+        'title' => 'Billing',
+        'slug' => 'billing',
+        'content' => 'Invoices and payments.',
+        'visibility' => 'public',
+    ], User::first());
+
+    editArticle($this->article)
+        ->fillForm([
+            'translations' => [
+                'de' => [
+                    'title' => 'Abrechnung',
+                    'slug' => 'billing',
+                    'content' => 'Rechnungen und Zahlungen.',
+                ],
+            ],
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['translations.de.slug']);
+
+    expect($this->article->fresh()->translation('de'))->toBeNull()
+        ->and($other->fresh()->slug)->toBe('billing');
+});
+
+it('lets an article reuse its own slug in another language', function () {
+    editArticle($this->article)
+        ->fillForm([
+            'translations' => [
+                'de' => [
+                    'title' => 'Passwort zurücksetzen',
+                    'slug' => 'password-reset',
+                    'content' => 'So setzt du dein Passwort zurück.',
+                ],
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($this->article->fresh()->translation('de')->slug)->toBe('password-reset');
+});
+
+it('shows the language states in the list without a query per row', function () {
+    foreach (range(1, 5) as $i) {
+        $this->service->createArticle([
+            'category_id' => $this->category->id,
+            'title' => "Extra article {$i}",
+            'slug' => "extra-article-{$i}",
+            'content' => 'Content.',
+            'visibility' => 'public',
+        ], User::first());
+    }
+
+    DB::enableQueryLog();
+    Livewire::test(ListArticles::class)->assertOk();
+    $translationQueries = collect(DB::getQueryLog())
+        ->filter(fn (array $query): bool => str_contains($query['query'], 'article_translations'))
+        ->count();
+    DB::disableQueryLog();
+
+    // One eager load for all rows, not one per row and language (6 rows x 2 languages).
+    expect($translationQueries)->toBeLessThan(4);
 });

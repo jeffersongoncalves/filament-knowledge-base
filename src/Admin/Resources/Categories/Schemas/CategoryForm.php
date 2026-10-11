@@ -14,6 +14,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Support\Locales;
+use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class CategoryForm
 {
@@ -97,7 +98,8 @@ class CategoryForm
                     TextInput::make("translations.{$locale}.slug")
                         ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.slug'))
                         ->required($required)
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->rule(TranslationForm::uniqueSlugRule(ModelResolver::categoryTranslation(), 'category_id')),
                     Textarea::make("translations.{$locale}.description")
                         ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.description'))
                         ->rows(3)

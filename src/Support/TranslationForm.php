@@ -2,9 +2,11 @@
 
 namespace JeffersonGoncalves\FilamentKnowledgeBase\Support;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\TranslatableContract;
 use JeffersonGoncalves\KnowledgeBase\Support\Locales;
+use JeffersonGoncalves\KnowledgeBase\Support\SlugOwnership;
 
 /**
  * Bridges Filament form state and the core's translation rows.
@@ -64,6 +66,9 @@ class TranslationForm
 
     /**
      * The language state of a record's version (missing/draft/published/outdated).
+     *
+     * Uses the eager-loaded `translations` relation when present (the article
+     * list loads it), so a list page does not query once per row and language.
      */
     public static function state(Model $record, string $locale): string
     {
@@ -71,7 +76,33 @@ class TranslationForm
             return LocalizationState::MISSING;
         }
 
-        return LocalizationState::of($record->translation($locale));
+        $translation = $record->relationLoaded('translations')
+            ? $record->getRelation('translations')->firstWhere('locale', $locale)
+            : $record->translation($locale);
+
+        return LocalizationState::of($translation instanceof Model ? $translation : null);
+    }
+
+    /**
+     * Validation for a language tab's slug: a slug belongs to one record, in
+     * any language (core design D1a). Without it, a taken slug reaches the
+     * core's save guard as an exception instead of a form error.
+     *
+     * Returned as a Filament rule closure, so the edited record is injected.
+     *
+     * @param  class-string<Model>  $translationClass
+     */
+    public static function uniqueSlugRule(string $translationClass, string $foreignKey): Closure
+    {
+        return fn (?Model $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($record, $translationClass, $foreignKey): void {
+            if (! is_string($value) || $value === '') {
+                return;
+            }
+
+            if (SlugOwnership::isTakenByAnother($translationClass, $foreignKey, $record?->getKey(), $value)) {
+                $fail(__('validation.unique', ['attribute' => 'slug']));
+            }
+        };
     }
 
     /**

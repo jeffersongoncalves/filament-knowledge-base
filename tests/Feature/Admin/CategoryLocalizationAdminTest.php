@@ -89,3 +89,25 @@ it('keeps the category form bound to the category columns with one language', fu
 
     expect($this->category->fresh()->name)->toBe('Billing (edited)');
 });
+
+it('shows a form error instead of failing when a language tab uses a slug of another category', function () {
+    $this->service->createCategory([
+        'name' => 'Subscriptions',
+        'slug' => 'subscriptions',
+        'visibility' => 'public',
+    ]);
+
+    Livewire::test(EditCategory::class, ['record' => $this->category->getRouteKey()])
+        ->fillForm([
+            'translations' => [
+                'de' => [
+                    'name' => 'Abonnements',
+                    'slug' => 'subscriptions',
+                ],
+            ],
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['translations.de.slug']);
+
+    expect($this->category->fresh()->translation('de'))->toBeNull();
+});
