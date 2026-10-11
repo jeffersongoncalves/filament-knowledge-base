@@ -15,9 +15,6 @@ use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
  * themselves and the panels keep their previous behaviour.
  */
 beforeEach(function () {
-    if (! PublicVisibility::isSupported()) {
-        $this->markTestSkipped('Needs a laravel-knowledge-base release with the public visibility scopes.');
-    }
 
     User::createTable();
     $this->service = app(KnowledgeBaseService::class);
