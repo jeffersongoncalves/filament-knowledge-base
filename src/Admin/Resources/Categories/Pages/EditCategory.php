@@ -13,6 +13,9 @@ class EditCategory extends EditRecord
 
     protected static string $resource = CategoryResource::class;
 
+    // Save and Cancel stay in view while editing a long form.
+    public static bool $formActionsAreSticky = true;
+
     protected function getHeaderActions(): array
     {
         return [

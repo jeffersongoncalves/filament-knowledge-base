@@ -11,4 +11,7 @@ class EditCollection extends EditRecord
     use ManagesCollectionTranslations;
 
     protected static string $resource = CollectionResource::class;
+
+    // Save and Cancel stay in view while editing a long form.
+    public static bool $formActionsAreSticky = true;
 }

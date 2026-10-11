@@ -14,6 +14,9 @@ class CreateArticle extends CreateRecord
 
     protected static string $resource = ArticleResource::class;
 
+    // Save and Cancel stay in view while editing a long form.
+    public static bool $formActionsAreSticky = true;
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data = $this->prepareTranslations($data);

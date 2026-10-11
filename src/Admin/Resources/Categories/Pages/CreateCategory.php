@@ -11,4 +11,7 @@ class CreateCategory extends CreateRecord
     use ManagesCategoryTranslations;
 
     protected static string $resource = CategoryResource::class;
+
+    // Save and Cancel stay in view while editing a long form.
+    public static bool $formActionsAreSticky = true;
 }
