@@ -221,10 +221,26 @@ it('keeps the Insert button disabled until an image is chosen', function () {
 
     $submit = fn () => $page->instance()->getMountedAction()->getModalSubmitAction();
 
-    expect($submit()->getLabel())->toBe('Insert')
+    expect($submit()->getName())->toBe('submit')
+        ->and($submit()->getLabel())->toBe('Insert')
         ->and($submit()->isDisabled())->toBeTrue();
 
     $page->set('mountedActions.0.data.existing', $shared->uuid);
 
     expect($submit()->isDisabled())->toBeFalse();
+});
+
+it('inserts the chosen image when Insert is clicked, without reopening the dialog', function () {
+    $this->actingAs(User::first());
+    $shared = editorImage($this->article, 'fern-leaf.jpg');
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->mountAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->set('mountedActions.0.data.existing', $shared->uuid)
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertSet('mountedActions', []);
 });

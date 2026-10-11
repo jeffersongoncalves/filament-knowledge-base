@@ -26,7 +26,7 @@ class InsertImageAction
 
     public static function make(): Action
     {
-        $action = Action::make(self::NAME)
+        $insert = Action::make(self::NAME)
             ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.label'))
             ->modalHeading(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.heading'))
             ->modalWidth(Width::Large)
@@ -87,10 +87,11 @@ class InsertImageAction
 
         // "Insert", and only once an image is chosen or uploaded (editing an
         // image that is already in the text can always be confirmed).
-        return $action->modalSubmitAction(fn (Action $submit): Action => $submit
+        // Filament passes the confirm button as \$action; it is not the dialog's own action.
+        return $insert->modalSubmitAction(fn (Action $action): Action => $action
             ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.submit'))
-            ->disabled(fn (): bool => blank($action->getArguments()['src'] ?? null)
-                && ! ContentAttachments::hasSource($action->getRawData())));
+            ->disabled(fn (): bool => blank($insert->getArguments()['src'] ?? null)
+                && ! ContentAttachments::hasSource($insert->getRawData())));
     }
 
     /**
