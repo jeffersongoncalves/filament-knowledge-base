@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Forms\Components\RichEditor;
 use Illuminate\Support\Facades\DB;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\CreateArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
@@ -363,4 +364,15 @@ it('shows the language states in the list without a query per row', function () 
 
     // One eager load for all rows, not one per row and language (6 rows x 2 languages).
     expect($translationQueries)->toBeLessThan(4);
+});
+
+it('stores files added in every language tab in the knowledge base attachments directory', function () {
+    config(['knowledge-base.attachments' => ['disk' => 'public', 'directory' => 'knowledge-base/attachments']]);
+
+    $usesKnowledgeBaseDirectory = fn (RichEditor $field): bool => $field->getFileAttachmentsDiskName() === 'public'
+        && $field->getFileAttachmentsDirectory() === 'knowledge-base/attachments';
+
+    editArticle($this->article)
+        ->assertFormFieldExists('translations.en.content', $usesKnowledgeBaseDirectory)
+        ->assertFormFieldExists('translations.de.content', $usesKnowledgeBaseDirectory);
 });

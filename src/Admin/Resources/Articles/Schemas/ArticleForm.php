@@ -17,6 +17,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\LocalizationState;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
@@ -66,7 +67,7 @@ class ArticleForm
                         ->searchable()
                         ->preload()
                         ->required(),
-                    RichEditor::make('content')
+                    ContentAttachments::configure(RichEditor::make('content'))
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
                         ->required()
                         ->columnSpanFull(),
@@ -150,7 +151,7 @@ class ArticleForm
                     ->required(fn (Get $get): bool => static::requiresVersion($get, $default, $locale))
                     ->maxLength(255)
                     ->rule(TranslationForm::uniqueSlugRule(ModelResolver::articleTranslation(), 'article_id')),
-                RichEditor::make("translations.{$locale}.content")
+                ContentAttachments::configure(RichEditor::make("translations.{$locale}.content"))
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
                     ->required(fn (Get $get): bool => static::requiresVersion($get, $default, $locale))
                     ->columnSpanFull(),
