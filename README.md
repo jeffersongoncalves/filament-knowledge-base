@@ -62,6 +62,29 @@ public function panel(Panel $panel): Panel
 
 **Widgets:** Knowledge Base Overview (total articles, published, drafts, categories, views, helpful rate).
 
+#### Languages
+
+When the core package is configured with more than one language
+(`knowledge-base.locales`), the article and category forms grow a tab per
+language and the article list grows a state per language.
+
+- **Article form:** one tab per language with that language's title, slug,
+  excerpt, content and SEO fields, an **authoritative language** select and a
+  per-language version status. The authoritative version follows the article's
+  own status; every other language is published on its own. A **“Mark other
+  languages outdated”** toggle (off by default) flags the other languages when
+  you save the authoritative version.
+- **Article list:** a state per language (`missing`, `draft`, `published`,
+  `outdated`), a **Mark up to date** action for outdated versions and an
+  **Outdated in language** filter. Both the columns and the filter adapt to the
+  configured languages.
+- **Category form:** one tab per language with that language's name, slug and
+  description; the default language is required, the others are optional.
+
+With a single configured language the forms, the list and the actions are
+exactly as above without a `Languages` section: nothing changes for
+single-language installs.
+
 ### User Panel
 
 Read-only access to published articles for authenticated users, with feedback capability.
