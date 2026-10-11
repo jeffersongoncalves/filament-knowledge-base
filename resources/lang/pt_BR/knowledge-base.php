@@ -134,6 +134,68 @@ return [
                 'not_visible' => 'Os clientes não veem este artigo.',
             ],
         ],
+        'assets' => [
+            'insert_image' => [
+                'label' => 'Inserir imagem',
+                'modal' => [
+                    'heading' => 'Inserir imagem',
+                    'tab_existing' => 'Neste artigo (:count)',
+                    'tab_upload' => 'Enviar nova',
+                    'existing' => 'Imagens deste artigo',
+                    'existing_help' => 'Imagens compartilhadas e imagens deste idioma. Escolha uma e clique em Inserir.',
+                    'submit' => 'Inserir',
+                    'file' => 'Ou envie uma nova imagem',
+                    'file_only' => 'Enviar uma imagem',
+                    'alt' => 'Texto alternativo',
+                    'alt_help' => 'Descreve a imagem para quem não pode vê-la, neste idioma.',
+                ],
+            ],
+            'attach_file' => [
+                'label' => 'Anexar arquivo',
+                'modal' => [
+                    'heading' => 'Anexar arquivo',
+                    'tab_existing' => 'Neste artigo (:count)',
+                    'tab_upload' => 'Enviar novo',
+                    'existing' => 'Arquivos deste artigo',
+                    'existing_help' => 'Arquivos compartilhados e arquivos deste idioma. Escolha um e clique em Anexar.',
+                    'submit' => 'Anexar',
+                    'file' => 'Ou envie um novo arquivo',
+                    'file_only' => 'Enviar um arquivo',
+                ],
+            ],
+            'scope' => [
+                'shared' => 'Compartilhado',
+            ],
+            'usage' => [
+                'used_in' => 'Usado em :languages',
+                'unused' => 'Não usado',
+            ],
+            'delete' => [
+                'used' => 'Este arquivo ainda é usado em :languages.',
+                'unused' => 'Este arquivo não é usado em nenhum lugar.',
+            ],
+            'save_first' => [
+                'heading' => 'Adicione imagens e arquivos depois de salvar',
+                'description' => 'Salve o artigo primeiro para adicionar imagens e arquivos.',
+            ],
+            'broken' => [
+                'heading' => 'O conteúdo se refere a arquivos ausentes',
+                'message' => 'Parte do conteúdo se refere a imagens ou arquivos que não existem mais (:details). Remova-os ou substitua-os para limpar este aviso.',
+                'images' => '{1} 1 imagem excluída|[2,*] :count imagens excluídas',
+                'badge' => 'Arquivo ausente',
+            ],
+            'manager' => [
+                'title' => 'Arquivos',
+                'preview' => 'Pré-visualização',
+                'name' => 'Nome',
+                'size' => 'Tamanho',
+                'scope' => 'Escopo',
+                'usage' => 'Uso',
+                'upload' => 'Enviar',
+                'file' => 'Arquivo',
+                'kind' => 'Tipo',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Total de Artigos',
