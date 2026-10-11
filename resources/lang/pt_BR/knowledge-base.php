@@ -41,6 +41,10 @@ return [
             'navigation_label' => 'Artigos',
             'model_label' => 'Artigo',
             'plural_model_label' => 'Artigos',
+            'tools' => [
+                'heading' => 'Arquivos, histórico e feedback',
+                'description' => 'Imagens e arquivos deste artigo, versões anteriores, feedback dos leitores e artigos relacionados.',
+            ],
             'form' => [
                 'section_content' => 'Conteúdo',
                 'section_settings' => 'Configurações',

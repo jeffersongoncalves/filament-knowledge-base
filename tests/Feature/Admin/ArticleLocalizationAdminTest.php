@@ -378,5 +378,11 @@ it('styles the language tabs as tabs with the plugin stylesheet', function () {
     editArticle($this->article)->assertSeeHtml('kb-language-tabs');
 
     expect(collect(FilamentAsset::getStyles())->map(fn ($style) => $style->getId()))
-        ->toContain('language-tabs');
+        ->toContain('filament-knowledge-base');
+});
+
+it('sets the article\'s files, history and feedback apart from the edit form', function () {
+    editArticle($this->article)
+        ->assertSeeHtml('kb-article-tools')
+        ->assertSeeInOrder(['Save changes', 'Files, history and feedback']);
 });

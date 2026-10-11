@@ -39,6 +39,10 @@ return [
             'navigation_label' => 'Artikel',
             'model_label' => 'Artikel',
             'plural_model_label' => 'Artikel',
+            'tools' => [
+                'heading' => 'Dateien, Verlauf und Feedback',
+                'description' => 'Bilder und Dateien dieses Artikels, frühere Versionen, Feedback von Lesern und verwandte Artikel.',
+            ],
             'form' => [
                 'section_content' => 'Inhalt',
                 'section_settings' => 'Einstellungen',

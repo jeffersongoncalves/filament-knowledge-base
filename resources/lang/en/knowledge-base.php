@@ -41,6 +41,10 @@ return [
             'navigation_label' => 'Articles',
             'model_label' => 'Article',
             'plural_model_label' => 'Articles',
+            'tools' => [
+                'heading' => 'Files, history and feedback',
+                'description' => 'Images and files of this article, earlier versions, reader feedback and related articles.',
+            ],
             'form' => [
                 'section_content' => 'Content',
                 'section_settings' => 'Settings',
