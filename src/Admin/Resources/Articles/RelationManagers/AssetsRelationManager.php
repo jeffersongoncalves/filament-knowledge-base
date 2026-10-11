@@ -20,6 +20,7 @@ use JeffersonGoncalves\KnowledgeBase\Enums\AssetKind;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\ArticleAssetContract;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\ArticleContract;
 use JeffersonGoncalves\KnowledgeBase\Support\ArticleAssets;
+use Livewire\Attributes\On;
 
 /**
  * The asset manager on the article's edit page (see design D10): a grid of
@@ -32,6 +33,15 @@ class AssetsRelationManager extends RelationManager
 
     /** A neutral document icon, shown instead of a thumbnail for files. */
     protected const FILE_ICON = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+
+    /**
+     * The editor stored an asset on this page: show it straight away.
+     */
+    #[On(ContentAttachments::ASSETS_CHANGED_EVENT)]
+    public function refreshAssets(): void
+    {
+        $this->flushCachedTableRecords();
+    }
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {

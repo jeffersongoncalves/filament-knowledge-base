@@ -153,3 +153,18 @@ it('attaches an existing file without uploading it again', function () {
 
     expect(ArticleAsset::count())->toBe(1);
 });
+
+it('tells the asset manager when the editor stores a new image', function () {
+    $this->actingAs(User::first());
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->callAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.en.content', schema: 'form'),
+            data: ['file' => UploadedFile::fake()->image('fern.jpg'), 'alt' => 'A fern leaf'],
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertHasNoActionErrors()
+        ->assertDispatched(ContentAttachments::ASSETS_CHANGED_EVENT);
+
+    expect(ArticleAsset::count())->toBe(1);
+});
