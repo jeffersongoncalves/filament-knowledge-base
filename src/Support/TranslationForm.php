@@ -25,9 +25,19 @@ class TranslationForm
         return Locales::all();
     }
 
+    /**
+     * Whether the admin shows language tabs. Needs a laravel-knowledge-base
+     * release with content localization; with an older core the plugin keeps
+     * its single-language admin instead of failing on the missing classes.
+     */
     public static function isMultiLocale(): bool
     {
-        return count(static::locales()) > 1;
+        return static::coreSupportsLocalization() && count(static::locales()) > 1;
+    }
+
+    public static function coreSupportsLocalization(): bool
+    {
+        return class_exists(Locales::class);
     }
 
     /** @return list<string> */
