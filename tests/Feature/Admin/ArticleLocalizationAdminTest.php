@@ -6,6 +6,7 @@ use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\Crea
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\ListArticles;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\LocalizationState;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\User;
 use JeffersonGoncalves\KnowledgeBase\Enums\TranslationStatus;
 use JeffersonGoncalves\KnowledgeBase\Models\Article;
@@ -15,6 +16,9 @@ use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
 beforeEach(function () {
+    if (! TranslationForm::coreSupportsLocalization()) {
+        $this->markTestSkipped('Needs a laravel-knowledge-base release with content localization.');
+    }
     config([
         'knowledge-base.locales' => ['en', 'de'],
         'knowledge-base.default_locale' => 'en',

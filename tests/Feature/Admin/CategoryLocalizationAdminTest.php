@@ -3,12 +3,16 @@
 use Filament\Facades\Filament;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Categories\Pages\CreateCategory;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Categories\Pages\EditCategory;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\User;
 use JeffersonGoncalves\KnowledgeBase\Models\Category;
 use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
 use Livewire\Livewire;
 
 beforeEach(function () {
+    if (! TranslationForm::coreSupportsLocalization()) {
+        $this->markTestSkipped('Needs a laravel-knowledge-base release with content localization.');
+    }
     config([
         'knowledge-base.locales' => ['en', 'de'],
         'knowledge-base.default_locale' => 'en',

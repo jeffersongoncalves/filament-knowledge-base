@@ -5,6 +5,12 @@ use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Enums\TranslationStatus;
 use JeffersonGoncalves\KnowledgeBase\Models\ArticleTranslation;
 
+beforeEach(function () {
+    if (! TranslationForm::coreSupportsLocalization()) {
+        $this->markTestSkipped('Needs a laravel-knowledge-base release with content localization.');
+    }
+});
+
 it('reads the state from a translation row', function () {
     $published = new ArticleTranslation(['status' => TranslationStatus::Published->value]);
     $draft = new ArticleTranslation(['status' => TranslationStatus::Draft->value]);
