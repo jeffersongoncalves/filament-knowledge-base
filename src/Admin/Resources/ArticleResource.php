@@ -179,7 +179,7 @@ class ArticleResource extends Resource
             $tabComponents = [
                 Forms\Components\TextInput::make("translations.{$locale}.title")
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.title'))
-                    ->required(fn (Forms\Get $get): bool => static::isAuthoritative($get, $default, $locale))
+                    ->required(fn (Forms\Get $get): bool => static::requiresVersion($get, $default, $locale))
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(function (Forms\Set $set, ?string $state) use ($locale) {
@@ -189,12 +189,12 @@ class ArticleResource extends Resource
                     }),
                 Forms\Components\TextInput::make("translations.{$locale}.slug")
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.slug'))
-                    ->required(fn (Forms\Get $get): bool => static::isAuthoritative($get, $default, $locale))
+                    ->required(fn (Forms\Get $get): bool => static::requiresVersion($get, $default, $locale))
                     ->maxLength(255)
                     ->rule(TranslationForm::uniqueSlugRule(ModelResolver::articleTranslation(), 'article_id')),
                 Forms\Components\RichEditor::make("translations.{$locale}.content")
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
-                    ->required(fn (Forms\Get $get): bool => static::isAuthoritative($get, $default, $locale))
+                    ->required(fn (Forms\Get $get): bool => static::requiresVersion($get, $default, $locale))
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make("translations.{$locale}.excerpt")
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.excerpt'))
@@ -272,6 +272,17 @@ class ArticleResource extends Resource
     protected static function isAuthoritative(Forms\Get $get, string $default, string $locale): bool
     {
         return ($get('data.source_locale', isAbsolute: true) ?: $default) === $locale;
+    }
+
+    /**
+     * A tab's required fields apply to the authoritative language and to any
+     * other language with content, so a partly filled tab is a form error
+     * instead of a failed insert.
+     */
+    protected static function requiresVersion(Forms\Get $get, string $default, string $locale): bool
+    {
+        return static::isAuthoritative($get, $default, $locale)
+            || TranslationForm::isFilled($get("data.translations.{$locale}", isAbsolute: true), TranslationForm::articleFields());
     }
 
     /**

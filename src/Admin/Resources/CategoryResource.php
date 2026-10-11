@@ -70,7 +70,11 @@ class CategoryResource extends Resource
         $tabs = [];
 
         foreach (TranslationForm::locales() as $locale) {
-            $required = $locale === $default;
+            // The default language is always required; any other language
+            // with content needs a name and slug too (a form error instead of
+            // a failed insert).
+            $required = fn (Forms\Get $get): bool => $locale === $default
+                || TranslationForm::isFilled($get("data.translations.{$locale}", isAbsolute: true), TranslationForm::categoryFields());
 
             $tabs[] = Forms\Components\Tabs\Tab::make(strtoupper($locale))
                 ->schema([
