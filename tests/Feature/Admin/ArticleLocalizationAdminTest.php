@@ -3,6 +3,7 @@
 use Filament\Facades\Filament;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\DB;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\CreateArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
@@ -371,4 +372,11 @@ it('stores files added in every language tab in the knowledge base attachments d
     editArticle($this->article)
         ->assertFormFieldExists('translations.en.content', $usesKnowledgeBaseDirectory)
         ->assertFormFieldExists('translations.de.content', $usesKnowledgeBaseDirectory);
+});
+
+it('styles the language tabs as tabs with the plugin stylesheet', function () {
+    editArticle($this->article)->assertSeeHtml('kb-language-tabs');
+
+    expect(collect(FilamentAsset::getStyles())->map(fn ($style) => $style->getId()))
+        ->toContain('language-tabs');
 });

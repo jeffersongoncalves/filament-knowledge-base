@@ -189,7 +189,10 @@ class ArticleForm
         $components = [
             static::brokenReferencesNotice(),
             ...($allowUploads ? [] : [static::saveFirstNotice()]),
-            Tabs::make('translations')->tabs($tabs)->persistTabInQueryString(),
+            Tabs::make('translations')
+                ->tabs($tabs)
+                ->persistTabInQueryString()
+                ->extraAttributes(['class' => 'kb-language-tabs']),
             Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_settings'))
                 ->schema([
                     Toggle::make('flag_other_locales_outdated')

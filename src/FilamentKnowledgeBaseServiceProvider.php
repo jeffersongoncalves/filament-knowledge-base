@@ -2,6 +2,8 @@
 
 namespace JeffersonGoncalves\FilamentKnowledgeBase;
 
+use Filament\Support\Assets\Css;
+use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -18,5 +20,14 @@ class FilamentKnowledgeBaseServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews(static::$viewNamespace)
             ->hasTranslations();
+    }
+
+    public function packageBooted(): void
+    {
+        // Published to public/ by `php artisan filament:assets` (also run by
+        // `filament:upgrade`), and loaded on every panel.
+        FilamentAsset::register([
+            Css::make('language-tabs', __DIR__.'/../resources/dist/language-tabs.css'),
+        ], 'jeffersongoncalves/filament-knowledge-base');
     }
 }
