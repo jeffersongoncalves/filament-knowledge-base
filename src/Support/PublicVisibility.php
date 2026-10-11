@@ -5,8 +5,6 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Support;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
-use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\ArticleContract;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\CategoryContract;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
@@ -15,23 +13,13 @@ use JeffersonGoncalves\KnowledgeBase\Support\Visibility;
 /**
  * The Guest and User panels' public-only queries.
  *
- * When the installed core has the public visibility scopes (#15,
- * {@see Visibility}), every query goes through them, so a public article in an
- * internal category or under an internal/inactive ancestor is hidden from
- * customers, exactly like the core's own public surfaces. With an older core the
- * previous queries (which only filtered on the article's or category's own
- * columns) are kept, so the plugin still works there.
+ * Every query goes through the core's public visibility rules
+ * ({@see Visibility}), so a public article in an internal category or under an
+ * internal/inactive ancestor is hidden from customers, exactly like the core's
+ * own public surfaces.
  */
 class PublicVisibility
 {
-    /**
-     * Whether the installed core ships the public visibility scopes.
-     */
-    public static function isSupported(): bool
-    {
-        return class_exists(Visibility::class);
-    }
-
     /**
      * Restrict an article query to the articles customers may see.
      *
@@ -42,13 +30,7 @@ class PublicVisibility
      */
     public static function scopeArticles(Builder $query): Builder
     {
-        if (static::isSupported()) {
-            return Visibility::applyPublic($query);
-        }
-
-        return $query
-            ->where($query->qualifyColumn('status'), ArticleStatus::Published->value)
-            ->where($query->qualifyColumn('visibility'), ArticleVisibility::Public->value);
+        return Visibility::applyPublic($query);
     }
 
     /**
@@ -61,13 +43,7 @@ class PublicVisibility
      */
     public static function scopeCategories(Builder $query): Builder
     {
-        if (static::isSupported()) {
-            return $query->whereIn($query->qualifyColumn('id'), Visibility::publicCategoryIds());
-        }
-
-        return $query
-            ->where($query->qualifyColumn('is_active'), true)
-            ->where($query->qualifyColumn('visibility'), ArticleVisibility::Public->value);
+        return $query->whereIn($query->qualifyColumn('id'), Visibility::publicCategoryIds());
     }
 
     /**
