@@ -85,7 +85,9 @@ class ArticleResource extends Resource
 
     public static function getRelations(): array
     {
-        $relations = [];
+        $relations = [
+            RelationManagers\AssetsRelationManager::class,
+        ];
 
         try {
             $plugin = KnowledgeBasePlugin::get();
@@ -135,10 +137,11 @@ class ArticleResource extends Resource
                 SoftDeletingScope::class,
             ]);
 
-        // The per-language state column and the "mark up to date" action read
-        // every version; load them once instead of per row (task 6.2).
-        if (TranslationForm::isMultiLocale() && is_a(static::getModel(), TranslatableContract::class, true)) {
-            $query->with('translations');
+        // The per-language state column, the "mark up to date" action and the
+        // broken-reference badge read every version and the article's assets;
+        // load them once instead of per row (task 6.2 and 4.5).
+        if (is_a(static::getModel(), TranslatableContract::class, true)) {
+            $query->with(TranslationForm::isMultiLocale() ? ['translations', 'assets'] : ['assets']);
         }
 
         return $query;

@@ -104,6 +104,37 @@ return [
                     'existing' => 'Oder eine vorhandene Datei wählen',
                 ],
             ],
+            'scope' => [
+                'shared' => 'Geteilt',
+            ],
+            'usage' => [
+                'used_in' => 'Verwendet in :languages',
+                'unused' => 'Nicht verwendet',
+            ],
+            'delete' => [
+                'used' => 'Diese Datei wird noch in :languages verwendet.',
+                'unused' => 'Diese Datei wird nirgends verwendet.',
+            ],
+            'save_first' => [
+                'heading' => 'Bilder und Dateien nach dem Speichern hinzufügen',
+                'description' => 'Speichere den Artikel zuerst, um Bilder und Dateien hinzuzufügen.',
+            ],
+            'broken' => [
+                'heading' => 'Inhalt verweist auf fehlende Dateien',
+                'message' => 'Einige Inhalte verweisen auf Dateien, die es nicht mehr gibt (:details). Korrigiere den Inhalt, um diese Warnung zu entfernen.',
+                'badge' => 'Fehlende Datei',
+            ],
+            'manager' => [
+                'title' => 'Dateien',
+                'preview' => 'Vorschau',
+                'name' => 'Name',
+                'size' => 'Größe',
+                'scope' => 'Geltungsbereich',
+                'usage' => 'Verwendet',
+                'upload' => 'Hochladen',
+                'file' => 'Datei',
+                'kind' => 'Art',
+            ],
         ],
         'widgets' => [
             'overview' => [

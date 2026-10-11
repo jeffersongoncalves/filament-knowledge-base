@@ -40,10 +40,15 @@ final class ContentAttachments
         return trim((string) config('knowledge-base.attachments.directory', 'knowledge-base'), '/');
     }
 
-    public static function configure(RichEditor $editor): RichEditor
+    /**
+     * @param  bool  $allowUploads  false on the create page, before the article
+     *                              exists: the tools are left out and the form
+     *                              shows a "save first" hint (see design D10).
+     */
+    public static function configure(RichEditor $editor, bool $allowUploads = true): RichEditor
     {
         // Readers see these files on public pages, so they are always public.
-        return $editor
+        $editor = $editor
             ->fileAttachmentsDisk(fn (): string => self::disk())
             ->fileAttachmentsDirectory(fn (): string => self::directory())
             ->fileAttachmentsVisibility('public')
@@ -55,6 +60,15 @@ final class ContentAttachments
             ->getFileAttachmentUrlUsing(
                 fn (mixed $file): ?string => self::url($file),
             )
+            // Filament's paperclip is never used: it would store at the root of
+            // its default disk instead of in the article's folder.
+            ->disableToolbarButtons(['attachFiles']);
+
+        if (! $allowUploads) {
+            return $editor;
+        }
+
+        return $editor
             ->tools([
                 RichEditorTool::make(InsertImageAction::NAME)
                     ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.label'))
@@ -69,8 +83,6 @@ final class ContentAttachments
                 InsertImageAction::make(),
                 AttachFileAction::make(),
             ])
-            // Replace Filament's paperclip with the two knowledge base tools.
-            ->disableToolbarButtons(['attachFiles'])
             ->enableToolbarButtons([InsertImageAction::NAME, AttachFileAction::NAME]);
     }
 
