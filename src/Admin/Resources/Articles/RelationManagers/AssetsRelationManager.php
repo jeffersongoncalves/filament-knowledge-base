@@ -5,7 +5,10 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Rela
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -27,6 +30,9 @@ class AssetsRelationManager extends RelationManager
 {
     protected static string $relationship = 'assets';
 
+    /** A neutral document icon, shown instead of a thumbnail for files. */
+    protected const FILE_ICON = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('filament-knowledge-base::knowledge-base.admin.assets.manager.title');
@@ -35,27 +41,42 @@ class AssetsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            // A card per asset. Filament only lays records out as cards when the
+            // columns sit in a layout component; without one it falls back to
+            // rows and leaves out the record actions.
             ->contentGrid(['md' => 2, 'xl' => 3])
             ->columns([
-                ImageColumn::make('preview')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.preview'))
-                    ->state(fn (Model&ArticleAssetContract $record): ?string => self::previewUrl($record))
-                    ->imageHeight(80),
-                TextColumn::make('original_name')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.name'))
-                    ->searchable()
-                    ->limit(50),
-                TextColumn::make('size')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.size'))
-                    ->state(fn (Model&ArticleAssetContract $record): string => Number::fileSize((int) $record->getAttribute('size'))),
-                TextColumn::make('scope')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.scope'))
-                    ->badge()
-                    ->state(fn (Model&ArticleAssetContract $record): string => AssetUsage::scopeLabel($record)),
-                TextColumn::make('usage')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.usage'))
-                    ->badge()
-                    ->state(fn (Model&ArticleAssetContract $record): string => AssetUsage::usageLabel($record)),
+                Stack::make([
+                    // Images by path on their own disk, so Filament builds the URL;
+                    // files show a document icon instead.
+                    ImageColumn::make('preview')
+                        ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.preview'))
+                        ->state(fn (Model&ArticleAssetContract $record): ?string => $record->kind() === AssetKind::Image ? (string) $record->getAttribute('path') : null)
+                        ->disk(fn (Model&ArticleAssetContract $record): string => (string) $record->getAttribute('disk'))
+                        ->defaultImageUrl(self::FILE_ICON)
+                        ->imageHeight(120),
+                    TextColumn::make('original_name')
+                        ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.name'))
+                        ->weight(FontWeight::SemiBold)
+                        ->searchable()
+                        ->limit(50),
+                    TextColumn::make('size')
+                        ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.size'))
+                        ->color('gray')
+                        ->state(fn (Model&ArticleAssetContract $record): string => Number::fileSize((int) $record->getAttribute('size'))),
+                    Split::make([
+                        TextColumn::make('scope')
+                            ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.scope'))
+                            ->badge()
+                            ->grow(false)
+                            ->state(fn (Model&ArticleAssetContract $record): string => AssetUsage::scopeLabel($record)),
+                        TextColumn::make('usage')
+                            ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.usage'))
+                            ->badge()
+                            ->color(fn (Model&ArticleAssetContract $record): string => app(ArticleAssets::class)->usage($record) === [] ? 'warning' : 'success')
+                            ->state(fn (Model&ArticleAssetContract $record): string => AssetUsage::usageLabel($record)),
+                    ]),
+                ])->space(2),
             ])
             ->filters([
                 SelectFilter::make('scope')
@@ -124,17 +145,5 @@ class AssetsRelationManager extends RelationManager
                         return true;
                     }),
             ]);
-    }
-
-    /**
-     * The thumbnail URL for an image, or null so the file icon shows.
-     */
-    protected static function previewUrl(Model&ArticleAssetContract $asset): ?string
-    {
-        if ($asset->kind() !== AssetKind::Image) {
-            return null;
-        }
-
-        return app(ArticleAssets::class)->url($asset);
     }
 }
