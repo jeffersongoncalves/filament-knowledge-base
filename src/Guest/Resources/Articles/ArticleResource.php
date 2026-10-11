@@ -11,8 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Resources\Articles\Schemas\ArticleInfolist;
 use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Resources\Articles\Tables\ArticlesTable;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseGuestPlugin;
-use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
-use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\PublicVisibility;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class ArticleResource extends Resource
@@ -81,8 +80,6 @@ class ArticleResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->where('status', ArticleStatus::Published->value)
-            ->where('visibility', ArticleVisibility::Public->value);
+        return PublicVisibility::scopeArticles(parent::getEloquentQuery());
     }
 }
