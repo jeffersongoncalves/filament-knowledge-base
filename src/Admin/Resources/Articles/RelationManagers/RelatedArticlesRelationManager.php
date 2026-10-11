@@ -9,6 +9,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 
@@ -63,6 +64,10 @@ class RelatedArticlesRelationManager extends RelationManager
 
     protected function pivotSortColumn(): string
     {
-        return $this->getRelationship()->getTable().'.sort_order';
+        $relationship = $this->getRelationship();
+
+        return $relationship instanceof BelongsToMany
+            ? $relationship->qualifyPivotColumn('sort_order')
+            : 'sort_order';
     }
 }
