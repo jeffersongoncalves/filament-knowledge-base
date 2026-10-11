@@ -141,3 +141,13 @@ it('removes the file from disk when an asset is deleted', function () {
     expect(ArticleAsset::query()->count())->toBe(0);
     Storage::disk('public')->assertMissing($path);
 });
+
+it('renders each asset as a card with its delete action', function () {
+    $image = managerImage($this->article, 'fern.jpg');
+
+    $html = manager($this->article)->call('loadTable')->html();
+
+    expect($html)->toContain('fi-ta-record')
+        ->and($html)->toContain("mountAction('delete'")
+        ->and($html)->toContain((string) $image->getAttribute('path'));
+});
