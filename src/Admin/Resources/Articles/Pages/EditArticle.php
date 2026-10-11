@@ -15,6 +15,9 @@ class EditArticle extends EditRecord
 
     protected static string $resource = ArticleResource::class;
 
+    // Save and Cancel stay in view while editing a long form.
+    public static bool $formActionsAreSticky = true;
+
     /**
      * The form with its Save button, then the article's files, history and
      * feedback as a separate area with its own heading.
