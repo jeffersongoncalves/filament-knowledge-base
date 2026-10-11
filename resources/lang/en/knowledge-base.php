@@ -133,7 +133,6 @@ return [
             ],
         ],
         'localization' => [
-            'source_locale' => 'Authoritative language',
             'language' => 'Language',
             'language_label' => ':language',
             'version_status' => 'Version status',

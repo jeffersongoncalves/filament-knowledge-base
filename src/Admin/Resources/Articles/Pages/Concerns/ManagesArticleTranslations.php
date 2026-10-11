@@ -25,8 +25,6 @@ trait ManagesArticleTranslations
 
     protected bool $submittedFlagOtherLocalesOutdated = false;
 
-    protected ?string $submittedSourceLocale = null;
-
     /**
      * The article row and its language versions are written in one save
      * (afterCreate/afterSave run inside Filament's transaction), so keep them
@@ -54,7 +52,6 @@ trait ManagesArticleTranslations
         }
 
         $data['translations'] = TranslationForm::fill($record, TranslationForm::articleFields());
-        $data['source_locale'] = $record->authoritativeLocale();
         $data['flag_other_locales_outdated'] = false;
 
         return $data;
@@ -87,9 +84,10 @@ trait ManagesArticleTranslations
 
         $this->captureSubmittedTranslations($data);
 
-        // The main row mirrors the authoritative version, so it has to carry
-        // the chosen language's content on create.
-        $source = $this->submittedSourceLocale ?? Locales::default();
+        // The main row mirrors the authoritative version, which is always the
+        // configured default language, so it has to carry that tab's content
+        // on create.
+        $source = Locales::default();
 
         foreach (TranslationForm::articleFields() as $field) {
             if (array_key_exists($field, $this->submittedTranslations[$source] ?? [])) {
@@ -122,7 +120,7 @@ trait ManagesArticleTranslations
             return;
         }
 
-        $source = $this->submittedSourceLocale ?? $article->authoritativeLocale();
+        $source = $article->authoritativeLocale();
 
         foreach (TranslationForm::locales() as $locale) {
             $values = $this->submittedTranslations[$locale] ?? [];
@@ -150,10 +148,6 @@ trait ManagesArticleTranslations
             }
         }
 
-        if ($source !== $article->authoritativeLocale() && $article->translation($source) instanceof Model) {
-            $article->changeSourceLocale($source);
-        }
-
         if ($this->submittedFlagOtherLocalesOutdated) {
             $article->flagOtherTranslationsOutdated();
         }
@@ -168,9 +162,6 @@ trait ManagesArticleTranslations
         $this->submittedTranslations = is_array($translations) ? $translations : [];
 
         $this->submittedFlagOtherLocalesOutdated = (bool) ($data['flag_other_locales_outdated'] ?? false);
-
-        $source = $data['source_locale'] ?? null;
-        $this->submittedSourceLocale = is_string($source) && Locales::isConfigured($source) ? $source : null;
     }
 
     /**

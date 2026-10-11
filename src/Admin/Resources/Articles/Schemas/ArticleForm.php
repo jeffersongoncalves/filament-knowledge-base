@@ -113,24 +113,14 @@ class ArticleForm
 
     /**
      * More than one language: a tab per language bound to the core's
-     * translation rows, an authoritative-language select and the
-     * "flag other languages outdated" option (design D9).
+     * translation rows and the "flag other languages outdated" option (design
+     * D9). The authoritative language is always the configured default, so the
+     * form offers no choice of it.
      */
     protected static function configureMultiLocale(Schema $schema): Schema
     {
         $locales = TranslationForm::locales();
         $default = Locales::default();
-
-        $localeOptions = collect($locales)
-            ->mapWithKeys(fn (string $locale): array => [$locale => strtoupper($locale)])
-            ->all();
-
-        $sourceSelect = Select::make('source_locale')
-            ->label(__('filament-knowledge-base::knowledge-base.admin.localization.source_locale'))
-            ->options($localeOptions)
-            ->default($default)
-            ->required()
-            ->live();
 
         $tabs = [];
 
@@ -171,7 +161,7 @@ class ArticleForm
                     $status->value => $status->label(),
                 ]))
                 ->default(TranslationStatus::Draft->value)
-                ->visible(fn (Get $get): bool => ! static::isAuthoritative($get, $default, $locale))
+                ->visible($locale !== $default)
                 ->helperText(__('filament-knowledge-base::knowledge-base.admin.localization.version_status_helper'));
 
             $tabs[] = Tab::make(strtoupper($locale))
@@ -192,7 +182,6 @@ class ArticleForm
             Tabs::make('translations')->tabs($tabs)->persistTabInQueryString(),
             Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_settings'))
                 ->schema([
-                    $sourceSelect,
                     Toggle::make('flag_other_locales_outdated')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.localization.flag_other_locales_outdated'))
                         ->helperText(__('filament-knowledge-base::knowledge-base.admin.localization.flag_other_locales_outdated_helper'))
@@ -227,19 +216,14 @@ class ArticleForm
             ->components($components);
     }
 
-    protected static function isAuthoritative(Get $get, string $default, string $locale): bool
-    {
-        return ($get('data.source_locale', isAbsolute: true) ?: $default) === $locale;
-    }
-
     /**
-     * A tab's required fields apply to the authoritative language and to any
-     * other language with content, so a partly filled tab is a form error
-     * instead of a failed insert.
+     * A tab's required fields apply to the default (authoritative) language
+     * and to any other language with content, so a partly filled tab is a form
+     * error instead of a failed insert.
      */
     protected static function requiresVersion(Get $get, string $default, string $locale): bool
     {
-        return static::isAuthoritative($get, $default, $locale)
+        return $locale === $default
             || TranslationForm::isFilled($get("data.translations.{$locale}", isAbsolute: true), TranslationForm::articleFields());
     }
 
