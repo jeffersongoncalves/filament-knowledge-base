@@ -1,6 +1,5 @@
 <?php
 
-use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Collections\CollectionResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\CustomerVisibility;
 use JeffersonGoncalves\KnowledgeBase\Models\Article;
 use JeffersonGoncalves\KnowledgeBase\Models\Category;
@@ -12,10 +11,6 @@ use JeffersonGoncalves\KnowledgeBase\Support\Visibility;
  * warning (spec: Choosing and ordering articles).
  */
 beforeEach(function () {
-    if (! (class_exists(Visibility::class) && CollectionResource::isAvailable())) {
-        $this->markTestSkipped('Needs a laravel-knowledge-base release with collections.');
-    }
-
     $this->service = app(KnowledgeBaseService::class);
 });
 

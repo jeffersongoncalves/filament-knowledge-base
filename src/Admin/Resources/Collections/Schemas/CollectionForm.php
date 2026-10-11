@@ -80,7 +80,11 @@ class CollectionForm
         $tabs = [];
 
         foreach (TranslationForm::locales() as $locale) {
-            $required = $locale === $default;
+            // The default language is always required; any other language
+            // with content needs a name and slug too (a form error instead of
+            // a failed insert).
+            $required = fn (Get $get): bool => $locale === $default
+                || TranslationForm::isFilled($get("data.translations.{$locale}", isAbsolute: true), TranslationForm::collectionFields());
 
             $tabs[] = Tab::make(strtoupper($locale))
                 ->schema([
@@ -150,6 +154,7 @@ class CollectionForm
                             ->options(fn (): array => static::articleOptions())
                             ->searchable()
                             ->required()
+                            ->distinct()
                             ->live(),
                         Placeholder::make('visibility_warning')
                             ->hiddenLabel()

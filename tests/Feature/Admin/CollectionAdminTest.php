@@ -13,10 +13,6 @@ use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
 use Livewire\Livewire;
 
 beforeEach(function () {
-    if (! (CollectionResource::isAvailable())) {
-        $this->markTestSkipped('Needs a laravel-knowledge-base release with collections.');
-    }
-
     if (! TranslationForm::coreSupportsLocalization()) {
         $this->markTestSkipped('Needs a laravel-knowledge-base release with content localization.');
     }
@@ -96,6 +92,38 @@ it('shows a form error instead of failing when a language tab uses a slug of ano
         ->assertHasFormErrors(['translations.de.slug']);
 
     expect(Collection::where('slug', 'getting-started')->exists())->toBeFalse();
+});
+
+it('requires a name and slug on a partly filled language tab', function () {
+    Livewire::test(CreateCollection::class)
+        ->fillForm([
+            'translations' => [
+                'en' => ['name' => 'FAQ', 'slug' => 'faq'],
+                'de' => ['description' => 'Nur eine Beschreibung.'],
+            ],
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['translations.de.name' => 'required', 'translations.de.slug' => 'required']);
+
+    expect(Collection::where('slug', 'faq')->exists())->toBeFalse();
+});
+
+it('does not accept the same article twice', function () {
+    $article = collectionAdminArticle($this->public, 'How do I pay?');
+
+    Livewire::test(CreateCollection::class)
+        ->fillForm([
+            'translations' => ['en' => ['name' => 'FAQ', 'slug' => 'faq']],
+            'articles' => [['id' => $article->id], ['id' => $article->id]],
+        ])
+        ->call('create')
+        ->assertHasFormErrors();
+
+    expect(Collection::where('slug', 'faq')->exists())->toBeFalse();
+});
+
+it('saves the collection, its versions and its articles in one transaction', function () {
+    expect(Livewire::test(CreateCollection::class)->instance()->hasDatabaseTransactions())->toBeTrue();
 });
 
 it('keeps the collection form bound to the collection columns with one language', function () {

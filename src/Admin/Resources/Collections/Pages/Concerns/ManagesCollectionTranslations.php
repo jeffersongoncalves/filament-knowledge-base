@@ -25,6 +25,16 @@ trait ManagesCollectionTranslations
     protected array $submittedArticles = [];
 
     /**
+     * The collection row, its language versions and its article pivot are
+     * written in one save (afterCreate/afterSave run inside Filament's
+     * transaction), so keep them atomic whatever the panel's default.
+     */
+    public function hasDatabaseTransactions(): bool
+    {
+        return true;
+    }
+
+    /**
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
