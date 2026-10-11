@@ -41,6 +41,14 @@ return [
             'navigation_label' => 'Artigos',
             'model_label' => 'Artigo',
             'plural_model_label' => 'Artigos',
+            'actions' => [
+                'view_on_site' => 'Ver no site',
+            ],
+            'details' => [
+                'heading' => 'Sobre este artigo',
+                'description' => 'Status, visibilidade e estatísticas, imagens e arquivos, versões anteriores, feedback dos leitores e artigos relacionados.',
+                'details_tab' => 'Detalhes',
+            ],
             'tools' => [
                 'heading' => 'Arquivos, histórico e feedback',
                 'description' => 'Imagens e arquivos deste artigo, versões anteriores, feedback dos leitores e artigos relacionados.',

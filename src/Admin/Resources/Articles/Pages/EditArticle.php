@@ -7,6 +7,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Concerns\SavesOnlyWhenChanged;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Actions\ViewOnSiteAction;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\Concerns\ManagesArticleTranslations;
 
@@ -39,6 +40,7 @@ class EditArticle extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ViewOnSiteAction::make(),
             Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),

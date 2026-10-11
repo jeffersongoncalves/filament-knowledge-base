@@ -41,6 +41,14 @@ return [
             'navigation_label' => 'Articles',
             'model_label' => 'Article',
             'plural_model_label' => 'Articles',
+            'actions' => [
+                'view_on_site' => 'View on site',
+            ],
+            'details' => [
+                'heading' => 'About this article',
+                'description' => 'Status, visibility and statistics, images and files, earlier versions, reader feedback and related articles.',
+                'details_tab' => 'Details',
+            ],
             'tools' => [
                 'heading' => 'Files, history and feedback',
                 'description' => 'Images and files of this article, earlier versions, reader feedback and related articles.',

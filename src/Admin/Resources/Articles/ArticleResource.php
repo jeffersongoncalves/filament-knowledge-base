@@ -8,6 +8,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\ArticleForm;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\ArticleInfolist;
@@ -17,6 +18,7 @@ use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\TranslatableContract;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
+use JeffersonGoncalves\KnowledgeBase\Support\Visibility;
 
 class ArticleResource extends Resource
 {
@@ -145,6 +147,25 @@ class ArticleResource extends Resource
         }
 
         return $query;
+    }
+
+    /**
+     * The article's public URL in a language, when the app configured
+     * publicUrlUsing() and customers can see the article; null otherwise.
+     */
+    public static function publicUrl(Model $record, string $locale): ?string
+    {
+        try {
+            $plugin = KnowledgeBasePlugin::get();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if (! $plugin->hasPublicUrls() || ! Visibility::articleIsPubliclyVisible($record)) {
+            return null;
+        }
+
+        return $plugin->getPublicUrl($record, $locale);
     }
 
     public static function hasSeo(): bool
