@@ -41,6 +41,9 @@ return [
             'navigation_label' => 'Articles',
             'model_label' => 'Article',
             'plural_model_label' => 'Articles',
+            'actions' => [
+                'view_on_site' => 'View on site',
+            ],
             'form' => [
                 'section_content' => 'Content',
                 'section_settings' => 'Settings',
@@ -122,6 +125,40 @@ return [
                 'not_visible' => 'Customers cannot see this article.',
             ],
         ],
+        'assets' => [
+            'scope' => [
+                'shared' => 'Shared',
+            ],
+            'usage' => [
+                'used_in' => 'Used in :languages',
+                'unused' => 'Unused',
+            ],
+            'delete' => [
+                'used' => 'This asset is still used in :languages.',
+                'unused' => 'This asset is not used anywhere.',
+            ],
+            'save_first' => [
+                'heading' => 'Add images and files after saving',
+                'description' => 'Save the article first to add images and files.',
+            ],
+            'broken' => [
+                'heading' => 'Content refers to missing assets',
+                'message' => 'Some content refers to images or files that no longer exist (:details). Remove or replace them to clear this warning.',
+                'images' => '{1} 1 deleted image|[2,*] :count deleted images',
+                'badge' => 'Missing asset',
+            ],
+            'manager' => [
+                'title' => 'Assets',
+                'preview' => 'Preview',
+                'name' => 'Name',
+                'size' => 'Size',
+                'scope' => 'Scope',
+                'usage' => 'Used',
+                'upload' => 'Upload',
+                'file' => 'File',
+                'kind' => 'Kind',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Total Articles',
@@ -133,7 +170,6 @@ return [
             ],
         ],
         'localization' => [
-            'source_locale' => 'Authoritative language',
             'language' => 'Language',
             'language_label' => ':language',
             'version_status' => 'Version status',

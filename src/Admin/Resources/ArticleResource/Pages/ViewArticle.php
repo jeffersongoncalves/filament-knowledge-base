@@ -5,6 +5,7 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResour
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Actions\ViewOnSiteAction;
 
 class ViewArticle extends ViewRecord
 {
@@ -13,6 +14,7 @@ class ViewArticle extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            ViewOnSiteAction::make(),
             Actions\EditAction::make(),
         ];
     }

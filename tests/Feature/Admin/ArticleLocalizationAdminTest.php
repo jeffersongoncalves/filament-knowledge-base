@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\DB;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Pages\CreateArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Pages\EditArticle;
@@ -92,25 +93,16 @@ it('saves the article and its language versions in one transaction', function ()
         ->and(Livewire::test(CreateArticle::class)->instance()->hasDatabaseTransactions())->toBeTrue();
 });
 
-it('saves the chosen authoritative language', function () {
+it('offers no way to choose the authoritative language', function () {
     editArticle($this->article)
-        ->fillForm([
-            'source_locale' => 'de',
-            'translations' => [
-                'de' => [
-                    'title' => 'Passwort zurücksetzen',
-                    'slug' => 'passwort-zuruecksetzen',
-                    'content' => 'So setzt du dein Passwort zurück.',
-                ],
-            ],
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
+        ->assertOk()
+        ->assertFormFieldDoesNotExist('source_locale');
+});
 
-    $article = $this->article->fresh();
-
-    expect($article->source_locale)->toBe('de')
-        ->and($article->title)->toBe('Passwort zurücksetzen');
+it('marks the default language tab as required', function () {
+    editArticle($this->article)
+        ->assertFormFieldExists('translations.en.title', fn (TextInput $field): bool => $field->isRequired())
+        ->assertFormFieldExists('translations.en.slug', fn (TextInput $field): bool => $field->isRequired());
 });
 
 it('publishes the German version on its own', function () {
@@ -276,16 +268,20 @@ it('does not create a version for an untouched language tab', function () {
     expect($this->article->fresh()->translations)->toHaveCount(1);
 });
 
-it('creates an article in a chosen authoritative language', function () {
+it('creates an article in the default language even when another tab is filled', function () {
     Livewire::test(CreateArticle::class)
         ->fillForm([
-            'source_locale' => 'de',
             'visibility' => 'public',
             'category_id' => $this->category->id,
             'translations' => [
+                'en' => [
+                    'title' => 'Password reset',
+                    'slug' => 'password-reset-new',
+                    'content' => 'How to reset it.',
+                ],
                 'de' => [
                     'title' => 'Passwort zurücksetzen',
-                    'slug' => 'passwort-zuruecksetzen',
+                    'slug' => 'passwort-zuruecksetzen-neu',
                     'content' => 'So setzt du dein Passwort zurück.',
                 ],
             ],
@@ -293,10 +289,10 @@ it('creates an article in a chosen authoritative language', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    $article = Article::where('slug', 'passwort-zuruecksetzen')->firstOrFail();
+    $article = Article::where('slug', 'password-reset-new')->firstOrFail();
 
-    expect($article->source_locale)->toBe('de')
-        ->and($article->title)->toBe('Passwort zurücksetzen')
+    expect($article->authoritativeLocale())->toBe('en')
+        ->and($article->title)->toBe('Password reset')
         ->and($article->translation('de'))->not->toBeNull();
 });
 

@@ -18,15 +18,20 @@ use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Pag
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\RelationManagers;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\BrokenReferences;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\LocalizationState;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 use JeffersonGoncalves\KnowledgeBase\Enums\TranslationStatus;
+use JeffersonGoncalves\KnowledgeBase\Models\Contracts\ArticleContract;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\ArticleTranslationContract;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\TranslatableContract;
+use JeffersonGoncalves\KnowledgeBase\Support\ArticleAssets;
 use JeffersonGoncalves\KnowledgeBase\Support\Locales;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
+use JeffersonGoncalves\KnowledgeBase\Support\Visibility;
 
 class ArticleResource extends Resource
 {
@@ -80,20 +85,26 @@ class ArticleResource extends Resource
 
     public static function form(Form $form): Form
     {
+        // Uploads need an existing article to belong to, so on the create page
+        // the attach button is left out and a "save first" hint is shown.
+        $allowUploads = $form->getOperation() !== 'create';
+
         if (! TranslationForm::isMultiLocale()) {
-            return static::singleLocaleForm($form);
+            return static::singleLocaleForm($form, $allowUploads);
         }
 
-        return static::multiLocaleForm($form);
+        return static::multiLocaleForm($form, $allowUploads);
     }
 
     /**
      * One configured language: the form binds to the article columns exactly
      * as before localization.
      */
-    protected static function singleLocaleForm(Form $form): Form
+    protected static function singleLocaleForm(Form $form, bool $allowUploads = true): Form
     {
         $schema = [
+            static::brokenReferencesNotice(),
+            ...($allowUploads ? [] : [static::saveFirstNotice()]),
             Forms\Components\Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_content'))
                 ->schema([
                     Forms\Components\TextInput::make('title')
@@ -117,7 +128,7 @@ class ArticleResource extends Resource
                         ->searchable()
                         ->preload()
                         ->required(),
-                    Forms\Components\RichEditor::make('content')
+                    ContentAttachments::configure(Forms\Components\RichEditor::make('content'), $allowUploads)
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
                         ->required()
                         ->columnSpanFull(),
@@ -161,17 +172,14 @@ class ArticleResource extends Resource
 
     /**
      * More than one language: a tab per language bound to the core's
-     * translation rows, an authoritative-language select and the
-     * "flag other languages outdated" option.
+     * translation rows and the "flag other languages outdated" option. The
+     * authoritative language is always the configured default, so the form
+     * offers no choice of it.
      */
-    protected static function multiLocaleForm(Form $form): Form
+    protected static function multiLocaleForm(Form $form, bool $allowUploads = true): Form
     {
         $locales = TranslationForm::locales();
         $default = Locales::default();
-
-        $localeOptions = collect($locales)
-            ->mapWithKeys(fn (string $locale): array => [$locale => strtoupper($locale)])
-            ->all();
 
         $tabs = [];
 
@@ -192,7 +200,7 @@ class ArticleResource extends Resource
                     ->required(fn (Forms\Get $get): bool => static::requiresVersion($get, $default, $locale))
                     ->maxLength(255)
                     ->rule(TranslationForm::uniqueSlugRule(ModelResolver::articleTranslation(), 'article_id')),
-                Forms\Components\RichEditor::make("translations.{$locale}.content")
+                ContentAttachments::configure(Forms\Components\RichEditor::make("translations.{$locale}.content"), $allowUploads)
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
                     ->required(fn (Forms\Get $get): bool => static::requiresVersion($get, $default, $locale))
                     ->columnSpanFull(),
@@ -212,7 +220,7 @@ class ArticleResource extends Resource
                     $status->value => $status->label(),
                 ]))
                 ->default(TranslationStatus::Draft->value)
-                ->visible(fn (Forms\Get $get): bool => ! static::isAuthoritative($get, $default, $locale))
+                ->visible($locale !== $default)
                 ->helperText(__('filament-knowledge-base::knowledge-base.admin.localization.version_status_helper'));
 
             $tabs[] = Forms\Components\Tabs\Tab::make(strtoupper($locale))
@@ -227,18 +235,14 @@ class ArticleResource extends Resource
         }
 
         return $form->schema([
+            static::brokenReferencesNotice(),
+            ...($allowUploads ? [] : [static::saveFirstNotice()]),
             Forms\Components\Tabs::make('translations')
                 ->tabs($tabs)
                 ->persistTabInQueryString()
                 ->columnSpanFull(),
             Forms\Components\Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_settings'))
                 ->schema([
-                    Forms\Components\Select::make('source_locale')
-                        ->label(__('filament-knowledge-base::knowledge-base.admin.localization.source_locale'))
-                        ->options($localeOptions)
-                        ->default($default)
-                        ->required()
-                        ->live(),
                     Forms\Components\Toggle::make('flag_other_locales_outdated')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.localization.flag_other_locales_outdated'))
                         ->helperText(__('filament-knowledge-base::knowledge-base.admin.localization.flag_other_locales_outdated_helper'))
@@ -269,20 +273,42 @@ class ArticleResource extends Resource
         ]);
     }
 
-    protected static function isAuthoritative(Forms\Get $get, string $default, string $locale): bool
-    {
-        return ($get('data.source_locale', isAbsolute: true) ?: $default) === $locale;
-    }
-
     /**
-     * A tab's required fields apply to the authoritative language and to any
-     * other language with content, so a partly filled tab is a form error
-     * instead of a failed insert.
+     * A tab's required fields apply to the default (authoritative) language
+     * and to any other language with content, so a partly filled tab is a form
+     * error instead of a failed insert.
      */
     protected static function requiresVersion(Forms\Get $get, string $default, string $locale): bool
     {
-        return static::isAuthoritative($get, $default, $locale)
+        return $locale === $default
             || TranslationForm::isFilled($get("data.translations.{$locale}", isAbsolute: true), TranslationForm::articleFields());
+    }
+
+    /**
+     * A banner shown while the article still refers to a deleted or unknown
+     * asset in any language; it disappears once the content is fixed.
+     */
+    protected static function brokenReferencesNotice(): Forms\Components\Section
+    {
+        return Forms\Components\Section::make(__('filament-knowledge-base::knowledge-base.admin.assets.broken.heading'))
+            ->description(fn (?Model $record): string => BrokenReferences::message($record))
+            ->icon('heroicon-o-exclamation-triangle')
+            ->iconColor('warning')
+            ->schema([])
+            ->visible(fn (?Model $record): bool => BrokenReferences::has($record));
+    }
+
+    /**
+     * The create page has no article yet, so the attach button is left out;
+     * this tells the editor why.
+     */
+    protected static function saveFirstNotice(): Forms\Components\Section
+    {
+        return Forms\Components\Section::make(__('filament-knowledge-base::knowledge-base.admin.assets.save_first.heading'))
+            ->description(__('filament-knowledge-base::knowledge-base.admin.assets.save_first.description'))
+            ->icon('heroicon-o-information-circle')
+            ->iconColor('info')
+            ->schema([]);
     }
 
     /**
@@ -309,6 +335,15 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('assets_warning')
+                    ->label('')
+                    ->badge()
+                    ->color('warning')
+                    ->icon('heroicon-o-exclamation-triangle')
+                    ->state(fn (Model $record): string => BrokenReferences::has($record)
+                        ? __('filament-knowledge-base::knowledge-base.admin.assets.broken.badge')
+                        : '')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.title'))
                     ->searchable()
@@ -509,6 +544,10 @@ class ArticleResource extends Resource
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.category')),
                     Infolists\Components\TextEntry::make('content')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
+                        // Asset references point at the asset's current URL.
+                        ->formatStateUsing(fn (?string $state, Model $record): string => $record instanceof ArticleContract
+                            ? app(ArticleAssets::class)->resolve((string) $state, $record)
+                            : (string) $state)
                         ->html()
                         ->columnSpanFull(),
                     Infolists\Components\TextEntry::make('excerpt')
@@ -567,7 +606,9 @@ class ArticleResource extends Resource
 
     public static function getRelations(): array
     {
-        $relations = [];
+        $relations = [
+            RelationManagers\AssetsRelationManager::class,
+        ];
 
         try {
             $plugin = KnowledgeBasePlugin::get();
@@ -617,13 +658,33 @@ class ArticleResource extends Resource
                 SoftDeletingScope::class,
             ]);
 
-        // The per-language state column and the "mark up to date" action read
-        // every version; load them once instead of per row.
-        if (TranslationForm::isMultiLocale() && is_a(static::getModel(), TranslatableContract::class, true)) {
-            $query->with('translations');
+        // The per-language state column, the "mark up to date" action and the
+        // missing-asset badge read every version and the article's assets;
+        // load them once instead of per row.
+        if (is_a(static::getModel(), TranslatableContract::class, true)) {
+            $query->with(TranslationForm::isMultiLocale() ? ['translations', 'assets'] : ['assets']);
         }
 
         return $query;
+    }
+
+    /**
+     * The article's public URL in a language, when the app configured
+     * publicUrlUsing() and customers can see the article; null otherwise.
+     */
+    public static function publicUrl(Model $record, string $locale): ?string
+    {
+        try {
+            $plugin = KnowledgeBasePlugin::get();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if (! $plugin->hasPublicUrls() || ! Visibility::articleIsPubliclyVisible($record)) {
+            return null;
+        }
+
+        return $plugin->getPublicUrl($record, $locale);
     }
 
     public static function hasSeo(): bool
