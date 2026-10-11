@@ -2,6 +2,7 @@
 
 namespace JeffersonGoncalves\FilamentKnowledgeBase\Support;
 
+use Error;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,12 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
  */
 final class ContentAttachments
 {
+    /**
+     * Livewire event sent after the editor stores an asset, so the asset
+     * manager on the same page shows it without a reload.
+     */
+    public const ASSETS_CHANGED_EVENT = 'kb-article-assets-changed';
+
     public static function disk(): string
     {
         return (string) config('knowledge-base.attachments.disk', 'public');
@@ -192,7 +199,24 @@ final class ContentAttachments
             self::localeForStatePath((string) $component->getStatePath(isAbsolute: false)),
         );
 
+        self::notifyAssetsChanged($component);
+
         return (string) $asset->getAttribute('uuid');
+    }
+
+    /**
+     * Tell the page the editor sits on that an asset was stored. An editor
+     * outside a form (no page) has nobody to tell.
+     */
+    protected static function notifyAssetsChanged(RichEditor $component): void
+    {
+        try {
+            $livewire = $component->getLivewire();
+        } catch (Error) {
+            return;
+        }
+
+        $livewire->dispatch(self::ASSETS_CHANGED_EVENT);
     }
 
     /**

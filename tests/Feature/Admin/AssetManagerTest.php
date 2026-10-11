@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\RelationManagers\AssetsRelationManager;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\AssetUsage;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\User;
 use JeffersonGoncalves\KnowledgeBase\Enums\AssetKind;
 use JeffersonGoncalves\KnowledgeBase\Models\Article;
@@ -150,4 +151,13 @@ it('renders each asset as a card with its delete action', function () {
     expect($html)->toContain('fi-ta-record')
         ->and($html)->toContain("mountAction('delete'")
         ->and($html)->toContain((string) $image->getAttribute('path'));
+});
+
+it('shows an asset the editor just stored without a reload', function () {
+    $manager = manager($this->article)->call('loadTable')->assertDontSee('fern.jpg');
+
+    managerImage($this->article, 'fern.jpg');
+
+    $manager->dispatch(ContentAttachments::ASSETS_CHANGED_EVENT)
+        ->assertSee('fern.jpg');
 });
