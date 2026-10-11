@@ -27,7 +27,7 @@ class AttachFileAction
 
     public static function make(): Action
     {
-        $action = Action::make(self::NAME)
+        $attach = Action::make(self::NAME)
             ->label(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.label'))
             ->modalHeading(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.heading'))
             ->modalWidth(Width::Large)
@@ -76,9 +76,10 @@ class AttachFileAction
             });
 
         // "Attach", and only once a file is chosen or uploaded.
-        return $action->modalSubmitAction(fn (Action $submit): Action => $submit
+        // Filament passes the confirm button as \$action; it is not the dialog's own action.
+        return $attach->modalSubmitAction(fn (Action $action): Action => $action
             ->label(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.submit'))
-            ->disabled(fn (): bool => ! ContentAttachments::hasSource($action->getRawData())));
+            ->disabled(fn (): bool => ! ContentAttachments::hasSource($attach->getRawData())));
     }
 
     /**
