@@ -38,14 +38,12 @@ class AttachFileAction
                     ->maxSize(ContentAttachments::fileMaxSize())
                     ->storeFiles(false)
                     // Needed only when no existing file is chosen.
-                    ->required(fn (Get $get): bool => blank($get('existing')))
-                    ->hiddenLabel(),
+                    ->required(fn (Get $get): bool => blank($get('existing'))),
                 Select::make('existing')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.existing'))
                     ->options(fn (): array => ContentAttachments::fileChoices($component))
                     ->searchable()
-                    ->visible(fn (): bool => ContentAttachments::fileChoices($component) !== [])
-                    ->hiddenLabel(),
+                    ->visible(fn (): bool => ContentAttachments::fileChoices($component) !== []),
             ])
             ->action(function (array $arguments, array $data, RichEditor $component): void {
                 $asset = self::resolveFile($component, $data);
