@@ -10,10 +10,19 @@ use Filament\Tables\Table;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Collections\Schemas\CollectionForm;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Collections\Tables\CollectionsTable;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
+use JeffersonGoncalves\KnowledgeBase\Models\Collection;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class CollectionResource extends Resource
 {
+    /**
+     * Whether the installed laravel-knowledge-base has collections.
+     */
+    public static function isAvailable(): bool
+    {
+        return class_exists(Collection::class);
+    }
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?int $navigationSort = 2;

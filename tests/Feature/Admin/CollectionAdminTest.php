@@ -13,6 +13,10 @@ use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
 use Livewire\Livewire;
 
 beforeEach(function () {
+    if (! (CollectionResource::isAvailable())) {
+        $this->markTestSkipped('Needs a laravel-knowledge-base release with collections.');
+    }
+
     if (! TranslationForm::coreSupportsLocalization()) {
         $this->markTestSkipped('Needs a laravel-knowledge-base release with content localization.');
     }
