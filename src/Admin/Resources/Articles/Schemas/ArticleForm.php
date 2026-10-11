@@ -23,6 +23,7 @@ use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 use JeffersonGoncalves\KnowledgeBase\Enums\TranslationStatus;
 use JeffersonGoncalves\KnowledgeBase\Support\Locales;
+use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class ArticleForm
 {
@@ -147,7 +148,8 @@ class ArticleForm
                 TextInput::make("translations.{$locale}.slug")
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.slug'))
                     ->required(fn (Get $get): bool => static::isAuthoritative($get, $default, $locale))
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->rule(TranslationForm::uniqueSlugRule(ModelResolver::articleTranslation(), 'article_id')),
                 RichEditor::make("translations.{$locale}.content")
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
                     ->required(fn (Get $get): bool => static::isAuthoritative($get, $default, $locale))
