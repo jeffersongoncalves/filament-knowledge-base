@@ -5,6 +5,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\ListArticles;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\BrokenReferences;
 use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\User;
 use JeffersonGoncalves\KnowledgeBase\Enums\AssetKind;
 use JeffersonGoncalves\KnowledgeBase\Models\Article;
@@ -69,7 +70,15 @@ it('warns on the edit page while content refers to a deleted asset', function ()
     Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
         ->assertOk()
         ->assertSee('Content refers to missing assets')
-        ->assertSee('DE');
+        ->assertSee('DE: 1 deleted image');
+});
+
+it('describes a deleted image in plain words, never by an internal id', function () {
+    $uuid = breakGermanImage($this->article);
+
+    expect(BrokenReferences::message($this->article->fresh()))
+        ->toContain('DE: 1 deleted image')
+        ->not->toContain($uuid);
 });
 
 it('clears the edit-page warning once the reference is removed', function () {

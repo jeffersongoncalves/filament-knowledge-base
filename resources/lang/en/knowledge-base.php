@@ -157,7 +157,8 @@ return [
             ],
             'broken' => [
                 'heading' => 'Content refers to missing assets',
-                'message' => 'Some content refers to assets that no longer exist (:details). Fix the content to clear this warning.',
+                'message' => 'Some content refers to images or files that no longer exist (:details). Remove or replace them to clear this warning.',
+                'images' => '{1} 1 deleted image|[2,*] :count deleted images',
                 'badge' => 'Missing asset',
             ],
             'manager' => [
