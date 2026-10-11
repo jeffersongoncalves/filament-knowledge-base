@@ -41,6 +41,18 @@ return [
             'navigation_label' => 'Articles',
             'model_label' => 'Article',
             'plural_model_label' => 'Articles',
+            'actions' => [
+                'view_on_site' => 'View on site',
+            ],
+            'details' => [
+                'heading' => 'About this article',
+                'description' => 'Status, visibility and statistics, images and files, earlier versions, reader feedback and related articles.',
+                'details_tab' => 'Details',
+            ],
+            'tools' => [
+                'heading' => 'Files, history and feedback',
+                'description' => 'Images and files of this article, earlier versions, reader feedback and related articles.',
+            ],
             'form' => [
                 'section_content' => 'Content',
                 'section_settings' => 'Settings',
@@ -122,6 +134,68 @@ return [
                 'not_visible' => 'Customers cannot see this article.',
             ],
         ],
+        'assets' => [
+            'insert_image' => [
+                'label' => 'Insert image',
+                'modal' => [
+                    'heading' => 'Insert image',
+                    'tab_existing' => 'In this article (:count)',
+                    'tab_upload' => 'Upload new',
+                    'existing' => 'Images in this article',
+                    'existing_help' => 'Shared images and images for this language. Choose one, then click Insert.',
+                    'submit' => 'Insert',
+                    'file' => 'Or upload a new image',
+                    'file_only' => 'Upload an image',
+                    'alt' => 'Alt text',
+                    'alt_help' => 'Describes the image for people who can\'t see it, in this language.',
+                ],
+            ],
+            'attach_file' => [
+                'label' => 'Attach file',
+                'modal' => [
+                    'heading' => 'Attach file',
+                    'tab_existing' => 'In this article (:count)',
+                    'tab_upload' => 'Upload new',
+                    'existing' => 'Files in this article',
+                    'existing_help' => 'Shared files and files for this language. Choose one, then click Attach.',
+                    'submit' => 'Attach',
+                    'file' => 'Or upload a new file',
+                    'file_only' => 'Upload a file',
+                ],
+            ],
+            'scope' => [
+                'shared' => 'Shared',
+            ],
+            'usage' => [
+                'used_in' => 'Used in :languages',
+                'unused' => 'Unused',
+            ],
+            'delete' => [
+                'used' => 'This asset is still used in :languages.',
+                'unused' => 'This asset is not used anywhere.',
+            ],
+            'save_first' => [
+                'heading' => 'Add images and files after saving',
+                'description' => 'Save the article first to add images and files.',
+            ],
+            'broken' => [
+                'heading' => 'Content refers to missing assets',
+                'message' => 'Some content refers to images or files that no longer exist (:details). Remove or replace them to clear this warning.',
+                'images' => '{1} 1 deleted image|[2,*] :count deleted images',
+                'badge' => 'Missing asset',
+            ],
+            'manager' => [
+                'title' => 'Assets',
+                'preview' => 'Preview',
+                'name' => 'Name',
+                'size' => 'Size',
+                'scope' => 'Scope',
+                'usage' => 'Used',
+                'upload' => 'Upload',
+                'file' => 'File',
+                'kind' => 'Kind',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Total Articles',
@@ -133,7 +207,6 @@ return [
             ],
         ],
         'localization' => [
-            'source_locale' => 'Authoritative language',
             'language' => 'Language',
             'language_label' => ':language',
             'version_status' => 'Version status',

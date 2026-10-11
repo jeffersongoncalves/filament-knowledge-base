@@ -8,6 +8,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\ArticleForm;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\ArticleInfolist;
@@ -17,6 +18,7 @@ use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Models\Contracts\TranslatableContract;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
+use JeffersonGoncalves\KnowledgeBase\Support\Visibility;
 
 class ArticleResource extends Resource
 {
@@ -85,7 +87,9 @@ class ArticleResource extends Resource
 
     public static function getRelations(): array
     {
-        $relations = [];
+        $relations = [
+            RelationManagers\AssetsRelationManager::class,
+        ];
 
         try {
             $plugin = KnowledgeBasePlugin::get();
@@ -135,13 +139,33 @@ class ArticleResource extends Resource
                 SoftDeletingScope::class,
             ]);
 
-        // The per-language state column and the "mark up to date" action read
-        // every version; load them once instead of per row (task 6.2).
-        if (TranslationForm::isMultiLocale() && is_a(static::getModel(), TranslatableContract::class, true)) {
-            $query->with('translations');
+        // The per-language state column, the "mark up to date" action and the
+        // broken-reference badge read every version and the article's assets;
+        // load them once instead of per row (task 6.2 and 4.5).
+        if (is_a(static::getModel(), TranslatableContract::class, true)) {
+            $query->with(TranslationForm::isMultiLocale() ? ['translations', 'assets'] : ['assets']);
         }
 
         return $query;
+    }
+
+    /**
+     * The article's public URL in a language, when the app configured
+     * publicUrlUsing() and customers can see the article; null otherwise.
+     */
+    public static function publicUrl(Model $record, string $locale): ?string
+    {
+        try {
+            $plugin = KnowledgeBasePlugin::get();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if (! $plugin->hasPublicUrls() || ! Visibility::articleIsPubliclyVisible($record)) {
+            return null;
+        }
+
+        return $plugin->getPublicUrl($record, $locale);
     }
 
     public static function hasSeo(): bool
