@@ -158,6 +158,10 @@ Features can also be toggled globally in `config/filament-knowledge-base.php`.
 | Search | Yes | Yes | Yes |
 | Requires Auth | Yes | Yes | No |
 
+## Images in articles
+
+Files added in the article editor (images) are stored where the core's `knowledge-base.attachments` setting says: `knowledge-base/attachments` on the `public` disk by default. Run `php artisan storage:link` once so readers can see them, or point `KB_ATTACHMENTS_DISK` at a cloud disk such as `s3`. See the [laravel-knowledge-base README](https://github.com/jeffersongoncalves/laravel-knowledge-base#attachments).
+
 ## Localization
 
 Translations are provided for:
