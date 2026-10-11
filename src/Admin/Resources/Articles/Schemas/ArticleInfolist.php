@@ -21,16 +21,20 @@ class ArticleInfolist
             ->columns(1)
             ->components([
                 Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_content'))
+                    ->extraAttributes(['class' => 'kb-article-view'])
                     ->schema([
                         TextEntry::make('title')
-                            ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.title')),
+                            ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.title'))
+                            ->extraAttributes(['class' => 'kb-entry-title']),
                         TextEntry::make('slug')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.slug')),
                         TextEntry::make('category.name')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.category')),
+                        // Prose: headings, lists and images get their usual spacing.
                         TextEntry::make('content')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
                             ->html()
+                            ->prose()
                             ->columnSpanFull(),
                         TextEntry::make('excerpt')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.excerpt'))
@@ -47,6 +51,7 @@ class ArticleInfolist
     {
         $components = [
             Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_settings'))
+                ->extraAttributes(['class' => 'kb-article-view'])
                 ->schema([
                     TextEntry::make('status')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.status'))
@@ -80,6 +85,7 @@ class ArticleInfolist
 
         if (ArticleResource::hasSeo()) {
             $components[] = Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_seo'))
+                ->extraAttributes(['class' => 'kb-article-view'])
                 ->schema([
                     TextEntry::make('seo_title')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.seo_title')),
