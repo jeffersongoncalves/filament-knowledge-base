@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.1 - 2026-10-10
+
+### What's Changed
+
+* ci: standardize tests workflow (1.x) by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/26
+* fix: make ArticleResource::hasSeo() public (1.x) by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/29
+* ci: run PHPStan on PHP 8.4 (1.x) by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/30
+* fix: repair PHPStan config and the type errors it was hiding by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/33
+* ci: auto-merge dependabot github-actions minor/patch by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/36
+* ci: let the Pint workflow push its fixes by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/39
+* Fix enum state crash in article badges and related-articles sort (1.x) by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/44
+
+**Full Changelog**: https://github.com/jeffersongoncalves/filament-knowledge-base/compare/1.1.0...1.1.1
+
 ## 1.1.0 - 2026-09-23
 
 ### What's new
