@@ -10,6 +10,8 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\CategoryResource\Pages;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
+use JeffersonGoncalves\KnowledgeBase\Support\Locales;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class CategoryResource extends Resource
@@ -50,6 +52,75 @@ class CategoryResource extends Resource
 
     public static function form(Form $form): Form
     {
+        if (! TranslationForm::isMultiLocale()) {
+            return static::singleLocaleForm($form);
+        }
+
+        return static::multiLocaleForm($form);
+    }
+
+    /**
+     * More than one language: a tab per language bound to the core's category
+     * translation rows. Categories always have a version in the default
+     * language, so only that tab is required.
+     */
+    protected static function multiLocaleForm(Form $form): Form
+    {
+        $default = Locales::default();
+        $tabs = [];
+
+        foreach (TranslationForm::locales() as $locale) {
+            $required = $locale === $default;
+
+            $tabs[] = Forms\Components\Tabs\Tab::make(strtoupper($locale))
+                ->schema([
+                    Forms\Components\TextInput::make("translations.{$locale}.name")
+                        ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.name'))
+                        ->required($required)
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function (Forms\Set $set, ?string $state) use ($locale) {
+                            if ($state) {
+                                $set("translations.{$locale}.slug", Str::slug($state));
+                            }
+                        }),
+                    Forms\Components\TextInput::make("translations.{$locale}.slug")
+                        ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.slug'))
+                        ->required($required)
+                        ->maxLength(255)
+                        ->rule(TranslationForm::uniqueSlugRule(ModelResolver::categoryTranslation(), 'category_id')),
+                    Forms\Components\Textarea::make("translations.{$locale}.description")
+                        ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.description'))
+                        ->rows(3)
+                        ->columnSpanFull(),
+                ])->columns(2);
+        }
+
+        return $form
+            ->schema([
+                Forms\Components\Tabs::make('translations')
+                    ->tabs($tabs)
+                    ->persistTabInQueryString()
+                    ->columnSpanFull(),
+                Forms\Components\Section::make(__('filament-knowledge-base::knowledge-base.admin.categories.form.section_settings'))
+                    ->schema([
+                        Forms\Components\Select::make('parent_id')
+                            ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.parent'))
+                            ->relationship('parent', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->nullable(),
+                        ...static::settingsFields(),
+                    ])->columns(2),
+            ]);
+    }
+
+    /**
+     * One configured language: the form binds to the category columns exactly
+     * as before localization.
+     */
+    protected static function singleLocaleForm(Form $form): Form
+    {
         return $form
             ->schema([
                 Forms\Components\Section::make(__('filament-knowledge-base::knowledge-base.admin.categories.form.section_details'))
@@ -81,28 +152,37 @@ class CategoryResource extends Resource
                             ->columnSpanFull(),
                     ])->columns(2),
                 Forms\Components\Section::make(__('filament-knowledge-base::knowledge-base.admin.categories.form.section_settings'))
-                    ->schema([
-                        Forms\Components\TextInput::make('icon')
-                            ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.icon'))
-                            ->placeholder('heroicon-o-folder')
-                            ->maxLength(255),
-                        Forms\Components\Select::make('visibility')
-                            ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.visibility'))
-                            ->options([
-                                'public' => __('filament-knowledge-base::knowledge-base.common.visibility.public'),
-                                'internal' => __('filament-knowledge-base::knowledge-base.common.visibility.internal'),
-                            ])
-                            ->default('public')
-                            ->required(),
-                        Forms\Components\Toggle::make('is_active')
-                            ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.is_active'))
-                            ->default(true),
-                        Forms\Components\TextInput::make('sort_order')
-                            ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.sort_order'))
-                            ->numeric()
-                            ->default(0),
-                    ])->columns(2),
+                    ->schema(static::settingsFields())
+                    ->columns(2),
             ]);
+    }
+
+    /**
+     * @return array<int, Forms\Components\Select|Forms\Components\TextInput|Forms\Components\Toggle>
+     */
+    protected static function settingsFields(): array
+    {
+        return [
+            Forms\Components\TextInput::make('icon')
+                ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.icon'))
+                ->placeholder('heroicon-o-folder')
+                ->maxLength(255),
+            Forms\Components\Select::make('visibility')
+                ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.visibility'))
+                ->options([
+                    'public' => __('filament-knowledge-base::knowledge-base.common.visibility.public'),
+                    'internal' => __('filament-knowledge-base::knowledge-base.common.visibility.internal'),
+                ])
+                ->default('public')
+                ->required(),
+            Forms\Components\Toggle::make('is_active')
+                ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.is_active'))
+                ->default(true),
+            Forms\Components\TextInput::make('sort_order')
+                ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.sort_order'))
+                ->numeric()
+                ->default(0),
+        ];
     }
 
     public static function table(Table $table): Table

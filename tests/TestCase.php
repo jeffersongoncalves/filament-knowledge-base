@@ -18,6 +18,7 @@ use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\TestPanelProvider;
 use JeffersonGoncalves\KnowledgeBase\KnowledgeBaseServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -29,6 +30,7 @@ abstract class TestCase extends BaseTestCase
             LivewireServiceProvider::class,
             BladeIconsServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
+            BladeCaptureDirectiveServiceProvider::class,
             FilamentServiceProvider::class,
             ActionsServiceProvider::class,
             FormsServiceProvider::class,
@@ -90,13 +92,14 @@ abstract class TestCase extends BaseTestCase
             'add_kb_collections',
         ];
 
-        $tempPath = sys_get_temp_dir().'/filament-knowledge-base-migrations';
+        // Per process, so parallel or concurrent runs never share copies.
+        $tempPath = sys_get_temp_dir().'/filament-knowledge-base-migrations-'.getmypid();
 
         if (! is_dir($tempPath)) {
             mkdir($tempPath, 0755, true);
         }
 
-        // Drop copies left by other branches/checkouts so no migration loads twice.
+        // Drop copies left by an earlier run with the same pid so no migration loads twice.
         array_map('unlink', glob($tempPath.'/*.php') ?: []);
 
         foreach ($order as $index => $name) {
