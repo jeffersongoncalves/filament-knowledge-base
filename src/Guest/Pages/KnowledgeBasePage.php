@@ -7,10 +7,9 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseGuestPlugin;
-use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\PublicVisibility;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
-use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 use Livewire\Attributes\Url;
 
 class KnowledgeBasePage extends Page
@@ -46,18 +45,7 @@ class KnowledgeBasePage extends Page
 
     public function getCategories(): Collection
     {
-        $categoryModel = ModelResolver::category();
-
-        return $categoryModel::query()
-            ->where('is_active', true)
-            ->where('visibility', 'public')
-            ->whereNull('parent_id')
-            ->withCount(['articles' => function ($query) {
-                $query->where('status', ArticleStatus::Published->value)
-                    ->where('visibility', ArticleVisibility::Public->value);
-            }])
-            ->orderBy('sort_order')
-            ->get();
+        return PublicVisibility::rootCategories();
     }
 
     public function getSearchResults(): Collection

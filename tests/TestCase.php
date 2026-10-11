@@ -51,20 +51,50 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    /**
+     * Load the core package's migrations in dependency order.
+     *
+     * Alphabetical order is not enough: `add_kb_content_localization` sorts
+     * before the `create_kb_*` tables it alters, and `kb_article_versions`
+     * sorts before the `kb_articles` it references. The package ships the
+     * migrations as `.php.stub`; copy them into a temp directory with an
+     * ordered filename prefix (the same order as the core package's own
+     * `KnowledgeBaseServiceProvider::hasMigrations()`), so the symlinked core
+     * checkout is never written to. Migrations a given core release does not
+     * ship (an older release without content localization) are simply skipped.
+     */
     protected function defineDatabaseMigrations(): void
     {
         $migrationsPath = __DIR__.'/../vendor/jeffersongoncalves/laravel-knowledge-base/database/migrations';
 
-        if (is_dir($migrationsPath)) {
-            foreach (glob($migrationsPath.'/*.php.stub') as $stub) {
-                $migrationPath = str_replace('.php.stub', '.php', $stub);
-
-                if (! file_exists($migrationPath)) {
-                    copy($stub, $migrationPath);
-                }
-            }
-
-            $this->loadMigrationsFrom($migrationsPath);
+        if (! is_dir($migrationsPath)) {
+            return;
         }
+
+        $order = [
+            'create_kb_categories_table',
+            'create_kb_articles_table',
+            'create_kb_article_versions_table',
+            'create_kb_article_feedback_table',
+            'create_kb_article_relations_table',
+            'add_kb_content_localization',
+            'add_kb_collections',
+        ];
+
+        $tempPath = sys_get_temp_dir().'/filament-panel-fix-migrations';
+
+        if (! is_dir($tempPath)) {
+            mkdir($tempPath, 0755, true);
+        }
+
+        foreach ($order as $index => $name) {
+            $stub = $migrationsPath.'/'.$name.'.php.stub';
+
+            if (is_file($stub)) {
+                copy($stub, $tempPath.'/'.sprintf('%03d_%s.php', $index, $name));
+            }
+        }
+
+        $this->loadMigrationsFrom($tempPath);
     }
 }
