@@ -8,6 +8,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\HtmlString;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
@@ -40,7 +41,8 @@ class InsertImageAction
                     ->acceptedFileTypes(ContentAttachments::imageTypes())
                     ->maxSize(ContentAttachments::imageMaxSize())
                     ->storeFiles(false)
-                    ->required(blank($arguments['src'] ?? null))
+                    // Needed only for a new image that isn't chosen from the existing ones.
+                    ->required(fn (Get $get): bool => blank($arguments['src'] ?? null) && blank($get('existing')))
                     ->hiddenLabel(),
                 Select::make('existing')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.existing'))

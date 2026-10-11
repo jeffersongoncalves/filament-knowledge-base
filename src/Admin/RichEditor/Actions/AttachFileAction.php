@@ -7,6 +7,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
@@ -36,7 +37,8 @@ class AttachFileAction
                     ->acceptedFileTypes(ContentAttachments::fileTypes())
                     ->maxSize(ContentAttachments::fileMaxSize())
                     ->storeFiles(false)
-                    ->required()
+                    // Needed only when no existing file is chosen.
+                    ->required(fn (Get $get): bool => blank($get('existing')))
                     ->hiddenLabel(),
                 Select::make('existing')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.existing'))
