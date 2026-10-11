@@ -27,7 +27,7 @@ class FilamentKnowledgeBaseServiceProvider extends PackageServiceProvider
         // Published to public/ by `php artisan filament:assets` (also run by
         // `filament:upgrade`), and loaded on every panel.
         FilamentAsset::register([
-            Css::make('language-tabs', __DIR__.'/../resources/dist/language-tabs.css'),
+            Css::make('filament-knowledge-base', __DIR__.'/../resources/dist/knowledge-base.css'),
         ], 'jeffersongoncalves/filament-knowledge-base');
     }
 }

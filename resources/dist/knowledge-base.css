@@ -1,4 +1,6 @@
 /*
+ * Small additions to Filament's look for the knowledge base admin.
+ *
  * Language tabs (EN, DE, …) in the article, category and collection forms:
  * flat tabs with a line under the active language instead of Filament's pill
  * buttons, because they switch between versions of the same text.
@@ -32,4 +34,23 @@
 
 .dark .kb-language-tabs .fi-tabs-item.fi-active {
     border-bottom-color: var(--primary-400);
+}
+
+/*
+ * The article's files, history and feedback below the edit form: a separate
+ * area, set apart from the form and its Save button by a line and a heading.
+ */
+.kb-article-tools {
+    margin-top: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.dark .kb-article-tools {
+    border-top-color: rgb(255 255 255 / 0.1);
+}
+
+/* Line the section tabs up with the area's heading instead of centring them. */
+.kb-article-tools .fi-sc-tabs > .fi-tabs {
+    margin-inline: 0;
 }
