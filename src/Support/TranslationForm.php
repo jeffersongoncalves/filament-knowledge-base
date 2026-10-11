@@ -147,8 +147,34 @@ class TranslationForm
         return true;
     }
 
+    /**
+     * Whether a language tab's form state holds any of the given fields, so
+     * its required fields must be validated before a row is written.
+     *
+     * @param  list<string>  $fields
+     */
+    public static function isFilled(mixed $state, array $fields): bool
+    {
+        return is_array($state) && ! static::isEmpty($state, $fields);
+    }
+
     protected static function isBlankHtml(mixed $value): bool
     {
+        // Live form state of a rich editor is a document tree (Filament 4+),
+        // not HTML: blank when none of its text nodes holds anything.
+        // ponytail: text-only check, an image-only document counts as blank.
+        if (is_array($value)) {
+            $text = '';
+
+            array_walk_recursive($value, function (mixed $item, int|string $key) use (&$text): void {
+                if ($key === 'text' && is_string($item)) {
+                    $text .= $item;
+                }
+            });
+
+            $value = $text;
+        }
+
         if (! is_string($value)) {
             return blank($value);
         }

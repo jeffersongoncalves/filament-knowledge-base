@@ -98,6 +98,23 @@ return [
                 'helpful_rate' => 'Taxa de Utilidade',
             ],
         ],
+        'localization' => [
+            'source_locale' => 'Idioma de referência',
+            'language' => 'Idioma',
+            'language_label' => ':language',
+            'version_status' => 'Status da versão',
+            'version_status_helper' => 'A versão de referência segue o status do artigo; cada outro idioma é publicado separadamente.',
+            'flag_other_locales_outdated' => 'Marcar outros idiomas como desatualizados',
+            'flag_other_locales_outdated_helper' => 'Marque quando esta alteração exigir uma nova tradução dos outros idiomas.',
+            'outdated_filter' => 'Desatualizado no idioma',
+            'mark_up_to_date' => 'Marcar como atualizado',
+            'state' => [
+                'missing' => 'Ausente',
+                'draft' => 'Rascunho',
+                'published' => 'Publicado',
+                'outdated' => 'Desatualizado',
+            ],
+        ],
     ],
 
     'user' => [

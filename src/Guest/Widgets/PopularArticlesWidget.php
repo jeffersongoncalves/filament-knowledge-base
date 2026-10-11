@@ -5,9 +5,7 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Guest\Widgets;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
-use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
-use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\PublicVisibility;
 
 class PopularArticlesWidget extends BaseWidget
 {
@@ -22,16 +20,8 @@ class PopularArticlesWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $articleModel = ModelResolver::article();
-
         return $table
-            ->query(
-                $articleModel::query()
-                    ->where('status', ArticleStatus::Published->value)
-                    ->where('visibility', ArticleVisibility::Public->value)
-                    ->orderByDesc('view_count')
-                    ->limit(5)
-            )
+            ->query(PublicVisibility::popularArticlesQuery())
             ->columns([
                 TextColumn::make('title')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.title'))

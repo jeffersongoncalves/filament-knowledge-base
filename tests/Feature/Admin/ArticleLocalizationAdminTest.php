@@ -75,6 +75,23 @@ it('translates an article when the German tab is filled in', function () {
         ->and($german->article_id)->toBe($this->article->id);
 });
 
+it('requires a title and slug on a partly filled language tab', function () {
+    editArticle($this->article)
+        ->fillForm(['translations' => ['de' => ['excerpt' => 'Nur eine Zusammenfassung.']]])
+        ->call('save')
+        ->assertHasFormErrors([
+            'translations.de.title' => 'required',
+            'translations.de.slug' => 'required',
+        ]);
+
+    expect($this->article->fresh()->translation('de'))->toBeNull();
+});
+
+it('saves the article and its language versions in one transaction', function () {
+    expect(editArticle($this->article)->instance()->hasDatabaseTransactions())->toBeTrue()
+        ->and(Livewire::test(CreateArticle::class)->instance()->hasDatabaseTransactions())->toBeTrue();
+});
+
 it('saves the chosen authoritative language', function () {
     editArticle($this->article)
         ->fillForm([
