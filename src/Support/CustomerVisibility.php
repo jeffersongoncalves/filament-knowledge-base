@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
+use JeffersonGoncalves\KnowledgeBase\Support\Visibility;
 
 /**
  * Why a customer cannot see an article right now, for the collections admin's
@@ -17,6 +18,12 @@ use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
  * in it while it is being prepared. The editor is warned with the reason instead
  * of being blocked, because visibility (and the category's) can change later and
  * the public read filters at read time anyway.
+ *
+ * Whether an article is visible is decided by the core's rule
+ * ({@see Visibility::articleIsPubliclyVisible()}), the same one every public
+ * read uses, so the warning can never disagree with what customers see. This
+ * class only explains why, and falls back to a generic reason if the core ever
+ * hides an article for a reason it does not know.
  */
 class CustomerVisibility
 {
@@ -32,10 +39,24 @@ class CustomerVisibility
 
     public const BROKEN_TREE = 'broken_category_tree';
 
+    public const NOT_VISIBLE = 'not_visible';
+
     /**
      * The reason an article is not customer-visible, or null when it is.
      */
     public static function reason(Model $article): ?string
+    {
+        if (Visibility::articleIsPubliclyVisible($article)) {
+            return null;
+        }
+
+        return static::explain($article) ?? self::NOT_VISIBLE;
+    }
+
+    /**
+     * The first rule the article fails, in the order an editor would fix them.
+     */
+    protected static function explain(Model $article): ?string
     {
         if (static::value($article->getAttribute('status')) !== ArticleStatus::Published->value) {
             return self::NOT_PUBLISHED;
