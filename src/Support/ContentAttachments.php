@@ -3,8 +3,13 @@
 namespace JeffersonGoncalves\FilamentKnowledgeBase\Support;
 
 use Error;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
+use Filament\Forms\Components\ViewField;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -107,6 +112,57 @@ final class ContentAttachments
         $view = self::ASSET_PICKER_VIEW;
 
         return $view;
+    }
+
+    /**
+     * The choose-or-upload part of the Insert image / Attach file dialogs:
+     * two tabs ("In this article (n)" and "Upload new") when the article has
+     * assets to reuse, so a long list never pushes the upload or the alt text
+     * out of sight; just the upload when it has none.
+     *
+     * @param  array<string, mixed>  $choices
+     * @param  string  $texts  translation prefix, e.g. `...assets.insert_image.modal`
+     */
+    public static function chooseOrUpload(array $choices, ViewField $picker, FileUpload $upload, string $texts): Component
+    {
+        if ($choices === []) {
+            return $upload->label(__($texts.'.file_only'))->live();
+        }
+
+        // Not contained: the dialog is the frame already, a card inside it only
+        // doubles the borders and padding.
+        return Tabs::make('source')
+            ->contained(false)
+            ->extraAttributes(['class' => 'kb-dialog-tabs'])
+            ->tabs([
+                Tab::make(__($texts.'.tab_existing', ['count' => count($choices)]))
+                    ->schema([
+                        $picker
+                            ->live()
+                            ->label(__($texts.'.existing'))
+                            ->hiddenLabel()
+                            // Above the grid: below a long list it would scroll out of sight.
+                            ->aboveContent(__($texts.'.existing_help'))
+                            ->view(self::assetPickerView())
+                            ->viewData(['choices' => $choices]),
+                    ]),
+                Tab::make(__($texts.'.tab_upload'))
+                    ->schema([
+                        $upload->label(__($texts.'.file_only'))->hiddenLabel()->live(),
+                    ]),
+            ]);
+    }
+
+    /**
+     * Whether the dialog has something to insert: a chosen asset or a finished
+     * upload. Until then its Insert / Attach button stays disabled.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function hasSource(array $data): bool
+    {
+        return filled($data['existing'] ?? null)
+            || array_filter((array) ($data['file'] ?? [])) !== [];
     }
 
     /**

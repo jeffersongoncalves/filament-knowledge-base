@@ -5,6 +5,8 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\ViewField;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
@@ -171,7 +173,7 @@ it('tells the asset manager when the editor stores a new image', function () {
     expect(ArticleAsset::count())->toBe(1);
 });
 
-it('shows the article\'s images as named thumbnail cards above the upload', function () {
+it('offers the article\'s images and a new upload in two tabs', function () {
     $this->actingAs(User::first());
     $shared = editorImage($this->article, 'fern-leaf.jpg');
 
@@ -182,14 +184,17 @@ it('shows the article\'s images as named thumbnail cards above the upload', func
         )
         ->assertSchemaComponentExists('existing', 'mountedActionSchema0', function (ViewField $field) use ($shared): bool {
             $choice = $field->getViewData()['choices'][$shared->uuid] ?? null;
+            $tabs = $field->getContainer()->getParentComponent()?->getContainer()->getParentComponent();
 
-            return $field->getLabel() === 'Images in this article'
+            return $tabs instanceof Tabs
+                && collect($tabs->getChildComponents())->map(fn (Tab $tab) => $tab->getLabel())->all() === ['In this article (1)', 'Upload new']
                 && $field->getView() === ContentAttachments::ASSET_PICKER_VIEW
                 && $choice['name'] === 'fern-leaf.jpg'
                 && $choice['scope'] === 'Shared'
                 && filled($choice['url']);
         })
-        ->assertSchemaComponentExists('file', 'mountedActionSchema0', fn (FileUpload $field): bool => $field->getLabel() === 'Or upload a new image');
+        ->assertSchemaComponentExists('file', 'mountedActionSchema0')
+        ->assertSchemaComponentExists('alt', 'mountedActionSchema0');
 });
 
 it('asks for an upload only when the article has no images yet', function () {
@@ -201,5 +206,25 @@ it('asks for an upload only when the article has no images yet', function () {
             arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
         )
         ->assertSchemaComponentExists('file', 'mountedActionSchema0', fn (FileUpload $field): bool => $field->getLabel() === 'Upload an image')
-        ->assertSchemaComponentHidden('existing', 'mountedActionSchema0');
+        ->assertSchemaComponentDoesNotExist('existing', 'mountedActionSchema0');
+});
+
+it('keeps the Insert button disabled until an image is chosen', function () {
+    $this->actingAs(User::first());
+    $shared = editorImage($this->article, 'fern-leaf.jpg');
+
+    $page = Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->mountAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        );
+
+    $submit = fn () => $page->instance()->getMountedAction()->getModalSubmitAction();
+
+    expect($submit()->getLabel())->toBe('Insert')
+        ->and($submit()->isDisabled())->toBeTrue();
+
+    $page->set('mountedActions.0.data.existing', $shared->uuid);
+
+    expect($submit()->isDisabled())->toBeFalse();
 });

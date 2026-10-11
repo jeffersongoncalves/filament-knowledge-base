@@ -26,7 +26,7 @@ class InsertImageAction
 
     public static function make(): Action
     {
-        return Action::make(self::NAME)
+        $action = Action::make(self::NAME)
             ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.label'))
             ->modalHeading(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.heading'))
             ->modalWidth(Width::Large)
@@ -37,24 +37,19 @@ class InsertImageAction
                 $choices = self::existingImages($component);
 
                 return [
-                    // First what the article already has, then a new upload.
-                    ViewField::make('existing')
-                        ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.existing'))
-                        ->helperText(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.existing_help'))
-                        ->view(ContentAttachments::assetPickerView())
-                        ->viewData(['choices' => $choices])
-                        ->visible($choices !== []),
-                    FileUpload::make('file')
-                        ->label(__($choices === []
-                            ? 'filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.file_only'
-                            : 'filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.file'))
-                        ->image()
-                        ->acceptedFileTypes(ContentAttachments::imageTypes())
-                        ->maxSize(ContentAttachments::imageMaxSize())
-                        ->storeFiles(false)
-                        // Needed only for a new image that isn't chosen from the existing ones.
-                        ->required(fn (Get $get): bool => blank($arguments['src'] ?? null) && blank($get('existing')))
-                        ->markAsRequired(false),
+                    ContentAttachments::chooseOrUpload(
+                        $choices,
+                        ViewField::make('existing'),
+                        FileUpload::make('file')
+                            ->image()
+                            ->acceptedFileTypes(ContentAttachments::imageTypes())
+                            ->maxSize(ContentAttachments::imageMaxSize())
+                            ->storeFiles(false)
+                            // Needed only for a new image that isn't chosen from the existing ones.
+                            ->required(fn (Get $get): bool => blank($arguments['src'] ?? null) && blank($get('existing')))
+                            ->markAsRequired(false),
+                        'filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal',
+                    ),
                     TextInput::make('alt')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.alt'))
                         ->helperText(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.alt_help'))
@@ -89,6 +84,13 @@ class InsertImageAction
                     editorSelection: $arguments['editorSelection'],
                 );
             });
+
+        // "Insert", and only once an image is chosen or uploaded (editing an
+        // image that is already in the text can always be confirmed).
+        return $action->modalSubmitAction(fn (Action $submit): Action => $submit
+            ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.submit'))
+            ->disabled(fn (): bool => blank($action->getArguments()['src'] ?? null)
+                && ! ContentAttachments::hasSource($action->getRawData())));
     }
 
     /**
