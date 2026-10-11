@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.3.0 - 2026-10-11
+
+### Breaking changes
+
+- **Requires `jeffersongoncalves/laravel-knowledge-base` ^2.0, and so PHP ^8.2.**
+- **The configured default language is always the authoritative one.** The article form's authoritative-language select is gone, matching the core change.
+
+### What's new
+
+- **Editor uploads become article assets** (#63): files dropped into the editor (the paperclip) are stored through the core's `ArticleAssets` in the article's own folder. An upload in the default language's tab is shared; one in another tab belongs to that language. On save, images get the asset's id, so the core resolves their current URL, knows where they are used and notices when they are deleted.
+- **Assets tab** on the article: thumbnail cards with name, size, scope and usage ("Used in EN, DE" / "Unused"), plus upload and delete. Deleting an asset that is still used shows a warning first.
+- **Missing-asset warnings**: a banner on the article form and a badge in the article list while content still refers to a deleted asset.
+- On the create page the paperclip is left out, with a hint to save the article first.
+- **View on site**: new plugin option `publicUrlUsing(fn (Article $article, string $locale) => …)` adds a per-language "View on site" action to the view and edit pages.
+
+The Insert image / Attach file pickers that reuse existing assets are not available here, because Filament 3's editor (Trix) keeps only an attachment's URL.
+
+### Upgrading
+
+1. Upgrade the core to ^2.0 and follow its [upgrade notes](https://github.com/jeffersongoncalves/laravel-knowledge-base/releases/tag/v2.0.0): publish its migrations and run `php artisan migrate`.
+2. With the default `public` disk, run `php artisan storage:link` once.
+
+Backport of #61 by @rcoenen to Filament 3. Thanks!
+
 ## 1.2.0 - 2026-10-11
 
 ### What's new
