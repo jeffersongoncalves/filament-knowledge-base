@@ -52,6 +52,12 @@ class TranslationForm
         return ['name', 'slug', 'description'];
     }
 
+    /** @return list<string> */
+    public static function collectionFields(): array
+    {
+        return ['name', 'slug', 'description'];
+    }
+
     /**
      * The nested form state for a record: one entry per configured language
      * with the fields to edit (and `status` for article versions).

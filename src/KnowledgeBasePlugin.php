@@ -6,6 +6,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Categories\CategoryResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Collections\CollectionResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Widgets\KnowledgeBaseOverviewWidget;
 use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasKnowledgeBasePluginConfig;
 
@@ -36,6 +37,7 @@ class KnowledgeBasePlugin implements Plugin
         $resources = [
             ArticleResource::class,
             CategoryResource::class,
+            CollectionResource::class,
         ];
 
         $widgets = [
