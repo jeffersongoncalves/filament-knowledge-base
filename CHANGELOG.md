@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.3.0 - 2026-10-11
+
+### Breaking changes
+
+- **Requires `jeffersongoncalves/laravel-knowledge-base` ^2.0.**
+- **The configured default language is always the authoritative one.** The article form's authoritative-language select is gone, matching the core change.
+
+### What's new
+
+- **Article assets in the editor** (#61): Filament's paperclip is replaced by **Insert image** and **Attach file**. Each one can upload a new file or reuse one the article already has, picked from thumbnail cards. Uploads are stored through the core's `ArticleAssets` in the article's own folder. An upload in the default language's tab is shared; one in another tab belongs to that language. Images carry the asset's id, so their URL is rebuilt on every load.
+- **Assets tab** on the article: thumbnail cards with name, size, scope and usage ("Used in EN, DE" / "Unused"), plus upload and delete. Deleting an asset that is still used shows a warning first.
+- **Missing-asset warnings**: a banner on the edit page and a badge in the article list while content still refers to a deleted asset.
+- **View on site**: new plugin option `publicUrlUsing(fn (Article $article, string $locale) => …)` adds a per-language "View on site" menu to the view and edit pages.
+- **Article screens**: the view page shows the article full width, with its details in a tab; relation tabs on the edit page are set apart from the form; Save and Cancel are sticky and stay disabled until something changes; language tabs are underlined.
+- pt_BR translations for the asset strings.
+
+### Fixed
+
+- An editor can reuse only the images and files that the current tab offers.
+
+### Upgrading
+
+1. Upgrade the core to ^2.0 and follow its [upgrade notes](https://github.com/jeffersongoncalves/laravel-knowledge-base/releases/tag/v2.0.0): publish its migrations and run `php artisan migrate`.
+2. Run `php artisan filament:assets` to publish the plugin stylesheet.
+3. With the default `public` disk, run `php artisan storage:link` once.
+4. If rich text in language tabs hits a `MaxNestingDepthExceededException`, raise `payload.max_nesting_depth` in `config/livewire.php` (see the README).
+
+Thanks @rcoenen for #61!
+
 ## 3.2.0 - 2026-10-11
 
 ### What's new
