@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Pages;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\RelationManagers;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
@@ -161,22 +162,13 @@ class ArticleResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.status'))
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        ArticleStatus::Draft->value => 'gray',
-                        ArticleStatus::Published->value => 'success',
-                        ArticleStatus::Archived->value => 'danger',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state): string => ArticleStatus::from($state)->label()),
+                    ->color(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusColor($state))
+                    ->formatStateUsing(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusLabel($state)),
                 Tables\Columns\TextColumn::make('visibility')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.visibility'))
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        ArticleVisibility::Public->value => 'success',
-                        ArticleVisibility::Internal->value => 'warning',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state): string => ArticleVisibility::from($state)->label())
+                    ->color(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityColor($state))
+                    ->formatStateUsing(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityLabel($state))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('view_count')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.view_count'))
@@ -252,20 +244,13 @@ class ArticleResource extends Resource
                     Infolists\Components\TextEntry::make('status')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.status'))
                         ->badge()
-                        ->color(fn (string $state): string => match ($state) {
-                            ArticleStatus::Draft->value => 'gray',
-                            ArticleStatus::Published->value => 'success',
-                            ArticleStatus::Archived->value => 'danger',
-                            default => 'gray',
-                        }),
+                        ->color(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusColor($state))
+                        ->formatStateUsing(fn (ArticleStatus|string|null $state): string => ArticleBadge::statusLabel($state)),
                     Infolists\Components\TextEntry::make('visibility')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.visibility'))
                         ->badge()
-                        ->color(fn (string $state): string => match ($state) {
-                            'public' => 'success',
-                            'internal' => 'warning',
-                            default => 'gray',
-                        }),
+                        ->color(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityColor($state))
+                        ->formatStateUsing(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityLabel($state)),
                     Infolists\Components\TextEntry::make('published_at')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.published_at'))
                         ->dateTime(),
