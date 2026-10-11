@@ -6,12 +6,14 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Concerns\SavesOnlyWhenChanged;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\Concerns\ManagesArticleTranslations;
 
 class EditArticle extends EditRecord
 {
     use ManagesArticleTranslations;
+    use SavesOnlyWhenChanged;
 
     protected static string $resource = ArticleResource::class;
 

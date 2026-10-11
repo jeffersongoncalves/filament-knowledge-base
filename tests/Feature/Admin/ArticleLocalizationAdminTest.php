@@ -386,3 +386,10 @@ it('sets the article\'s files, history and feedback apart from the edit form', f
         ->assertSeeHtml('kb-article-tools')
         ->assertSeeInOrder(['Save changes', 'Files, history and feedback']);
 });
+
+it('offers Save and Cancel only once the article has changes', function () {
+    editArticle($this->article)
+        ->assertSet('savedDataHash', fn (?string $hash): bool => filled($hash))
+        ->assertSeeHtml('x-bind:data-kb-unchanged')
+        ->assertSeeHtml('$wire.savedDataHash');
+});
