@@ -9,6 +9,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -81,7 +82,11 @@ class CategoryForm
         $tabs = [];
 
         foreach (TranslationForm::locales() as $locale) {
-            $required = $locale === $default;
+            // The default language is always required; any other language
+            // with content needs a name and slug too (a form error instead of
+            // a failed insert).
+            $required = fn (Get $get): bool => $locale === $default
+                || TranslationForm::isFilled($get("data.translations.{$locale}", isAbsolute: true), TranslationForm::categoryFields());
 
             $tabs[] = Tab::make(strtoupper($locale))
                 ->schema([

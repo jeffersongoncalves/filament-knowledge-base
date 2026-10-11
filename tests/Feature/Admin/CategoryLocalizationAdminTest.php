@@ -34,6 +34,15 @@ beforeEach(function () {
     ]);
 });
 
+it('requires a name and slug on a partly filled language tab', function () {
+    Livewire::test(EditCategory::class, ['record' => $this->category->getRouteKey()])
+        ->fillForm(['translations' => ['de' => ['description' => 'Nur eine Beschreibung.']]])
+        ->call('save')
+        ->assertHasFormErrors(['translations.de.name' => 'required', 'translations.de.slug' => 'required']);
+
+    expect($this->category->fresh()->translation('de'))->toBeNull();
+});
+
 it('translates a category when the German tab is filled in', function () {
     Livewire::test(EditCategory::class, ['record' => $this->category->getRouteKey()])
         ->assertOk()
