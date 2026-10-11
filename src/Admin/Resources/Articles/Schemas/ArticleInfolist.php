@@ -12,26 +12,40 @@ use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 
 class ArticleInfolist
 {
+    /**
+     * The article itself, full width: what readers get.
+     */
     public static function configure(Schema $schema): Schema
     {
-        $components = [
-            Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_content'))
-                ->schema([
-                    TextEntry::make('title')
-                        ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.title')),
-                    TextEntry::make('slug')
-                        ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.slug')),
-                    TextEntry::make('category.name')
-                        ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.category')),
-                    TextEntry::make('content')
-                        ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
-                        ->html()
-                        ->columnSpanFull(),
-                    TextEntry::make('excerpt')
-                        ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.excerpt'))
-                        ->columnSpanFull(),
-                ])->columns(2),
+        return $schema
+            ->columns(1)
+            ->components([
+                Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_content'))
+                    ->schema([
+                        TextEntry::make('title')
+                            ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.title')),
+                        TextEntry::make('slug')
+                            ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.slug')),
+                        TextEntry::make('category.name')
+                            ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.category')),
+                        TextEntry::make('content')
+                            ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
+                            ->html()
+                            ->columnSpanFull(),
+                        TextEntry::make('excerpt')
+                            ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.excerpt'))
+                            ->columnSpanFull(),
+                    ])->columns(3),
+            ]);
+    }
 
+    /**
+     * Status, visibility, counts and SEO: shown in the Details tab next to
+     * the article's assets, versions and feedback.
+     */
+    public static function details(Schema $schema): Schema
+    {
+        $components = [
             Section::make(__('filament-knowledge-base::knowledge-base.admin.articles.form.section_settings'))
                 ->schema([
                     TextEntry::make('status')
@@ -73,11 +87,9 @@ class ArticleInfolist
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.seo_description')),
                     TextEntry::make('seo_keywords')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.seo_keywords')),
-                ])->columns(3)
-                ->collapsible()
-                ->collapsed();
+                ])->columns(3);
         }
 
-        return $schema->schema($components);
+        return $schema->columns(1)->components($components);
     }
 }

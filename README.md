@@ -174,6 +174,18 @@ On the **create** page there is no article yet to belong to, so the tools are le
 
 Run `php artisan storage:link` once so readers can see the files, or point `KB_ATTACHMENTS_DISK` at a cloud disk such as `s3`. See the [laravel-knowledge-base README](https://github.com/jeffersongoncalves/laravel-knowledge-base#article-assets) for the storage layout, allowed types and the `kb:prune-assets` command.
 
+### Viewing an article on your site
+
+The package has no public pages of its own, so the plugin can't know their URLs. Tell it how to build one, and the article's view and edit pages get a "View on site" button that opens the public page in a new tab, per language (hidden for articles customers can't see):
+
+```php
+KnowledgeBasePlugin::make()
+    ->publicUrlUsing(fn (Article $article, string $locale): string => route('help.article', [
+        'locale' => $locale,
+        'slug' => $article->slug,
+    ]));
+```
+
 ### Livewire nesting depth
 
 Rich text is synchronised with Livewire as nested data, and Livewire limits nested property paths to 10 levels by default. An ordinary bullet list already goes deeper (in Filament's own rich editor too, and the language tabs add two more levels), which shows as a `MaxNestingDepthExceededException`. Raise `payload.max_nesting_depth` in your app's `config/livewire.php` as [Filament's rich editor documentation](https://filamentphp.com/docs/5.x/forms/rich-editor#configuring-livewires-maximum-nesting-depth) describes; 32 leaves room for nested lists and tables.
