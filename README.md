@@ -58,7 +58,7 @@ public function panel(Panel $panel): Panel
 
 **Resources:** Category (hierarchical, sortable), Article (with status, visibility, SEO fields).
 
-**Relation Managers:** Versions (read-only history), Feedback (helpful/not helpful), Related Articles (attach/detach with sort order).
+**Relation Managers:** Assets (the article's images and files), Versions (read-only history), Feedback (helpful/not helpful), Related Articles (attach/detach with sort order).
 
 **Widgets:** Knowledge Base Overview (total articles, published, drafts, categories, views, helpful rate).
 
@@ -69,9 +69,10 @@ When the core package is configured with more than one language
 language and the article list grows a state per language.
 
 - **Article form:** one tab per language with that language's title, slug,
-  excerpt, content and SEO fields, an **authoritative language** select and a
-  per-language version status. The authoritative version follows the article's
-  own status; every other language is published on its own. A **“Mark other
+  excerpt, content and SEO fields and a per-language version status. The
+  configured default language is always the authoritative one — there is no
+  per-article choice. The authoritative version follows the article's own
+  status; every other language is published on its own. A **“Mark other
   languages outdated”** toggle (off by default) flags the other languages when
   you save the authoritative version.
 - **Article list:** a state per language (`missing`, `draft`, `published`,
@@ -158,9 +159,20 @@ Features can also be toggled globally in `config/filament-knowledge-base.php`.
 | Search | Yes | Yes | Yes |
 | Requires Auth | Yes | Yes | No |
 
-## Images in articles
+## Images and files in articles
 
-Files added in the article editor (images) are stored where the core's `knowledge-base.attachments` setting says: `knowledge-base/attachments` on the `public` disk by default. Run `php artisan storage:link` once so readers can see them, or point `KB_ATTACHMENTS_DISK` at a cloud disk such as `s3`. See the [laravel-knowledge-base README](https://github.com/jeffersongoncalves/laravel-knowledge-base#attachments).
+The article editor's paperclip is replaced by two tools that store every upload as an asset of the article (through the core's `ArticleAssets`), so files land in the article's own folder instead of the root of Filament's default disk:
+
+- **Insert image** uploads a new image or reuses one the article already has (a thumbnail picker), asks for alt text and inserts it where the cursor is.
+- **Attach file** uploads a new file or reuses one and inserts a download link showing the file name and size.
+
+The scope follows the tab you are in: an upload in the default language's tab (or the single-language form) is a **shared** asset, an upload in another language's tab belongs to that language. Images carry the asset's id, so the editor and the public pages always build the current URL — moving the site to another domain or port never breaks them. Allowed types and sizes come from the core's `knowledge-base.attachments` setting.
+
+The **Assets** relation manager on the edit page shows the article's assets as a grid of thumbnails (a file icon for files) with their name, size, scope (Shared / language) and where they are used ("Used in EN, DE" or "Unused"). It can upload and delete; deleting an asset that is still used is allowed but the confirmation names the languages. While any language still refers to a deleted asset, the article form shows a warning and the article list marks the article, until the reference is fixed.
+
+On the **create** page there is no article yet to belong to, so the tools are left out with the hint "Save the article first to add images and files."
+
+Run `php artisan storage:link` once so readers can see the files, or point `KB_ATTACHMENTS_DISK` at a cloud disk such as `s3`. See the [laravel-knowledge-base README](https://github.com/jeffersongoncalves/laravel-knowledge-base#article-assets) for the storage layout, allowed types and the `kb:prune-assets` command.
 
 ## Localization
 

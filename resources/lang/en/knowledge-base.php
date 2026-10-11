@@ -140,6 +140,37 @@ return [
                     'existing' => 'Or choose an existing file',
                 ],
             ],
+            'scope' => [
+                'shared' => 'Shared',
+            ],
+            'usage' => [
+                'used_in' => 'Used in :languages',
+                'unused' => 'Unused',
+            ],
+            'delete' => [
+                'used' => 'This asset is still used in :languages.',
+                'unused' => 'This asset is not used anywhere.',
+            ],
+            'save_first' => [
+                'heading' => 'Add images and files after saving',
+                'description' => 'Save the article first to add images and files.',
+            ],
+            'broken' => [
+                'heading' => 'Content refers to missing assets',
+                'message' => 'Some content refers to assets that no longer exist (:details). Fix the content to clear this warning.',
+                'badge' => 'Missing asset',
+            ],
+            'manager' => [
+                'title' => 'Assets',
+                'preview' => 'Preview',
+                'name' => 'Name',
+                'size' => 'Size',
+                'scope' => 'Scope',
+                'usage' => 'Used',
+                'upload' => 'Upload',
+                'file' => 'File',
+                'kind' => 'Kind',
+            ],
         ],
         'widgets' => [
             'overview' => [
