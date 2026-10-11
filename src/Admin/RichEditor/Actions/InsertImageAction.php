@@ -6,11 +6,10 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\EditorCommand;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Width;
-use Illuminate\Support\HtmlString;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 
 /**
@@ -34,25 +33,34 @@ class InsertImageAction
             ->fillForm(fn (array $arguments): array => [
                 'alt' => $arguments['alt'] ?? null,
             ])
-            ->schema(fn (array $arguments, RichEditor $component): array => [
-                FileUpload::make('file')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.file'))
-                    ->image()
-                    ->acceptedFileTypes(ContentAttachments::imageTypes())
-                    ->maxSize(ContentAttachments::imageMaxSize())
-                    ->storeFiles(false)
-                    // Needed only for a new image that isn't chosen from the existing ones.
-                    ->required(fn (Get $get): bool => blank($arguments['src'] ?? null) && blank($get('existing'))),
-                Select::make('existing')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.existing'))
-                    ->options(fn (): array => self::existingImages($component))
-                    ->allowHtml()
-                    ->searchable()
-                    ->visible(fn (): bool => self::existingImages($component) !== []),
-                TextInput::make('alt')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.alt'))
-                    ->maxLength(1000),
-            ])
+            ->schema(function (array $arguments, RichEditor $component): array {
+                $choices = self::existingImages($component);
+
+                return [
+                    // First what the article already has, then a new upload.
+                    ViewField::make('existing')
+                        ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.existing'))
+                        ->helperText(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.existing_help'))
+                        ->view(ContentAttachments::assetPickerView())
+                        ->viewData(['choices' => $choices])
+                        ->visible($choices !== []),
+                    FileUpload::make('file')
+                        ->label(__($choices === []
+                            ? 'filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.file_only'
+                            : 'filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.file'))
+                        ->image()
+                        ->acceptedFileTypes(ContentAttachments::imageTypes())
+                        ->maxSize(ContentAttachments::imageMaxSize())
+                        ->storeFiles(false)
+                        // Needed only for a new image that isn't chosen from the existing ones.
+                        ->required(fn (Get $get): bool => blank($arguments['src'] ?? null) && blank($get('existing')))
+                        ->markAsRequired(false),
+                    TextInput::make('alt')
+                        ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.alt'))
+                        ->helperText(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.alt_help'))
+                        ->maxLength(1000),
+                ];
+            })
             ->action(function (array $arguments, array $data, RichEditor $component): void {
                 [$id, $src] = self::resolveImage($component, $arguments, $data);
 
@@ -84,10 +92,10 @@ class InsertImageAction
     }
 
     /**
-     * The article's shared images plus the ones of the tab's language, as a
-     * uuid => thumbnail choice.
+     * The article's shared images plus the ones of the tab's language, as
+     * uuid => card data for the thumbnail picker.
      *
-     * @return array<string, HtmlString>
+     * @return array<string, array{name: string, url: ?string, size: string, scope: string}>
      */
     protected static function existingImages(RichEditor $component): array
     {

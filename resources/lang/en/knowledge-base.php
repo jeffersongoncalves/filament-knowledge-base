@@ -127,17 +127,22 @@ return [
                 'label' => 'Insert image',
                 'modal' => [
                     'heading' => 'Insert image',
-                    'file' => 'Upload a new image',
-                    'existing' => 'Or choose an existing image',
+                    'existing' => 'Images in this article',
+                    'existing_help' => 'Shared images and images for this language. Click one to insert it.',
+                    'file' => 'Or upload a new image',
+                    'file_only' => 'Upload an image',
                     'alt' => 'Alt text',
+                    'alt_help' => 'Describes the image for people who can\'t see it, in this language.',
                 ],
             ],
             'attach_file' => [
                 'label' => 'Attach file',
                 'modal' => [
                     'heading' => 'Attach file',
-                    'file' => 'Upload a new file',
-                    'existing' => 'Or choose an existing file',
+                    'existing' => 'Files in this article',
+                    'existing_help' => 'Shared files and files for this language. Click one to link to it.',
+                    'file' => 'Or upload a new file',
+                    'file_only' => 'Upload a file',
                 ],
             ],
             'scope' => [

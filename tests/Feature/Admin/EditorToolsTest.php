@@ -2,7 +2,9 @@
 
 use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\ViewField;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
@@ -167,4 +169,37 @@ it('tells the asset manager when the editor stores a new image', function () {
         ->assertDispatched(ContentAttachments::ASSETS_CHANGED_EVENT);
 
     expect(ArticleAsset::count())->toBe(1);
+});
+
+it('shows the article\'s images as named thumbnail cards above the upload', function () {
+    $this->actingAs(User::first());
+    $shared = editorImage($this->article, 'fern-leaf.jpg');
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->mountAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertSchemaComponentExists('existing', 'mountedActionSchema0', function (ViewField $field) use ($shared): bool {
+            $choice = $field->getViewData()['choices'][$shared->uuid] ?? null;
+
+            return $field->getLabel() === 'Images in this article'
+                && $field->getView() === ContentAttachments::ASSET_PICKER_VIEW
+                && $choice['name'] === 'fern-leaf.jpg'
+                && $choice['scope'] === 'Shared'
+                && filled($choice['url']);
+        })
+        ->assertSchemaComponentExists('file', 'mountedActionSchema0', fn (FileUpload $field): bool => $field->getLabel() === 'Or upload a new image');
+});
+
+it('asks for an upload only when the article has no images yet', function () {
+    $this->actingAs(User::first());
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->mountAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertSchemaComponentExists('file', 'mountedActionSchema0', fn (FileUpload $field): bool => $field->getLabel() === 'Upload an image')
+        ->assertSchemaComponentHidden('existing', 'mountedActionSchema0');
 });

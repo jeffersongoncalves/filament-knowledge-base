@@ -6,7 +6,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\EditorCommand;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
@@ -31,20 +31,29 @@ class AttachFileAction
             ->label(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.label'))
             ->modalHeading(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.heading'))
             ->modalWidth(Width::Large)
-            ->schema(fn (RichEditor $component): array => [
-                FileUpload::make('file')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.file'))
-                    ->acceptedFileTypes(ContentAttachments::fileTypes())
-                    ->maxSize(ContentAttachments::fileMaxSize())
-                    ->storeFiles(false)
-                    // Needed only when no existing file is chosen.
-                    ->required(fn (Get $get): bool => blank($get('existing'))),
-                Select::make('existing')
-                    ->label(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.existing'))
-                    ->options(fn (): array => ContentAttachments::fileChoices($component))
-                    ->searchable()
-                    ->visible(fn (): bool => ContentAttachments::fileChoices($component) !== []),
-            ])
+            ->schema(function (RichEditor $component): array {
+                $choices = ContentAttachments::fileChoices($component);
+
+                return [
+                    // First what the article already has, then a new upload.
+                    ViewField::make('existing')
+                        ->label(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.existing'))
+                        ->helperText(__('filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.existing_help'))
+                        ->view(ContentAttachments::assetPickerView())
+                        ->viewData(['choices' => $choices])
+                        ->visible($choices !== []),
+                    FileUpload::make('file')
+                        ->label(__($choices === []
+                            ? 'filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.file_only'
+                            : 'filament-knowledge-base::knowledge-base.admin.assets.attach_file.modal.file'))
+                        ->acceptedFileTypes(ContentAttachments::fileTypes())
+                        ->maxSize(ContentAttachments::fileMaxSize())
+                        ->storeFiles(false)
+                        // Needed only when no existing file is chosen.
+                        ->required(fn (Get $get): bool => blank($get('existing')))
+                        ->markAsRequired(false),
+                ];
+            })
             ->action(function (array $arguments, array $data, RichEditor $component): void {
                 $asset = self::resolveFile($component, $data);
 
