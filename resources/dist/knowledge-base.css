@@ -75,3 +75,39 @@
 .fi-sc-actions.fi-sticky:has([data-kb-unchanged]) {
     display: none;
 }
+
+/*
+ * The article's view page: labels as small grey captions, values in full
+ * text colour, the title larger, so a label never reads like its value.
+ */
+.kb-article-view .fi-in-entry-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+}
+
+.kb-article-view .fi-in-text-item {
+    font-size: 0.9375rem;
+    color: var(--gray-950);
+}
+
+.dark .kb-article-view .fi-in-text-item {
+    color: var(--gray-50);
+}
+
+.kb-article-view .kb-entry-title .fi-in-text-item,
+.kb-article-view .kb-entry-title.fi-in-text-item {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* Images in the article text: some room around them, never wider than the text. */
+.kb-article-view .fi-prose img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-block: 1rem;
+    border-radius: 0.5rem;
+}
