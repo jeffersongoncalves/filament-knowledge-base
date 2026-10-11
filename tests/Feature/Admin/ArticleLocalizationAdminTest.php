@@ -393,3 +393,13 @@ it('offers Save and Cancel only once the article has changes', function () {
         ->assertSeeHtml('x-bind:data-kb-unchanged')
         ->assertSeeHtml('$wire.savedDataHash');
 });
+
+it('accepts edits inside a list in a language tab with the nesting depth Filament documents', function () {
+    // Filament documents raising Livewire's max_nesting_depth for rich text;
+    // a bullet list in a language tab needs more than the default of 10.
+    config(['livewire.payload.max_nesting_depth' => 32]);
+
+    editArticle($this->article)
+        ->set('data.translations.de.content.content.2.content.0.content.0.content.0.text', 'Gießen')
+        ->assertOk();
+});

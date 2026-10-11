@@ -174,6 +174,10 @@ On the **create** page there is no article yet to belong to, so the tools are le
 
 Run `php artisan storage:link` once so readers can see the files, or point `KB_ATTACHMENTS_DISK` at a cloud disk such as `s3`. See the [laravel-knowledge-base README](https://github.com/jeffersongoncalves/laravel-knowledge-base#article-assets) for the storage layout, allowed types and the `kb:prune-assets` command.
 
+### Livewire nesting depth
+
+Rich text is synchronised with Livewire as nested data, and Livewire limits nested property paths to 10 levels by default. An ordinary bullet list already goes deeper (in Filament's own rich editor too, and the language tabs add two more levels), which shows as a `MaxNestingDepthExceededException`. Raise `payload.max_nesting_depth` in your app's `config/livewire.php` as [Filament's rich editor documentation](https://filamentphp.com/docs/5.x/forms/rich-editor#configuring-livewires-maximum-nesting-depth) describes; 32 leaves room for nested lists and tables.
+
 ## Localization
 
 Translations are provided for:
