@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.1.1 - 2026-10-10
+
+### What's Changed
+
+* ci: standardize tests workflow (3.x) by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/28
+* ci: run PHPStan on PHP 8.4 (3.x) by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/32
+* fix: PopularArticlesWidget fatal error and PHPStan config by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/35
+* ci: auto-merge dependabot github-actions minor/patch by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/38
+* ci: let the Pint workflow push its fixes by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/41
+* Fix enum state crash in article badges and related-articles sort by @rcoenen in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/42
+* Fix PHPStan error in related-articles pivot sort by @jeffersongoncalves in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/45
+
+### New Contributors
+
+* @rcoenen made their first contribution in https://github.com/jeffersongoncalves/filament-knowledge-base/pull/42
+
+**Full Changelog**: https://github.com/jeffersongoncalves/filament-knowledge-base/compare/3.1.0...3.1.1
+
 ## 3.1.0 - 2026-09-23
 
 ### What's new
