@@ -122,6 +122,25 @@ return [
                 'not_visible' => 'Customers cannot see this article.',
             ],
         ],
+        'assets' => [
+            'insert_image' => [
+                'label' => 'Insert image',
+                'modal' => [
+                    'heading' => 'Insert image',
+                    'file' => 'Upload a new image',
+                    'existing' => 'Or choose an existing image',
+                    'alt' => 'Alt text',
+                ],
+            ],
+            'attach_file' => [
+                'label' => 'Attach file',
+                'modal' => [
+                    'heading' => 'Attach file',
+                    'file' => 'Upload a new file',
+                    'existing' => 'Or choose an existing file',
+                ],
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Total Articles',

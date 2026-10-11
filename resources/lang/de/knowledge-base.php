@@ -86,6 +86,25 @@ return [
                 ],
             ],
         ],
+        'assets' => [
+            'insert_image' => [
+                'label' => 'Bild einfügen',
+                'modal' => [
+                    'heading' => 'Bild einfügen',
+                    'file' => 'Neues Bild hochladen',
+                    'existing' => 'Oder ein vorhandenes Bild wählen',
+                    'alt' => 'Alternativtext',
+                ],
+            ],
+            'attach_file' => [
+                'label' => 'Datei anhängen',
+                'modal' => [
+                    'heading' => 'Datei anhängen',
+                    'file' => 'Neue Datei hochladen',
+                    'existing' => 'Oder eine vorhandene Datei wählen',
+                ],
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Artikel gesamt',
