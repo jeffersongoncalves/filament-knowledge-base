@@ -4,6 +4,7 @@ use JeffersonGoncalves\FilamentKnowledgeBase\Support\CustomerVisibility;
 use JeffersonGoncalves\KnowledgeBase\Models\Article;
 use JeffersonGoncalves\KnowledgeBase\Models\Category;
 use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
+use JeffersonGoncalves\KnowledgeBase\Support\Visibility;
 
 /**
  * The reason helper behind the collections admin's "customers cannot see this"
@@ -70,4 +71,25 @@ it('translates a reason into a warning sentence', function () {
     expect(CustomerVisibility::label(CustomerVisibility::INTERNAL_CATEGORY))
         ->toBe(__('filament-knowledge-base::knowledge-base.admin.collections.warnings.internal_category'))
         ->and(CustomerVisibility::warningFor(null))->toBeNull();
+});
+
+it('takes the visible-or-not decision from the core rule', function () {
+    $public = $this->service->createCategory(['name' => 'Public', 'slug' => 'public']);
+    $internal = $this->service->createCategory(['name' => 'Internal', 'slug' => 'internal', 'visibility' => 'internal']);
+    $inactive = $this->service->createCategory(['name' => 'Inactive', 'slug' => 'inactive', 'is_active' => false]);
+    $under = $this->service->createCategory(['name' => 'Under', 'slug' => 'under', 'parent_id' => $internal->id]);
+
+    $cases = [
+        visibilityArticle($public),
+        visibilityArticle($public, ['visibility' => 'internal']),
+        visibilityArticle($public, ['status' => 'draft']),
+        visibilityArticle($internal),
+        visibilityArticle($inactive),
+        visibilityArticle($under),
+    ];
+
+    foreach ($cases as $article) {
+        expect(CustomerVisibility::isVisible($article))
+            ->toBe(Visibility::articleIsPubliclyVisible($article));
+    }
 });
