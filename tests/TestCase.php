@@ -98,6 +98,12 @@ abstract class TestCase extends BaseTestCase
             mkdir($tempPath, 0755, true);
         }
 
+        // Start from an empty directory, so a migration copied in an earlier
+        // run (e.g. against a newer core) never lingers into this one.
+        foreach (glob($tempPath.'/*.php') ?: [] as $stale) {
+            unlink($stale);
+        }
+
         foreach ($order as $index => $name) {
             $stub = $migrationsPath.'/'.$name.'.php.stub';
 

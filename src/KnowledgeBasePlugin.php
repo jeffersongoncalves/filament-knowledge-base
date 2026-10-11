@@ -37,8 +37,13 @@ class KnowledgeBasePlugin implements Plugin
         $resources = [
             ArticleResource::class,
             CategoryResource::class,
-            CollectionResource::class,
         ];
+
+        // Collections need a laravel-knowledge-base release that has them; with
+        // an older core the admin simply has no Collections section.
+        if (CollectionResource::isAvailable()) {
+            $resources[] = CollectionResource::class;
+        }
 
         $widgets = [
             KnowledgeBaseOverviewWidget::class,
