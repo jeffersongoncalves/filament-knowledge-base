@@ -42,15 +42,13 @@ class InsertImageAction
                     ->maxSize(ContentAttachments::imageMaxSize())
                     ->storeFiles(false)
                     // Needed only for a new image that isn't chosen from the existing ones.
-                    ->required(fn (Get $get): bool => blank($arguments['src'] ?? null) && blank($get('existing')))
-                    ->hiddenLabel(),
+                    ->required(fn (Get $get): bool => blank($arguments['src'] ?? null) && blank($get('existing'))),
                 Select::make('existing')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.existing'))
                     ->options(fn (): array => self::existingImages($component))
                     ->allowHtml()
                     ->searchable()
-                    ->visible(fn (): bool => self::existingImages($component) !== [])
-                    ->hiddenLabel(),
+                    ->visible(fn (): bool => self::existingImages($component) !== []),
                 TextInput::make('alt')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.assets.insert_image.modal.alt'))
                     ->maxLength(1000),
