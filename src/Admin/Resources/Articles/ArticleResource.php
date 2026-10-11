@@ -13,7 +13,9 @@ use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\Ar
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\ArticleInfolist;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Tables\ArticlesTable;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
+use JeffersonGoncalves\KnowledgeBase\Models\Contracts\TranslatableContract;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class ArticleResource extends Resource
@@ -128,10 +130,18 @@ class ArticleResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
+        $query = parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+
+        // The per-language state column and the "mark up to date" action read
+        // every version; load them once instead of per row (task 6.2).
+        if (TranslationForm::isMultiLocale() && is_a(static::getModel(), TranslatableContract::class, true)) {
+            $query->with('translations');
+        }
+
+        return $query;
     }
 
     public static function hasSeo(): bool

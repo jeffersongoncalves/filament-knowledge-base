@@ -5,9 +5,12 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Page
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\Concerns\ManagesArticleTranslations;
 
 class EditArticle extends EditRecord
 {
+    use ManagesArticleTranslations;
+
     protected static string $resource = ArticleResource::class;
 
     protected function getHeaderActions(): array
