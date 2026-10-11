@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Http\UploadedFile;
@@ -118,4 +119,37 @@ it('accepts only the configured image and file types', function () {
     expect(ContentAttachments::imageTypes())->toBe(['image/jpeg', 'image/png', 'image/webp'])
         ->and(ContentAttachments::fileTypes())->toBe(['application/pdf'])
         ->and(ContentAttachments::imageTypes())->not->toContain('application/pdf');
+});
+
+it('inserts an existing image without uploading it again', function () {
+    $this->actingAs(User::first());
+    $shared = editorImage($this->article);
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->callAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            data: ['existing' => $shared->uuid, 'alt' => 'A fern leaf'],
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertHasNoActionErrors();
+
+    expect(ArticleAsset::count())->toBe(1);
+});
+
+it('attaches an existing file without uploading it again', function () {
+    $this->actingAs(User::first());
+    $guide = ArticleAsset::where('uuid', ContentAttachments::store(
+        editorFor($this->article, 'content'),
+        UploadedFile::fake()->create('care-guide.pdf', 20, 'application/pdf'),
+    ))->firstOrFail();
+
+    Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->callAction(
+            TestAction::make(AttachFileAction::NAME)->schemaComponent('translations.de.content', schema: 'form'),
+            data: ['existing' => $guide->uuid],
+            arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
+        )
+        ->assertHasNoActionErrors();
+
+    expect(ArticleAsset::count())->toBe(1);
 });
