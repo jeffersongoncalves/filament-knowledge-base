@@ -23,6 +23,16 @@ trait ManagesCategoryTranslations
     protected ?array $submittedTranslations = null;
 
     /**
+     * The category row and its language versions are written in one save
+     * (afterCreate/afterSave run inside Filament's transaction), so keep them
+     * atomic whatever the panel's default.
+     */
+    public function hasDatabaseTransactions(): bool
+    {
+        return TranslationForm::isMultiLocale() || parent::hasDatabaseTransactions();
+    }
+
+    /**
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */

@@ -75,6 +75,11 @@ it('translates an article when the German tab is filled in', function () {
         ->and($german->article_id)->toBe($this->article->id);
 });
 
+it('saves the article and its language versions in one transaction', function () {
+    expect(editArticle($this->article)->instance()->hasDatabaseTransactions())->toBeTrue()
+        ->and(Livewire::test(CreateArticle::class)->instance()->hasDatabaseTransactions())->toBeTrue();
+});
+
 it('saves the chosen authoritative language', function () {
     editArticle($this->article)
         ->fillForm([
