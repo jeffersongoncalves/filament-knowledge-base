@@ -17,7 +17,11 @@ trait SavesOnlyWhenChanged
     /** Browser-side: true while the form still matches what was last saved. */
     private const UNCHANGED_JS = "window.jsMd5(JSON.stringify(\$wire.data).replace(/\\\\/g, '')) === \$wire.savedDataHash";
 
-    protected ?bool $hasUnsavedDataChangesAlert = true;
+    // A method, not the property: redeclaring Filament's property with another default is a fatal trait conflict.
+    protected function hasUnsavedDataChangesAlert(): bool
+    {
+        return true;
+    }
 
     protected function getSaveFormAction(): Action
     {
