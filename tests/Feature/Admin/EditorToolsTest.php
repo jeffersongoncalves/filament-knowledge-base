@@ -135,7 +135,8 @@ it('inserts an existing image without uploading it again', function () {
             data: ['existing' => $shared->uuid, 'alt' => 'A fern leaf'],
             arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
         )
-        ->assertHasNoActionErrors();
+        ->assertHasNoActionErrors()
+        ->assertDispatched('run-rich-editor-commands');
 
     expect(ArticleAsset::count())->toBe(1);
 });
@@ -153,9 +154,46 @@ it('attaches an existing file without uploading it again', function () {
             data: ['existing' => $guide->uuid],
             arguments: ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]],
         )
-        ->assertHasNoActionErrors();
+        ->assertHasNoActionErrors()
+        ->assertDispatched('run-rich-editor-commands');
 
     expect(ArticleAsset::count())->toBe(1);
+});
+
+it('ignores an existing image or file the tab does not offer', function () {
+    $this->actingAs(User::first());
+
+    $other = app(KnowledgeBaseService::class)->createArticle([
+        'category_id' => $this->article->category_id,
+        'title' => 'Cactus care',
+        'slug' => 'cactus-care',
+        'content' => 'How to care for a cactus.',
+        'visibility' => 'public',
+    ], User::first());
+    $foreignImage = editorImage($other);
+    $germanImage = editorImage($this->article, 'farn.jpg', 'de');
+    $foreignFile = ArticleAsset::where('uuid', ContentAttachments::store(
+        editorFor($other, 'content'),
+        UploadedFile::fake()->create('cactus-guide.pdf', 20, 'application/pdf'),
+    ))->firstOrFail();
+
+    $page = Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()]);
+    $selection = ['editorSelection' => ['type' => 'text', 'anchor' => 1, 'head' => 1]];
+
+    // Another article's image, and a German image in the English tab.
+    foreach ([$foreignImage, $germanImage] as $image) {
+        $page->callAction(
+            TestAction::make(InsertImageAction::NAME)->schemaComponent('translations.en.content', schema: 'form'),
+            data: ['existing' => $image->uuid],
+            arguments: $selection,
+        )->assertNotDispatched('run-rich-editor-commands');
+    }
+
+    $page->callAction(
+        TestAction::make(AttachFileAction::NAME)->schemaComponent('translations.en.content', schema: 'form'),
+        data: ['existing' => $foreignFile->uuid],
+        arguments: $selection,
+    )->assertNotDispatched('run-rich-editor-commands');
 });
 
 it('tells the asset manager when the editor stores a new image', function () {

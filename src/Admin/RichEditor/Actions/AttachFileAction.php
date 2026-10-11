@@ -93,8 +93,11 @@ class AttachFileAction
             return is_string($uuid) ? ContentAttachments::asset($uuid) : null;
         }
 
-        if (filled($data['existing'] ?? null)) {
-            return ContentAttachments::asset((string) $data['existing']);
+        // Only a file this tab offers: the uuid comes from the browser.
+        $existing = (string) ($data['existing'] ?? '');
+
+        if ($existing !== '' && array_key_exists($existing, ContentAttachments::fileChoices($component))) {
+            return ContentAttachments::asset($existing);
         }
 
         return null;

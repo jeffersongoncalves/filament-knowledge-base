@@ -118,10 +118,11 @@ class InsertImageAction
             return [$id, ContentAttachments::url($id)];
         }
 
-        if (filled($data['existing'] ?? null)) {
-            $id = (string) $data['existing'];
+        // Only an image this tab offers: the uuid comes from the browser.
+        $existing = (string) ($data['existing'] ?? '');
 
-            return [$id, ContentAttachments::url($id)];
+        if ($existing !== '' && array_key_exists($existing, self::existingImages($component))) {
+            return [$existing, ContentAttachments::url($existing)];
         }
 
         if (filled($arguments['src'] ?? null)) {
