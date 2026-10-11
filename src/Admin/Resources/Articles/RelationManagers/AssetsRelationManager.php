@@ -117,7 +117,12 @@ class AssetsRelationManager extends RelationManager
             ])
             ->recordActions([
                 Actions\DeleteAction::make()
-                    ->modalDescription(fn (Model&ArticleAssetContract $record): string => AssetUsage::deleteWarning($record)),
+                    ->modalDescription(fn (Model&ArticleAssetContract $record): string => AssetUsage::deleteWarning($record))
+                    ->using(function (Model&ArticleAssetContract $record): bool {
+                        app(ArticleAssets::class)->delete($record);
+
+                        return true;
+                    }),
             ]);
     }
 

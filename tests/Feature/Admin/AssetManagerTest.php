@@ -127,3 +127,17 @@ it('uploads a new asset with a chosen kind and scope', function () {
 it('offers shared and every non-default language as a scope', function () {
     expect(AssetUsage::scopeOptions())->toBe(['shared' => 'Shared', 'de' => 'DE']);
 });
+
+it('removes the file from disk when an asset is deleted', function () {
+    $image = managerImage($this->article, 'fern.jpg');
+    $path = $image->getAttribute('path');
+
+    Storage::disk('public')->assertExists($path);
+
+    manager($this->article)
+        ->callTableAction('delete', $image)
+        ->assertHasNoTableActionErrors();
+
+    expect(ArticleAsset::query()->count())->toBe(0);
+    Storage::disk('public')->assertMissing($path);
+});
