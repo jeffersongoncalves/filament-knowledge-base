@@ -9,7 +9,7 @@ it('stores editor files in the knowledge base directory on the public disk by de
     $editor = ContentAttachments::configure(RichEditor::make('content'));
 
     expect($editor->getFileAttachmentsDiskName())->toBe('public')
-        ->and($editor->getFileAttachmentsDirectory())->toBe('knowledge-base/attachments')
+        ->and($editor->getFileAttachmentsDirectory())->toBe('knowledge-base')
         ->and($editor->getFileAttachmentsVisibility())->toBe('public');
 });
 
