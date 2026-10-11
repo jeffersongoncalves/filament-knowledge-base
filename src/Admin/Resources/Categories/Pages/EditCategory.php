@@ -4,12 +4,14 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Categories\Pa
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Concerns\SavesOnlyWhenChanged;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Categories\CategoryResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Categories\Pages\Concerns\ManagesCategoryTranslations;
 
 class EditCategory extends EditRecord
 {
     use ManagesCategoryTranslations;
+    use SavesOnlyWhenChanged;
 
     protected static string $resource = CategoryResource::class;
 
