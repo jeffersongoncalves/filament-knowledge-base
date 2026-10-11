@@ -1,16 +1,17 @@
 /*
  * Small additions to Filament's look for the knowledge base admin.
  *
- * Language tabs (EN, DE, …) in the article, category and collection forms:
+ * Language tabs (EN, DE, …) in the article, category and collection forms, and
+ * the choose/upload tabs in the editor dialogs:
  * flat tabs with a line under the active language instead of Filament's pill
  * buttons, because they switch between versions of the same text.
  */
-.kb-language-tabs .fi-tabs {
+:is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs {
     gap: 0.25rem;
     padding-bottom: 0;
 }
 
-.kb-language-tabs .fi-tabs-item {
+:is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item {
     border-radius: 0;
     background: transparent;
     border-bottom: 2px solid transparent;
@@ -18,21 +19,21 @@
     padding-bottom: 0.75rem;
 }
 
-.kb-language-tabs .fi-tabs-item:hover {
+:is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item:hover {
     background: transparent;
     border-bottom-color: var(--gray-300);
 }
 
-.kb-language-tabs .fi-tabs-item.fi-active {
+:is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item.fi-active {
     background: transparent;
     border-bottom-color: var(--primary-600);
 }
 
-.dark .kb-language-tabs .fi-tabs-item:hover {
+.dark :is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item:hover {
     border-bottom-color: var(--gray-600);
 }
 
-.dark .kb-language-tabs .fi-tabs-item.fi-active {
+.dark :is(.kb-language-tabs, .kb-dialog-tabs) .fi-tabs-item.fi-active {
     border-bottom-color: var(--primary-400);
 }
 
@@ -53,4 +54,18 @@
 /* Line the section tabs up with the area's heading instead of centring them. */
 .kb-article-tools .fi-sc-tabs > .fi-tabs {
     margin-inline: 0;
+}
+
+/* The choose/upload tabs in the editor dialogs: a plain tab row, left aligned. */
+.kb-dialog-tabs > .fi-tabs {
+    margin-inline: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.dark .kb-dialog-tabs > .fi-tabs {
+    border-bottom-color: rgb(255 255 255 / 0.1);
 }

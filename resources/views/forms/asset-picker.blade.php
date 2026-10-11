@@ -1,6 +1,7 @@
 {{--
     Thumbnail picker for the article's existing assets (Insert image / Attach
-    file). Click a card to choose it, click it again to clear the choice.
+    file). Click a card to choose it, click it again to clear the choice. Long
+    lists scroll inside the picker, so the dialog keeps its size.
     Inline styles only: the plugin ships no compiled CSS of its own.
 --}}
 @php
@@ -9,9 +10,9 @@
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
-        x-data="{ state: $wire.$entangle(@js($statePath)) }"
+        x-data="{ state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }} }"
         role="radiogroup"
-        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.75rem;"
+        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.75rem; max-height: 20rem; overflow-y: auto; padding: 0.25rem;"
     >
         @foreach ($choices as $uuid => $choice)
             <button
