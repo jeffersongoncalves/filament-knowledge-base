@@ -91,17 +91,22 @@ return [
                 'label' => 'Bild einfügen',
                 'modal' => [
                     'heading' => 'Bild einfügen',
-                    'file' => 'Neues Bild hochladen',
-                    'existing' => 'Oder ein vorhandenes Bild wählen',
+                    'existing' => 'Bilder in diesem Artikel',
+                    'existing_help' => 'Geteilte Bilder und Bilder für diese Sprache. Klicke auf ein Bild, um es einzufügen.',
+                    'file' => 'Oder ein neues Bild hochladen',
+                    'file_only' => 'Bild hochladen',
                     'alt' => 'Alternativtext',
+                    'alt_help' => 'Beschreibt das Bild für Menschen, die es nicht sehen können, in dieser Sprache.',
                 ],
             ],
             'attach_file' => [
                 'label' => 'Datei anhängen',
                 'modal' => [
                     'heading' => 'Datei anhängen',
-                    'file' => 'Neue Datei hochladen',
-                    'existing' => 'Oder eine vorhandene Datei wählen',
+                    'existing' => 'Dateien in diesem Artikel',
+                    'existing_help' => 'Geteilte Dateien und Dateien für diese Sprache. Klicke auf eine Datei, um sie zu verlinken.',
+                    'file' => 'Oder eine neue Datei hochladen',
+                    'file_only' => 'Datei hochladen',
                 ],
             ],
             'scope' => [

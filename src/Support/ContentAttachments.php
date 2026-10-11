@@ -8,7 +8,7 @@ use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
+use Illuminate\Support\Number;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\RichEditor\Actions\AttachFileAction;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\RichEditor\Actions\InsertImageAction;
 use JeffersonGoncalves\KnowledgeBase\Enums\AssetKind;
@@ -36,6 +36,9 @@ final class ContentAttachments
      * manager on the same page shows it without a reload.
      */
     public const ASSETS_CHANGED_EVENT = 'kb-article-assets-changed';
+
+    /** The thumbnail picker the Insert image and Attach file dialogs use. */
+    public const ASSET_PICKER_VIEW = 'filament-knowledge-base::forms.asset-picker';
 
     public static function disk(): string
     {
@@ -94,37 +97,61 @@ final class ContentAttachments
     }
 
     /**
-     * The article's images a tab may reuse: its shared images plus the ones of
-     * that language, as uuid => thumbnail for the "choose existing" picker.
+     * The picker view, typed for Filament's view().
      *
-     * @return array<string, HtmlString>
+     * @return view-string
+     */
+    public static function assetPickerView(): string
+    {
+        /** @var view-string $view */
+        $view = self::ASSET_PICKER_VIEW;
+
+        return $view;
+    }
+
+    /**
+     * The article's images a tab may reuse: its shared images plus the ones of
+     * that language, as uuid => card data for the thumbnail picker.
+     *
+     * @return array<string, array{name: string, url: ?string, size: string, scope: string}>
      */
     public static function imageChoices(RichEditor $component): array
     {
         return self::choices($component, AssetKind::Image)
-            ->mapWithKeys(function (Model $asset): array {
-                $name = e((string) $asset->getAttribute('original_name'));
-                $url = e(self::url((string) $asset->getAttribute('uuid')) ?? '');
-
-                return [(string) $asset->getAttribute('uuid') => new HtmlString(
-                    '<img src="'.$url.'" alt="" style="height: 1.5rem; width: 1.5rem; object-fit: cover; border-radius: 0.25rem; vertical-align: middle; margin-right: 0.5rem;">'.$name
-                )];
-            })
+            ->mapWithKeys(fn (Model&ArticleAssetContract $asset): array => [
+                (string) $asset->getAttribute('uuid') => self::card($asset, withPreview: true),
+            ])
             ->all();
     }
 
     /**
-     * The article's files a tab may reuse, as uuid => name.
+     * The article's files a tab may reuse, as uuid => card data.
      *
-     * @return array<string, string>
+     * @return array<string, array{name: string, url: ?string, size: string, scope: string}>
      */
     public static function fileChoices(RichEditor $component): array
     {
         return self::choices($component, AssetKind::File)
-            ->mapWithKeys(fn (Model $asset): array => [
-                (string) $asset->getAttribute('uuid') => (string) $asset->getAttribute('original_name'),
+            ->mapWithKeys(fn (Model&ArticleAssetContract $asset): array => [
+                (string) $asset->getAttribute('uuid') => self::card($asset, withPreview: false),
             ])
             ->all();
+    }
+
+    /**
+     * What the picker shows for one asset: its name, a thumbnail URL for
+     * images, its size and its scope ("Shared" or the language).
+     *
+     * @return array{name: string, url: ?string, size: string, scope: string}
+     */
+    protected static function card(Model&ArticleAssetContract $asset, bool $withPreview): array
+    {
+        return [
+            'name' => (string) $asset->getAttribute('original_name'),
+            'url' => $withPreview ? app(ArticleAssets::class)->url($asset) : null,
+            'size' => Number::fileSize((int) $asset->getAttribute('size')),
+            'scope' => AssetUsage::scopeLabel($asset),
+        ];
     }
 
     /**
