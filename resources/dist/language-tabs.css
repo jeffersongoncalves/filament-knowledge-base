@@ -1,0 +1,35 @@
+/*
+ * Language tabs (EN, DE, …) in the article, category and collection forms:
+ * flat tabs with a line under the active language instead of Filament's pill
+ * buttons, because they switch between versions of the same text.
+ */
+.kb-language-tabs .fi-tabs {
+    gap: 0.25rem;
+    padding-bottom: 0;
+}
+
+.kb-language-tabs .fi-tabs-item {
+    border-radius: 0;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding-bottom: 0.75rem;
+}
+
+.kb-language-tabs .fi-tabs-item:hover {
+    background: transparent;
+    border-bottom-color: var(--gray-300);
+}
+
+.kb-language-tabs .fi-tabs-item.fi-active {
+    background: transparent;
+    border-bottom-color: var(--primary-600);
+}
+
+.dark .kb-language-tabs .fi-tabs-item:hover {
+    border-bottom-color: var(--gray-600);
+}
+
+.dark .kb-language-tabs .fi-tabs-item.fi-active {
+    border-bottom-color: var(--primary-400);
+}

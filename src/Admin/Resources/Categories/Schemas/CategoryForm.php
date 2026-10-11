@@ -115,7 +115,10 @@ class CategoryForm
         return $schema
             ->columns(null)
             ->components([
-                Tabs::make('translations')->tabs($tabs)->persistTabInQueryString(),
+                Tabs::make('translations')
+                    ->tabs($tabs)
+                    ->persistTabInQueryString()
+                    ->extraAttributes(['class' => 'kb-language-tabs']),
                 Section::make(__('filament-knowledge-base::knowledge-base.admin.categories.form.section_settings'))
                     ->schema([
                         Select::make('parent_id')
