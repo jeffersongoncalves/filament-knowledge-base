@@ -150,7 +150,7 @@ it('renders each asset as a card with its delete action', function () {
 
     expect($html)->toContain('fi-ta-record')
         ->and($html)->toContain("mountTableAction('delete'")
-        ->and($html)->toContain((string) $image->getAttribute('path'));
+        ->and($html)->toContain(basename((string) $image->getAttribute('path')));
 });
 
 it('shows an asset the editor just stored without a reload', function () {
@@ -160,4 +160,11 @@ it('shows an asset the editor just stored without a reload', function () {
 
     $manager->dispatch(ContentAttachments::ASSETS_CHANGED_EVENT)
         ->assertSee('fern.jpg');
+});
+
+it('shows image thumbnails from the core\'s asset URL', function () {
+    $image = managerImage($this->article, 'fern.jpg');
+
+    manager($this->article)
+        ->assertSeeHtml('src="'.e(url(app(ArticleAssets::class)->url($image))).'"');
 });

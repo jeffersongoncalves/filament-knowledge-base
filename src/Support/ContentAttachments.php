@@ -24,7 +24,9 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
  * an upload in another language's tab belongs to that language.
  *
  * Filament 3's editor (Trix) keeps only the URL of an attachment, so on save
- * {@see tagImages()} adds the asset id the core resolves images by.
+ * {@see tagImages()} adds the asset id the core resolves images by, and when
+ * the form loads {@see refreshUrls()} points every attachment at its current
+ * URL (the stored one may be an old address or an expired signed URL).
  */
 final class ContentAttachments
 {
@@ -36,7 +38,7 @@ final class ContentAttachments
 
     public static function disk(): string
     {
-        return (string) config('knowledge-base.attachments.disk', 'public');
+        return (string) config('knowledge-base.attachments.disk', 'local');
     }
 
     public static function directory(): string
@@ -51,11 +53,13 @@ final class ContentAttachments
      */
     public static function configure(RichEditor $editor, bool $allowUploads = true): RichEditor
     {
-        // Readers see these files on public pages, so they are always public.
+        // The core stores the files and builds every URL (served with the
+        // article's visibility), so Filament never links to the disk itself.
         $editor = $editor
             ->fileAttachmentsDisk(fn (): string => self::disk())
             ->fileAttachmentsDirectory(fn (): string => self::directory())
-            ->fileAttachmentsVisibility('public')
+            ->fileAttachmentsVisibility('private')
+            ->formatStateUsing(fn (?string $state, ?Model $record): ?string => $record instanceof Model ? self::refreshUrls($state, $record) : $state)
             ->saveUploadedFileAttachmentsUsing(
                 fn (TemporaryUploadedFile $file, RichEditor $component): ?string => self::store($component, $file),
             )
@@ -123,6 +127,77 @@ final class ContentAttachments
     }
 
     /**
+     * Article content ready to show: every asset reference points at its
+     * current URL. For customers (`$forPublic`), references to deleted assets
+     * are left out, so they never see a broken image or a dead link.
+     */
+    public static function displayContent(mixed $state, mixed $record, bool $forPublic = false): string
+    {
+        $html = (string) $state;
+
+        if (! $record instanceof Model || ! $record instanceof ArticleContract) {
+            return $html;
+        }
+
+        return app(ArticleAssets::class)->resolve($html, $record, forPublic: $forPublic);
+    }
+
+    /**
+     * Point every attachment in editor content at its asset's current URL:
+     * images and file links through the core, and Trix's own attachment data,
+     * which the editor displays from.
+     */
+    public static function refreshUrls(?string $html, Model $article): ?string
+    {
+        if ($html === null || $html === '' || ! $article instanceof ArticleContract) {
+            return $html;
+        }
+
+        $html = app(ArticleAssets::class)->resolve($html, $article);
+
+        if (! str_contains($html, 'data-trix-attachment')) {
+            return $html;
+        }
+
+        $assetClass = ModelResolver::articleAsset();
+        $assets = $assetClass::query()->where('article_id', $article->getKey())->get();
+
+        if ($assets->isEmpty()) {
+            return $html;
+        }
+
+        // Either quote style: HTML serialisers single-quote an attribute whose
+        // value (here JSON) contains double quotes.
+        return preg_replace_callback('/data-trix-attachment=(["\'])(.*?)\1/s', function (array $match) use ($assets): string {
+            $attachment = json_decode(html_entity_decode($match[2], ENT_QUOTES | ENT_HTML5), true);
+
+            if (! is_array($attachment) || ! is_string($attachment['url'] ?? null)) {
+                return $match[0];
+            }
+
+            $url = urldecode((string) strtok($attachment['url'], '?#'));
+
+            foreach ($assets as $asset) {
+                $path = (string) $asset->getAttribute('path');
+                $uuid = (string) $asset->getAttribute('uuid');
+
+                if (($path !== '' && str_contains($url, $path)) || str_contains($url, '/'.$uuid.'/')) {
+                    $current = app(ArticleAssets::class)->url($asset);
+                    $attachment['url'] = $current;
+
+                    if (isset($attachment['href'])) {
+                        $attachment['href'] = $current;
+                    }
+
+                    return 'data-trix-attachment="'.e((string) json_encode($attachment, JSON_UNESCAPED_SLASHES)).'"';
+                }
+            }
+
+            return $match[0];
+        }, $html) ?? $html;
+    }
+
+    /**
      * Give every image that shows one of the article's assets the asset's id
      * as `data-id`, so the core resolves its URL on render, reports where it is
      * used and notices when it is deleted. File links need nothing: the core
@@ -157,8 +232,10 @@ final class ContentAttachments
 
             $url = urldecode((string) strtok(html_entity_decode($src[1]), '?#'));
 
+            // A disk URL contains the asset's path; a URL served by the core
+            // contains the asset's uuid.
             foreach ($paths as $path => $uuid) {
-                if (str_contains($url, (string) $path)) {
+                if (str_contains($url, (string) $path) || str_contains($url, '/'.$uuid.'/')) {
                     return substr($tag, 0, 4).' data-id="'.e($uuid).'"'.substr($tag, 4);
                 }
             }

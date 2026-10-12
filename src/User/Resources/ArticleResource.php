@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseUserPlugin;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\PublicVisibility;
 use JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\ArticleResource\Pages;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
@@ -105,8 +106,10 @@ class ArticleResource extends Resource
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.excerpt'))
                             ->columnSpanFull()
                             ->visible(fn ($record) => filled($record->excerpt)),
+                        // Customers see only working asset references, at their current URLs.
                         Infolists\Components\TextEntry::make('content')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
+                            ->formatStateUsing(fn (mixed $state, mixed $record): string => ContentAttachments::displayContent($state, $record, forPublic: true))
                             ->html()
                             ->columnSpanFull(),
                     ]),
