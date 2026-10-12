@@ -5,6 +5,7 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\Articles\Schem
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 
 class ArticleInfolist
 {
@@ -31,8 +32,10 @@ class ArticleInfolist
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.excerpt'))
                         ->columnSpanFull()
                         ->visible(fn ($record) => filled($record->excerpt)),
+                    // Customers see only working asset references, at their current URLs.
                     TextEntry::make('content')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
+                        ->formatStateUsing(fn (mixed $state, mixed $record): string => ContentAttachments::displayContent($state, $record, forPublic: true))
                         ->html()
                         ->columnSpanFull(),
                 ]),

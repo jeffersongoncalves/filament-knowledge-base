@@ -103,6 +103,23 @@ final class ContentAttachments
     }
 
     /**
+     * Article content ready to show: every asset reference points at its
+     * current URL (the stored one may be an old address or an expired signed
+     * URL). For customers (`$forPublic`), references to deleted assets are
+     * left out, so they never see a broken image or a dead link.
+     */
+    public static function displayContent(mixed $state, mixed $record, bool $forPublic = false): string
+    {
+        $html = (string) $state;
+
+        if (! $record instanceof Model || ! $record instanceof ArticleContract) {
+            return $html;
+        }
+
+        return app(ArticleAssets::class)->resolve($html, $record, forPublic: $forPublic);
+    }
+
+    /**
      * The picker view, typed for Filament's view().
      *
      * @return view-string

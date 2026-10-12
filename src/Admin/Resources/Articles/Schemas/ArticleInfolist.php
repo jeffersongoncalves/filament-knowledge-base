@@ -5,13 +5,11 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Sche
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Model;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
-use JeffersonGoncalves\KnowledgeBase\Models\Contracts\ArticleContract;
-use JeffersonGoncalves\KnowledgeBase\Support\ArticleAssets;
 
 class ArticleInfolist
 {
@@ -38,7 +36,7 @@ class ArticleInfolist
                         // ones may be another address or an expired signed URL.
                         TextEntry::make('content')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
-                            ->formatStateUsing(fn (?string $state, Model&ArticleContract $record): string => app(ArticleAssets::class)->resolve((string) $state, $record))
+                            ->formatStateUsing(fn (mixed $state, mixed $record): string => ContentAttachments::displayContent($state, $record))
                             ->html()
                             ->prose()
                             ->columnSpanFull(),
