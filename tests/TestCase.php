@@ -15,7 +15,9 @@ use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JeffersonGoncalves\FilamentKnowledgeBase\FilamentKnowledgeBaseServiceProvider;
+use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\GuestPanelProvider;
 use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\TestPanelProvider;
+use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\UserPanelProvider;
 use JeffersonGoncalves\KnowledgeBase\KnowledgeBaseServiceProvider;
 use JeffersonGoncalves\PestPluginDatabaseMigrations\LoadsPackageMigrations;
 use Livewire\LivewireServiceProvider;
@@ -43,6 +45,8 @@ abstract class TestCase extends BaseTestCase
             WidgetsServiceProvider::class,
             KnowledgeBaseServiceProvider::class,
             TestPanelProvider::class,
+            GuestPanelProvider::class,
+            UserPanelProvider::class,
             FilamentKnowledgeBaseServiceProvider::class,
         ];
     }
