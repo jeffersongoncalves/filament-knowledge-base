@@ -7,6 +7,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 
@@ -31,8 +32,11 @@ class ArticleInfolist
                         TextEntry::make('category.name')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.category')),
                         // Prose: headings, lists and images get their usual spacing.
+                        // Asset references point at their current URLs: the stored
+                        // ones may be another address or an expired signed URL.
                         TextEntry::make('content')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
+                            ->formatStateUsing(fn (mixed $state, mixed $record): string => ContentAttachments::displayContent($state, $record))
                             ->html()
                             ->prose()
                             ->columnSpanFull(),

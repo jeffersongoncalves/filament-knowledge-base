@@ -77,6 +77,13 @@ it('shows the article\'s assets with their scope and usage', function () {
         ->assertSee('Unused');
 });
 
+it('shows image thumbnails from the core\'s asset URL', function () {
+    $image = managerImage($this->article, 'fern.jpg');
+
+    manager($this->article)
+        ->assertSeeHtml('src="'.e(url($this->assets->url($image))).'"');
+});
+
 it('reports where an asset is used', function () {
     $shared = managerImage($this->article, 'fern.jpg');
 
@@ -150,7 +157,7 @@ it('renders each asset as a card with its delete action', function () {
 
     expect($html)->toContain('fi-ta-record')
         ->and($html)->toContain("mountAction('delete'")
-        ->and($html)->toContain((string) $image->getAttribute('path'));
+        ->and($html)->toContain(basename((string) $image->getAttribute('path')));
 });
 
 it('shows an asset the editor just stored without a reload', function () {

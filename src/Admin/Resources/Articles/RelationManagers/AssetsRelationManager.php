@@ -57,12 +57,13 @@ class AssetsRelationManager extends RelationManager
             ->contentGrid(['md' => 2, 'xl' => 3])
             ->columns([
                 Stack::make([
-                    // Images by path on their own disk, so Filament builds the URL;
-                    // files show a document icon instead.
+                    // Images by the core's URL, which works on a private disk (a
+                    // signed URL for an article that isn't public), made absolute
+                    // because a relative URL would be taken for a path on the
+                    // default disk; files show a document icon instead.
                     ImageColumn::make('preview')
                         ->label(__('filament-knowledge-base::knowledge-base.admin.assets.manager.preview'))
-                        ->state(fn (Model&ArticleAssetContract $record): ?string => $record->kind() === AssetKind::Image ? (string) $record->getAttribute('path') : null)
-                        ->disk(fn (Model&ArticleAssetContract $record): string => (string) $record->getAttribute('disk'))
+                        ->state(fn (Model&ArticleAssetContract $record): ?string => $record->kind() === AssetKind::Image ? url(app(ArticleAssets::class)->url($record)) : null)
                         ->defaultImageUrl(self::FILE_ICON)
                         ->imageHeight(120),
                     TextColumn::make('original_name')

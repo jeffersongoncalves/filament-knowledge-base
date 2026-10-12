@@ -4,6 +4,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\User;
 use JeffersonGoncalves\KnowledgeBase\Enums\AssetKind;
@@ -98,13 +99,15 @@ it('shows the current asset URL and follows the site address', function () {
 
     expect(ContentAttachments::url($uuid))->toBe(app(ArticleAssets::class)->url($asset));
 
-    config(['filesystems.disks.public.url' => 'https://first.test/storage']);
-    Storage::forgetDisk('public');
-    expect(ContentAttachments::url($uuid))->toContain('first.test');
+    // The site moves: both the app's address (served URLs) and the disk's
+    // own URL (when assets are linked straight from the disk) change.
+    foreach (['first.test', 'second.test'] as $host) {
+        URL::forceRootUrl("https://{$host}");
+        config(['filesystems.disks.public.url' => "https://{$host}/storage"]);
+        Storage::forgetDisk('public');
 
-    config(['filesystems.disks.public.url' => 'https://second.test/storage']);
-    Storage::forgetDisk('public');
-    expect(ContentAttachments::url($uuid))->toContain('second.test');
+        expect(ContentAttachments::url($uuid))->toContain("://{$host}/");
+    }
 });
 
 it('returns null for an unknown asset uuid', function () {
