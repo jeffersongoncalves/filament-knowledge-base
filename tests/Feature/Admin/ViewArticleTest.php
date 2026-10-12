@@ -1,13 +1,17 @@
 <?php
 
 use Filament\Facades\Filament;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\EditArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Pages\ViewArticle;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\User;
+use JeffersonGoncalves\KnowledgeBase\Enums\AssetKind;
 use JeffersonGoncalves\KnowledgeBase\Models\Article;
 use JeffersonGoncalves\KnowledgeBase\Models\Category;
 use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
+use JeffersonGoncalves\KnowledgeBase\Support\ArticleAssets;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -65,4 +69,18 @@ it('offers no public link for an internal article or without a configured URL', 
 
     Livewire::test(ViewArticle::class, ['record' => $this->article->getRouteKey()])
         ->assertActionHidden('viewOnSiteEn');
+});
+
+it('shows images at their current address, whatever address the content stored', function () {
+    Storage::fake((string) config('knowledge-base.attachments.disk'));
+    $assets = app(ArticleAssets::class);
+    $image = $assets->store($this->article, UploadedFile::fake()->image('fern.jpg'), AssetKind::Image);
+
+    $this->article->update([
+        'content' => '<p>How to care for a fern.</p><p><img data-id="'.$image->getAttribute('uuid').'" src="https://old.example.com/expired.jpg" alt="A fern"></p>',
+    ]);
+
+    Livewire::test(ViewArticle::class, ['record' => $this->article->getRouteKey()])
+        ->assertSeeHtml('src="'.e($assets->url($image)).'"')
+        ->assertDontSeeHtml('old.example.com');
 });
