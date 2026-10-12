@@ -47,7 +47,7 @@ final class ContentAttachments
 
     public static function disk(): string
     {
-        return (string) config('knowledge-base.attachments.disk', 'public');
+        return (string) config('knowledge-base.attachments.disk', 'local');
     }
 
     public static function directory(): string
@@ -62,11 +62,12 @@ final class ContentAttachments
      */
     public static function configure(RichEditor $editor, bool $allowUploads = true): RichEditor
     {
-        // Readers see these files on public pages, so they are always public.
+        // The core stores the files and builds every URL (served with the
+        // article's visibility), so Filament never links to the disk itself.
         $editor = $editor
             ->fileAttachmentsDisk(fn (): string => self::disk())
             ->fileAttachmentsDirectory(fn (): string => self::directory())
-            ->fileAttachmentsVisibility('public')
+            ->fileAttachmentsVisibility('private')
             ->fileAttachmentsAcceptedFileTypes(fn (): array => self::acceptedFileTypes())
             ->fileAttachmentsMaxSize(fn (): int => self::maxSize())
             ->saveUploadedFileAttachmentUsing(

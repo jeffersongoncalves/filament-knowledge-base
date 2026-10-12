@@ -5,10 +5,13 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Sche
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\ArticleResource;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
+use JeffersonGoncalves\KnowledgeBase\Models\Contracts\ArticleContract;
+use JeffersonGoncalves\KnowledgeBase\Support\ArticleAssets;
 
 class ArticleInfolist
 {
@@ -31,8 +34,11 @@ class ArticleInfolist
                         TextEntry::make('category.name')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.category')),
                         // Prose: headings, lists and images get their usual spacing.
+                        // Asset references point at their current URLs: the stored
+                        // ones may be another address or an expired signed URL.
                         TextEntry::make('content')
                             ->label(__('filament-knowledge-base::knowledge-base.admin.articles.form.content'))
+                            ->formatStateUsing(fn (?string $state, Model&ArticleContract $record): string => app(ArticleAssets::class)->resolve((string) $state, $record))
                             ->html()
                             ->prose()
                             ->columnSpanFull(),

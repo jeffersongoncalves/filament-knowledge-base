@@ -172,7 +172,7 @@ The **Assets** relation manager on the edit page shows the article's assets as a
 
 On the **create** page there is no article yet to belong to, so the tools are left out with the hint "Save the article first to add images and files."
 
-Run `php artisan storage:link` once so readers can see the files, or point `KB_ATTACHMENTS_DISK` at a cloud disk such as `s3`. See the [laravel-knowledge-base README](https://github.com/jeffersongoncalves/laravel-knowledge-base#article-assets) for the storage layout, allowed types and the `kb:prune-assets` command.
+The core stores the files on a private disk and serves them with the article's visibility, so images of internal articles show in the admin through signed URLs and never on a public address ([Serving assets](https://github.com/jeffersongoncalves/laravel-knowledge-base#serving-assets)). Core versions that link straight to the `public` disk need `php artisan storage:link` once. See the [laravel-knowledge-base README](https://github.com/jeffersongoncalves/laravel-knowledge-base#article-assets) for the storage layout, allowed types and the `kb:prune-assets` command.
 
 ### Viewing an article on your site
 
