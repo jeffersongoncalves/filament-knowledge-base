@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.3.1 - 2026-10-12
+
+### Fixed
+
+- **Article assets work on a private disk** (#64). Asset-manager thumbnails come from the core's `ArticleAssets::url()`, which gives a signed URL for an article that isn't public, instead of a disk URL.
+- **The admin view page and the Guest and User panels resolve article content before showing it.** Readers get each asset's current URL, and a deleted image is left out. Before this, a stored URL that had changed or expired showed as a broken image.
+- **Editor:** file attachments use `private` visibility. The core stores the files and builds every URL.
+
+Works with `jeffersongoncalves/laravel-knowledge-base` ^2.0. `storage:link` is only needed with core versions that link straight to the public disk.
+
+Thanks @rcoenen for #64!
+
 ## 3.3.0 - 2026-10-11
 
 ### Breaking changes
