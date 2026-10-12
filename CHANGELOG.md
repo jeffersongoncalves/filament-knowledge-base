@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.3.1 - 2026-10-12
+
+### Fixed
+
+- **Article assets work on a private disk** (#66). Asset-manager thumbnails come from the core's `ArticleAssets::url()`, which gives a signed URL for an article that isn't public, instead of a disk URL.
+- **The Guest and User panels resolve article content before showing it.** Readers get each asset's current URL, and a deleted image is left out.
+- **Editor:** file attachments use `private` visibility. The editor also refreshes asset URLs when the form loads, including Trix's own attachment data, so an image with an expired stored URL still shows.
+- Images are also recognised by the asset uuid in a URL the core serves, not only by their disk path, so they get their asset id on save.
+
+Works with `jeffersongoncalves/laravel-knowledge-base` ^2.0. `storage:link` is only needed with core versions that link straight to the public disk.
+
+Backport of #64 by @rcoenen to Filament 3. Thanks!
+
 ## 1.3.0 - 2026-10-11
 
 ### Breaking changes
