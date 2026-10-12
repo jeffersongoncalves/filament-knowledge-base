@@ -105,3 +105,32 @@ it('keeps the attach button off the create page and explains why', function () {
             && $field->getFileAttachmentsDiskName() === 'public'
             && $field->getFileAttachmentsDirectory() === 'knowledge-base');
 });
+
+it('gives an image its asset id when its URL is one the core serves', function () {
+    $asset = app(ArticleAssets::class)->store($this->article, UploadedFile::fake()->image('fern.jpg'), AssetKind::Image);
+    $served = 'http://localhost/knowledge-base/assets/'.$asset->getAttribute('uuid').'/fern.jpg?expires=1&amp;signature=abc';
+
+    expect(ContentAttachments::tagImages('<img src="'.$served.'">', $this->article))
+        ->toBe('<img data-id="'.$asset->getAttribute('uuid').'" src="'.$served.'">');
+});
+
+it('points images and Trix attachments at their current URL when the editor loads', function () {
+    $asset = app(ArticleAssets::class)->store($this->article, UploadedFile::fake()->image('fern.jpg'), AssetKind::Image);
+    $stale = 'https://old.example.com/knowledge-base/assets/'.$asset->getAttribute('uuid').'/fern.jpg?expires=1&signature=abc';
+    $current = app(ArticleAssets::class)->url($asset);
+    $attachment = e((string) json_encode(['contentType' => 'image/jpeg', 'url' => $stale, 'href' => $stale], JSON_UNESCAPED_SLASHES));
+
+    $this->article->update([
+        'content' => '<figure data-trix-attachment="'.$attachment.'"><img data-id="'.$asset->getAttribute('uuid').'" src="'.e($stale).'"></figure>'
+            .'<figure data-trix-attachment="{&quot;url&quot;:&quot;https://elsewhere.test/a.jpg&quot;}"><img src="https://elsewhere.test/a.jpg"></figure>',
+    ]);
+
+    $content = (string) Livewire::test(EditArticle::class, ['record' => $this->article->getRouteKey()])
+        ->get('data.translations.en.content');
+
+    expect($content)->not->toContain('old.example.com')
+        ->and($content)->toContain('src="'.e($current).'"')
+        ->and(html_entity_decode($content))->toContain('"url":"'.$current.'"')
+        ->and(html_entity_decode($content))->toContain('"href":"'.$current.'"')
+        ->and(html_entity_decode($content))->toContain('"url":"https://elsewhere.test/a.jpg"');
+});

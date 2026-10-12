@@ -169,7 +169,7 @@ On the **create** page there is no article yet to belong to, so the paperclip is
 
 Filament 3's editor keeps only an attachment's URL, so it has no "Insert image" / "Attach file" picker for reusing existing assets like the Filament 4 and 5 versions of this plugin.
 
-Run `php artisan storage:link` once so readers can see the files, or point `KB_ATTACHMENTS_DISK` at a cloud disk such as `s3`. See the [laravel-knowledge-base README](https://github.com/jeffersongoncalves/laravel-knowledge-base#article-assets) for the storage layout, allowed types and the `kb:prune-assets` command.
+The core stores the files on a private disk and serves them with the article's visibility, so images of internal articles show in the admin through signed URLs and never on a public address ([Serving assets](https://github.com/jeffersongoncalves/laravel-knowledge-base#serving-assets)). Core versions that link straight to the `public` disk need `php artisan storage:link` once. See the [laravel-knowledge-base README](https://github.com/jeffersongoncalves/laravel-knowledge-base#article-assets) for the storage layout, allowed types and the `kb:prune-assets` command.
 
 ### Viewing an article on your site
 
