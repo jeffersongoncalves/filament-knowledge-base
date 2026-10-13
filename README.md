@@ -11,6 +11,10 @@
 
 A Filament plugin for [jeffersongoncalves/laravel-knowledge-base](https://github.com/jeffersongoncalves/laravel-knowledge-base) that provides Admin, User, and Guest panels for complete knowledge base management.
 
+## See it in action
+
+[laravel-knowledge-base-demo](https://github.com/rcoenen/laravel-knowledge-base-demo) is a help center built with this plugin and [laravel-knowledge-base](https://github.com/jeffersongoncalves/laravel-knowledge-base), for Fernleaf, a made-up plant shop. Its admin is this plugin: a tab per language (English and German), images and files per article, staff-only articles and an FAQ collection. The public help pages are part of the demo app. It runs locally with Docker in a few minutes; screenshots are in its README.
+
 ## Compatibility
 
 | Version | Filament | PHP | Laravel | Tailwind |
