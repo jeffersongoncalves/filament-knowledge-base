@@ -8,6 +8,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
+use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 
 class CategoriesTable
 {
@@ -38,11 +40,8 @@ class CategoriesTable
                 TextColumn::make('visibility')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.categories.table.visibility'))
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'public' => 'success',
-                        'internal' => 'warning',
-                        default => 'gray',
-                    })
+                    ->color(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityColor($state))
+                    ->formatStateUsing(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityLabel($state))
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label(__('filament-knowledge-base::knowledge-base.common.created_at'))
