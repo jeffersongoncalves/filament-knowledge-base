@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'common' => [
         'created_at' => 'تاريخ الإنشاء',
         'updated_at' => 'تاريخ التحديث',
@@ -9,6 +10,7 @@ return [
             'internal' => 'داخلي',
         ],
     ],
+
     'admin' => [
         'categories' => [
             'navigation_label' => 'الفئات',
@@ -39,6 +41,18 @@ return [
             'navigation_label' => 'المقالات',
             'model_label' => 'مقالة',
             'plural_model_label' => 'المقالات',
+            'actions' => [
+                'view_on_site' => 'عرض على الموقع',
+            ],
+            'details' => [
+                'heading' => 'حول هذه المقالة',
+                'description' => 'الحالة والظهور والإحصاءات، والصور والملفات، والإصدارات السابقة، وملاحظات القراء، والمقالات ذات الصلة.',
+                'details_tab' => 'التفاصيل',
+            ],
+            'tools' => [
+                'heading' => 'الملفات والسجل والملاحظات',
+                'description' => 'صور هذه المقالة وملفاتها، والإصدارات السابقة، وملاحظات القراء، والمقالات ذات الصلة.',
+            ],
             'form' => [
                 'section_content' => 'المحتوى',
                 'section_settings' => 'الإعدادات',
@@ -86,6 +100,102 @@ return [
                 ],
             ],
         ],
+        'collections' => [
+            'navigation_label' => 'المجموعات',
+            'model_label' => 'مجموعة',
+            'plural_model_label' => 'المجموعات',
+            'form' => [
+                'section_details' => 'تفاصيل المجموعة',
+                'section_settings' => 'الإعدادات',
+                'name' => 'الاسم',
+                'slug' => 'المعرّف (Slug)',
+                'description' => 'الوصف',
+                'is_active' => 'نشطة',
+                'sort_order' => 'ترتيب الفرز',
+                'articles_section' => 'المقالات',
+                'articles_helper' => 'أضف المقالات بالترتيب الذي يجب أن يراها به العملاء؛ اسحب لإعادة الترتيب.',
+                'article' => 'مقالة',
+                'add_article' => 'إضافة مقالة',
+            ],
+            'table' => [
+                'name' => 'الاسم',
+                'slug' => 'المعرّف (Slug)',
+                'articles_count' => 'المقالات',
+                'is_active' => 'نشطة',
+                'sort_order' => 'ترتيب الفرز',
+            ],
+            'warnings' => [
+                'not_published' => 'لا يمكن للعملاء رؤية هذه المقالة: إنها غير منشورة.',
+                'internal_article' => 'لا يمكن للعملاء رؤية هذه المقالة: إنها داخلية.',
+                'internal_category' => 'لا يمكن للعملاء رؤية هذه المقالة: تصنيفها داخلي.',
+                'inactive_category' => 'لا يمكن للعملاء رؤية هذه المقالة: تصنيفها غير نشط.',
+                'deleted_category' => 'لا يمكن للعملاء رؤية هذه المقالة: تصنيفها محذوف.',
+                'broken_category_tree' => 'لا يمكن للعملاء رؤية هذه المقالة: شجرة تصنيفاتها تالفة.',
+                'not_visible' => 'لا يمكن للعملاء رؤية هذه المقالة.',
+            ],
+        ],
+        'assets' => [
+            'insert_image' => [
+                'label' => 'إدراج صورة',
+                'modal' => [
+                    'heading' => 'إدراج صورة',
+                    'tab_existing' => 'في هذه المقالة (:count)',
+                    'tab_upload' => 'رفع صورة جديدة',
+                    'existing' => 'الصور في هذه المقالة',
+                    'existing_help' => 'الصور المشتركة وصور هذه اللغة. اختر واحدة ثم انقر على إدراج.',
+                    'submit' => 'إدراج',
+                    'file' => 'أو ارفع صورة جديدة',
+                    'file_only' => 'رفع صورة',
+                    'alt' => 'النص البديل',
+                    'alt_help' => 'يصف الصورة بهذه اللغة لمن لا يستطيع رؤيتها.',
+                ],
+            ],
+            'attach_file' => [
+                'label' => 'إرفاق ملف',
+                'modal' => [
+                    'heading' => 'إرفاق ملف',
+                    'tab_existing' => 'في هذه المقالة (:count)',
+                    'tab_upload' => 'رفع ملف جديد',
+                    'existing' => 'الملفات في هذه المقالة',
+                    'existing_help' => 'الملفات المشتركة وملفات هذه اللغة. اختر واحدًا ثم انقر على إرفاق.',
+                    'submit' => 'إرفاق',
+                    'file' => 'أو ارفع ملفًا جديدًا',
+                    'file_only' => 'رفع ملف',
+                ],
+            ],
+            'scope' => [
+                'shared' => 'مشترك',
+            ],
+            'usage' => [
+                'used_in' => 'مستخدم في :languages',
+                'unused' => 'غير مستخدم',
+            ],
+            'delete' => [
+                'used' => 'لا يزال هذا المورد مستخدمًا في :languages.',
+                'unused' => 'هذا المورد غير مستخدم في أي مكان.',
+            ],
+            'save_first' => [
+                'heading' => 'أضف الصور والملفات بعد الحفظ',
+                'description' => 'احفظ المقالة أولًا لإضافة الصور والملفات.',
+            ],
+            'broken' => [
+                'heading' => 'يشير المحتوى إلى موارد مفقودة',
+                'message' => 'يشير جزء من المحتوى إلى صور أو ملفات لم تعد موجودة (:details). احذفها أو استبدلها لإزالة هذا التحذير.',
+                'images' => 'عدد الصور المحذوفة: :count',
+                'badge' => 'مورد مفقود',
+            ],
+            'manager' => [
+                'title' => 'الموارد',
+                'preview' => 'معاينة',
+                'name' => 'الاسم',
+                'size' => 'الحجم',
+                'scope' => 'النطاق',
+                'usage' => 'الاستخدام',
+                'upload' => 'رفع',
+                'file' => 'الملف',
+                'kind' => 'النوع',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'إجمالي المقالات',
@@ -96,7 +206,24 @@ return [
                 'helpful_rate' => 'نسبة الإفادة',
             ],
         ],
+        'localization' => [
+            'language' => 'اللغة',
+            'language_label' => ':language',
+            'version_status' => 'حالة الإصدار',
+            'version_status_helper' => 'يتبع الإصدار المرجعي حالة المقالة؛ وتُنشر كل لغة أخرى على حدة.',
+            'flag_other_locales_outdated' => 'وضع علامة "قديمة" على اللغات الأخرى',
+            'flag_other_locales_outdated_helper' => 'حدّد هذا الخيار إذا كان هذا التغيير يتطلب إعادة ترجمة اللغات الأخرى.',
+            'outdated_filter' => 'قديمة في اللغة',
+            'mark_up_to_date' => 'وضع علامة "محدّثة"',
+            'state' => [
+                'missing' => 'مفقودة',
+                'draft' => 'مسودة',
+                'published' => 'منشورة',
+                'outdated' => 'قديمة',
+            ],
+        ],
     ],
+
     'user' => [
         'articles' => [
             'navigation_label' => 'المقالات',
@@ -123,6 +250,7 @@ return [
             ],
         ],
     ],
+
     'guest' => [
         'articles' => [
             'navigation_label' => 'المقالات',
@@ -144,4 +272,5 @@ return [
             ],
         ],
     ],
+
 ];
