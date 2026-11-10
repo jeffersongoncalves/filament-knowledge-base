@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.4.0 - 2026-11-09
+
+### Added
+
+- **Signed-in customers visibility** (#81). Articles and categories can be set to `customers` ("Signed-in customers"). The User panel now reads as signed-in customers and shows `public` and `customers` content in its article list and page, category menu, search and popular-articles widget; the Guest panel stays public only. The category form and filter offer every visibility, collection notices say when an article is for signed-in customers only instead of calling it internal, and the badge is `info`.
+- **Drag-to-reorder articles inside a category** (#80). Filter the admin article list to one category to see the order customers get (`sort_order`, then newest first) and drag articles into place. Without a category filter the list stays newest first and cannot be reordered.
+- **Configurable slug prefix** (#77). `slug_prefix` in `config/filament-knowledge-base.php` (null by default, so existing URLs stay the same) prefixes the URLs and route names of every resource of the plugin: `'knowledge-base'` gives `/admin/knowledge-base/categories`. Use it when another plugin in the same panel, such as `filament-help-desk`, also has a `categories` resource.
+
+### Fixed
+
+- **Every language is complete** (#75). The 17 languages that missed the collection, asset and localization texts now have every key, so those screens no longer fall back to English. The new strings are machine translated; corrections from native speakers are welcome. A parity test keeps every language in step with English.
+- **The category list shows the translated visibility label** (#76) instead of the raw value.
+
+### Upgrading
+
+Requires `jeffersongoncalves/laravel-knowledge-base` ^2.2. Publish and run its new `add_kb_article_sort_order` migration.
+
+Thanks @rcoenen for #75, #76 and #77!
+
 ## 2.3.1 - 2026-10-12
 
 ### Fixed
