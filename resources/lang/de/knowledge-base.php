@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'common' => [
         'created_at' => 'Erstellt am',
         'updated_at' => 'Aktualisiert am',
@@ -9,6 +10,7 @@ return [
             'internal' => 'Intern',
         ],
     ],
+
     'admin' => [
         'categories' => [
             'navigation_label' => 'Kategorien',
@@ -98,6 +100,40 @@ return [
                 ],
             ],
         ],
+        'collections' => [
+            'navigation_label' => 'Sammlungen',
+            'model_label' => 'Sammlung',
+            'plural_model_label' => 'Sammlungen',
+            'form' => [
+                'section_details' => 'Details der Sammlung',
+                'section_settings' => 'Einstellungen',
+                'name' => 'Name',
+                'slug' => 'Slug',
+                'description' => 'Beschreibung',
+                'is_active' => 'Aktiv',
+                'sort_order' => 'Sortierung',
+                'articles_section' => 'Artikel',
+                'articles_helper' => 'Füge Artikel in der Reihenfolge hinzu, in der Kunden sie sehen sollen; zum Umsortieren ziehen.',
+                'article' => 'Artikel',
+                'add_article' => 'Artikel hinzufügen',
+            ],
+            'table' => [
+                'name' => 'Name',
+                'slug' => 'Slug',
+                'articles_count' => 'Artikel',
+                'is_active' => 'Aktiv',
+                'sort_order' => 'Sortierung',
+            ],
+            'warnings' => [
+                'not_published' => 'Kunden können diesen Artikel nicht sehen: er ist nicht veröffentlicht.',
+                'internal_article' => 'Kunden können diesen Artikel nicht sehen: er ist intern.',
+                'internal_category' => 'Kunden können diesen Artikel nicht sehen: seine Kategorie ist intern.',
+                'inactive_category' => 'Kunden können diesen Artikel nicht sehen: seine Kategorie ist inaktiv.',
+                'deleted_category' => 'Kunden können diesen Artikel nicht sehen: seine Kategorie wurde gelöscht.',
+                'broken_category_tree' => 'Kunden können diesen Artikel nicht sehen: sein Kategoriebaum ist beschädigt.',
+                'not_visible' => 'Kunden können diesen Artikel nicht sehen.',
+            ],
+        ],
         'assets' => [
             'insert_image' => [
                 'label' => 'Bild einfügen',
@@ -170,7 +206,24 @@ return [
                 'helpful_rate' => 'Hilfreich-Quote',
             ],
         ],
+        'localization' => [
+            'language' => 'Sprache',
+            'language_label' => ':language',
+            'version_status' => 'Status der Version',
+            'version_status_helper' => 'Die maßgebliche Version folgt dem Artikelstatus; jede andere Sprache wird separat veröffentlicht.',
+            'flag_other_locales_outdated' => 'Andere Sprachen als veraltet markieren',
+            'flag_other_locales_outdated_helper' => 'Ankreuzen, wenn die anderen Sprachen nach dieser Änderung neu übersetzt werden müssen.',
+            'outdated_filter' => 'Veraltet in Sprache',
+            'mark_up_to_date' => 'Als aktuell markieren',
+            'state' => [
+                'missing' => 'Fehlt',
+                'draft' => 'Entwurf',
+                'published' => 'Veröffentlicht',
+                'outdated' => 'Veraltet',
+            ],
+        ],
     ],
+
     'user' => [
         'articles' => [
             'navigation_label' => 'Artikel',
@@ -197,6 +250,7 @@ return [
             ],
         ],
     ],
+
     'guest' => [
         'articles' => [
             'navigation_label' => 'Artikel',
@@ -218,4 +272,5 @@ return [
             ],
         ],
     ],
+
 ];
