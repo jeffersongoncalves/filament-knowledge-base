@@ -9,11 +9,14 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Categories\Schemas\CategoryForm;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Categories\Tables\CategoriesTable;
+use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasSlugPrefix;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class CategoryResource extends Resource
 {
+    use HasSlugPrefix;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolder;
 
     protected static ?int $navigationSort = 1;

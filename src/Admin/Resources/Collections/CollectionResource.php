@@ -9,11 +9,14 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Collections\Schemas\CollectionForm;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Collections\Tables\CollectionsTable;
+use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasSlugPrefix;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class CollectionResource extends Resource
 {
+    use HasSlugPrefix;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?int $navigationSort = 2;
