@@ -150,6 +150,16 @@ Each plugin supports fluent feature toggles:
 
 Features can also be toggled globally in `config/filament-knowledge-base.php`.
 
+## Resource URLs
+
+The resources use Filament's default slugs (`/admin/categories`, `/admin/articles`, ...). If another plugin in the same panel also has a resource with one of those names, for example `filament-help-desk`'s categories, set a prefix in `config/filament-knowledge-base.php`:
+
+```php
+'slug_prefix' => 'knowledge-base', // /admin/knowledge-base/categories
+```
+
+The prefix applies to every resource of this plugin, in all panels.
+
 ### Plugin Comparison
 
 | Feature | Admin | User | Guest |
