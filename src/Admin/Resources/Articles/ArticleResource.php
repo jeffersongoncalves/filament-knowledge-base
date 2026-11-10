@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\ArticleForm;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Schemas\ArticleInfolist;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Tables\ArticlesTable;
+use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasSlugPrefix;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
 use JeffersonGoncalves\KnowledgeBase\Enums\ArticleStatus;
@@ -22,6 +23,8 @@ use JeffersonGoncalves\KnowledgeBase\Support\Visibility;
 
 class ArticleResource extends Resource
 {
+    use HasSlugPrefix;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static ?int $navigationSort = 0;

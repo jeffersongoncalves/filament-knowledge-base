@@ -8,6 +8,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasSlugPrefix;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseUserPlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\PublicVisibility;
 use JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\Articles\Schemas\ArticleInfolist;
@@ -16,6 +17,8 @@ use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class ArticleResource extends Resource
 {
+    use HasSlugPrefix;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static ?int $navigationSort = 0;
