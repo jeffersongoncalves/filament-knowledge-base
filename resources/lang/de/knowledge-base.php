@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'common' => [
         'created_at' => 'Erstellt am',
         'updated_at' => 'Aktualisiert am',
@@ -9,6 +10,7 @@ return [
             'internal' => 'Intern',
         ],
     ],
+
     'admin' => [
         'categories' => [
             'navigation_label' => 'Kategorien',
@@ -39,6 +41,9 @@ return [
             'navigation_label' => 'Artikel',
             'model_label' => 'Artikel',
             'plural_model_label' => 'Artikel',
+            'actions' => [
+                'view_on_site' => 'Auf der Website ansehen',
+            ],
             'form' => [
                 'section_content' => 'Inhalt',
                 'section_settings' => 'Einstellungen',
@@ -86,6 +91,74 @@ return [
                 ],
             ],
         ],
+        'collections' => [
+            'navigation_label' => 'Sammlungen',
+            'model_label' => 'Sammlung',
+            'plural_model_label' => 'Sammlungen',
+            'form' => [
+                'section_details' => 'Details der Sammlung',
+                'section_settings' => 'Einstellungen',
+                'name' => 'Name',
+                'slug' => 'Slug',
+                'description' => 'Beschreibung',
+                'is_active' => 'Aktiv',
+                'sort_order' => 'Sortierung',
+                'articles_section' => 'Artikel',
+                'articles_helper' => 'Füge Artikel in der Reihenfolge hinzu, in der Kunden sie sehen sollen; zum Umsortieren ziehen.',
+                'article' => 'Artikel',
+                'add_article' => 'Artikel hinzufügen',
+            ],
+            'table' => [
+                'name' => 'Name',
+                'slug' => 'Slug',
+                'articles_count' => 'Artikel',
+                'is_active' => 'Aktiv',
+                'sort_order' => 'Sortierung',
+            ],
+            'warnings' => [
+                'not_published' => 'Kunden können diesen Artikel nicht sehen: er ist nicht veröffentlicht.',
+                'internal_article' => 'Kunden können diesen Artikel nicht sehen: er ist intern.',
+                'internal_category' => 'Kunden können diesen Artikel nicht sehen: seine Kategorie ist intern.',
+                'inactive_category' => 'Kunden können diesen Artikel nicht sehen: seine Kategorie ist inaktiv.',
+                'deleted_category' => 'Kunden können diesen Artikel nicht sehen: seine Kategorie wurde gelöscht.',
+                'broken_category_tree' => 'Kunden können diesen Artikel nicht sehen: sein Kategoriebaum ist beschädigt.',
+                'not_visible' => 'Kunden können diesen Artikel nicht sehen.',
+            ],
+        ],
+        'assets' => [
+            'scope' => [
+                'shared' => 'Geteilt',
+            ],
+            'usage' => [
+                'used_in' => 'Verwendet in :languages',
+                'unused' => 'Nicht verwendet',
+            ],
+            'delete' => [
+                'used' => 'Diese Datei wird noch in :languages verwendet.',
+                'unused' => 'Diese Datei wird nirgends verwendet.',
+            ],
+            'save_first' => [
+                'heading' => 'Bilder und Dateien nach dem Speichern hinzufügen',
+                'description' => 'Speichere den Artikel zuerst, um Bilder und Dateien hinzuzufügen.',
+            ],
+            'broken' => [
+                'heading' => 'Inhalt verweist auf fehlende Dateien',
+                'message' => 'Einige Inhalte verweisen auf Bilder oder Dateien, die es nicht mehr gibt (:details). Entferne oder ersetze sie, um diese Warnung zu entfernen.',
+                'images' => '{1} 1 gelöschtes Bild|[2,*] :count gelöschte Bilder',
+                'badge' => 'Fehlende Datei',
+            ],
+            'manager' => [
+                'title' => 'Dateien',
+                'preview' => 'Vorschau',
+                'name' => 'Name',
+                'size' => 'Größe',
+                'scope' => 'Geltungsbereich',
+                'usage' => 'Verwendet',
+                'upload' => 'Hochladen',
+                'file' => 'Datei',
+                'kind' => 'Art',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Artikel gesamt',
@@ -96,7 +169,24 @@ return [
                 'helpful_rate' => 'Hilfreich-Quote',
             ],
         ],
+        'localization' => [
+            'language' => 'Sprache',
+            'language_label' => ':language',
+            'version_status' => 'Status der Version',
+            'version_status_helper' => 'Die maßgebliche Version folgt dem Artikelstatus; jede andere Sprache wird separat veröffentlicht.',
+            'flag_other_locales_outdated' => 'Andere Sprachen als veraltet markieren',
+            'flag_other_locales_outdated_helper' => 'Ankreuzen, wenn die anderen Sprachen nach dieser Änderung neu übersetzt werden müssen.',
+            'outdated_filter' => 'Veraltet in Sprache',
+            'mark_up_to_date' => 'Als aktuell markieren',
+            'state' => [
+                'missing' => 'Fehlt',
+                'draft' => 'Entwurf',
+                'published' => 'Veröffentlicht',
+                'outdated' => 'Veraltet',
+            ],
+        ],
     ],
+
     'user' => [
         'articles' => [
             'navigation_label' => 'Artikel',
@@ -123,6 +213,7 @@ return [
             ],
         ],
     ],
+
     'guest' => [
         'articles' => [
             'navigation_label' => 'Artikel',
@@ -144,4 +235,5 @@ return [
             ],
         ],
     ],
+
 ];

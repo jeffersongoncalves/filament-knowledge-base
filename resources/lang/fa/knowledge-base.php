@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'common' => [
         'created_at' => 'تاریخ ایجاد',
         'updated_at' => 'تاریخ به‌روزرسانی',
@@ -9,6 +10,7 @@ return [
             'internal' => 'داخلی',
         ],
     ],
+
     'admin' => [
         'categories' => [
             'navigation_label' => 'دسته‌ها',
@@ -39,6 +41,9 @@ return [
             'navigation_label' => 'مقالات',
             'model_label' => 'مقاله',
             'plural_model_label' => 'مقالات',
+            'actions' => [
+                'view_on_site' => 'مشاهده در سایت',
+            ],
             'form' => [
                 'section_content' => 'محتوا',
                 'section_settings' => 'تنظیمات',
@@ -86,6 +91,74 @@ return [
                 ],
             ],
         ],
+        'collections' => [
+            'navigation_label' => 'مجموعه‌ها',
+            'model_label' => 'مجموعه',
+            'plural_model_label' => 'مجموعه‌ها',
+            'form' => [
+                'section_details' => 'جزئیات مجموعه',
+                'section_settings' => 'تنظیمات',
+                'name' => 'نام',
+                'slug' => 'نامک',
+                'description' => 'توضیحات',
+                'is_active' => 'فعال',
+                'sort_order' => 'ترتیب',
+                'articles_section' => 'مقالات',
+                'articles_helper' => 'مقالات را به ترتیبی که مشتریان باید ببینند اضافه کنید؛ برای تغییر ترتیب بکشید.',
+                'article' => 'مقاله',
+                'add_article' => 'افزودن مقاله',
+            ],
+            'table' => [
+                'name' => 'نام',
+                'slug' => 'نامک',
+                'articles_count' => 'مقالات',
+                'is_active' => 'فعال',
+                'sort_order' => 'ترتیب',
+            ],
+            'warnings' => [
+                'not_published' => 'مشتریان نمی‌توانند این مقاله را ببینند: منتشر نشده است.',
+                'internal_article' => 'مشتریان نمی‌توانند این مقاله را ببینند: داخلی است.',
+                'internal_category' => 'مشتریان نمی‌توانند این مقاله را ببینند: دسته‌بندی آن داخلی است.',
+                'inactive_category' => 'مشتریان نمی‌توانند این مقاله را ببینند: دسته‌بندی آن غیرفعال است.',
+                'deleted_category' => 'مشتریان نمی‌توانند این مقاله را ببینند: دسته‌بندی آن حذف شده است.',
+                'broken_category_tree' => 'مشتریان نمی‌توانند این مقاله را ببینند: درخت دسته‌بندی آن خراب است.',
+                'not_visible' => 'مشتریان نمی‌توانند این مقاله را ببینند.',
+            ],
+        ],
+        'assets' => [
+            'scope' => [
+                'shared' => 'مشترک',
+            ],
+            'usage' => [
+                'used_in' => 'استفاده‌شده در :languages',
+                'unused' => 'استفاده‌نشده',
+            ],
+            'delete' => [
+                'used' => 'این منبع هنوز در :languages استفاده می‌شود.',
+                'unused' => 'این منبع در هیچ جا استفاده نمی‌شود.',
+            ],
+            'save_first' => [
+                'heading' => 'تصاویر و فایل‌ها را پس از ذخیره اضافه کنید',
+                'description' => 'برای افزودن تصاویر و فایل‌ها، ابتدا مقاله را ذخیره کنید.',
+            ],
+            'broken' => [
+                'heading' => 'محتوا به منابع ناموجود ارجاع می‌دهد',
+                'message' => 'بخشی از محتوا به تصاویر یا فایل‌هایی ارجاع می‌دهد که دیگر وجود ندارند (:details). برای رفع این هشدار، آن‌ها را حذف یا جایگزین کنید.',
+                'images' => ':count تصویر حذف‌شده',
+                'badge' => 'منبع ناموجود',
+            ],
+            'manager' => [
+                'title' => 'منابع',
+                'preview' => 'پیش‌نمایش',
+                'name' => 'نام',
+                'size' => 'اندازه',
+                'scope' => 'دامنه',
+                'usage' => 'استفاده',
+                'upload' => 'بارگذاری',
+                'file' => 'فایل',
+                'kind' => 'نوع',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'کل مقالات',
@@ -96,7 +169,24 @@ return [
                 'helpful_rate' => 'نرخ مفید بودن',
             ],
         ],
+        'localization' => [
+            'language' => 'زبان',
+            'language_label' => ':language',
+            'version_status' => 'وضعیت نسخه',
+            'version_status_helper' => 'نسخه مرجع از وضعیت مقاله پیروی می‌کند؛ هر زبان دیگر جداگانه منتشر می‌شود.',
+            'flag_other_locales_outdated' => 'علامت‌گذاری زبان‌های دیگر به‌عنوان قدیمی',
+            'flag_other_locales_outdated_helper' => 'اگر این تغییر نیاز به ترجمه دوباره زبان‌های دیگر دارد، این گزینه را علامت بزنید.',
+            'outdated_filter' => 'قدیمی در زبان',
+            'mark_up_to_date' => 'علامت‌گذاری به‌عنوان به‌روز',
+            'state' => [
+                'missing' => 'ناموجود',
+                'draft' => 'پیش‌نویس',
+                'published' => 'منتشرشده',
+                'outdated' => 'قدیمی',
+            ],
+        ],
     ],
+
     'user' => [
         'articles' => [
             'navigation_label' => 'مقالات',
@@ -123,6 +213,7 @@ return [
             ],
         ],
     ],
+
     'guest' => [
         'articles' => [
             'navigation_label' => 'مقالات',
@@ -144,4 +235,5 @@ return [
             ],
         ],
     ],
+
 ];
