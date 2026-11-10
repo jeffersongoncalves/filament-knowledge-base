@@ -132,6 +132,8 @@ return [
                 'deleted_category' => 'Klienci nie widzą tego artykułu: jego kategoria została usunięta.',
                 'broken_category_tree' => 'Klienci nie widzą tego artykułu: jego drzewo kategorii jest uszkodzone.',
                 'not_visible' => 'Klienci nie widzą tego artykułu.',
+                'customers_article' => 'Tylko zalogowani klienci widzą ten artykuł.',
+                'customers_category' => 'Tylko zalogowani klienci widzą ten artykuł: jego kategoria jest dla zalogowanych klientów.',
             ],
         ],
         'assets' => [

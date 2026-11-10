@@ -44,7 +44,7 @@ class KnowledgeBasePage extends Page
 
     public function getCategories(): Collection
     {
-        return PublicVisibility::rootCategories();
+        return PublicVisibility::rootCategories(ArticleVisibility::Customers);
     }
 
     public function getSearchResults(): Collection
@@ -54,7 +54,7 @@ class KnowledgeBasePage extends Page
         }
 
         return app(KnowledgeBaseService::class)->search($this->search, [
-            'visibility' => ArticleVisibility::Public->value,
+            'audience' => ArticleVisibility::Customers,
         ]);
     }
 }
