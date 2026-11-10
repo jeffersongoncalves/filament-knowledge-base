@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\CategoryResource\Pages;
+use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasSlugPrefix;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
@@ -18,6 +19,8 @@ use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class CategoryResource extends Resource
 {
+    use HasSlugPrefix;
+
     protected static ?string $navigationIcon = 'heroicon-o-folder';
 
     protected static ?int $navigationSort = 1;

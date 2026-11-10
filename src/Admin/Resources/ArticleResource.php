@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\Pages;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\ArticleResource\RelationManagers;
+use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasSlugPrefix;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\BrokenReferences;
@@ -35,6 +36,8 @@ use JeffersonGoncalves\KnowledgeBase\Support\Visibility;
 
 class ArticleResource extends Resource
 {
+    use HasSlugPrefix;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?int $navigationSort = 0;

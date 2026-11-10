@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\CollectionResource\Pages;
+use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasSlugPrefix;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\CustomerVisibility;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
@@ -17,6 +18,8 @@ use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class CollectionResource extends Resource
 {
+    use HasSlugPrefix;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?int $navigationSort = 2;
