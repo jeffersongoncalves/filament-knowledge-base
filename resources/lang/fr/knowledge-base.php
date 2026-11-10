@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'common' => [
         'created_at' => 'Créé le',
         'updated_at' => 'Mis à jour le',
@@ -9,6 +10,7 @@ return [
             'internal' => 'Interne',
         ],
     ],
+
     'admin' => [
         'categories' => [
             'navigation_label' => 'Catégories',
@@ -39,6 +41,18 @@ return [
             'navigation_label' => 'Articles',
             'model_label' => 'Article',
             'plural_model_label' => 'Articles',
+            'actions' => [
+                'view_on_site' => 'Voir sur le site',
+            ],
+            'details' => [
+                'heading' => 'À propos de cet article',
+                'description' => 'Statut, visibilité et statistiques, images et fichiers, versions précédentes, avis des lecteurs et articles liés.',
+                'details_tab' => 'Détails',
+            ],
+            'tools' => [
+                'heading' => 'Fichiers, historique et avis',
+                'description' => 'Images et fichiers de cet article, versions précédentes, avis des lecteurs et articles liés.',
+            ],
             'form' => [
                 'section_content' => 'Contenu',
                 'section_settings' => 'Paramètres',
@@ -86,6 +100,102 @@ return [
                 ],
             ],
         ],
+        'collections' => [
+            'navigation_label' => 'Collections',
+            'model_label' => 'Collection',
+            'plural_model_label' => 'Collections',
+            'form' => [
+                'section_details' => 'Détails de la collection',
+                'section_settings' => 'Paramètres',
+                'name' => 'Nom',
+                'slug' => 'Slug',
+                'description' => 'Description',
+                'is_active' => 'Active',
+                'sort_order' => 'Ordre de tri',
+                'articles_section' => 'Articles',
+                'articles_helper' => 'Ajoutez les articles dans l\'ordre où les clients doivent les voir ; faites glisser pour les réordonner.',
+                'article' => 'Article',
+                'add_article' => 'Ajouter un article',
+            ],
+            'table' => [
+                'name' => 'Nom',
+                'slug' => 'Slug',
+                'articles_count' => 'Articles',
+                'is_active' => 'Active',
+                'sort_order' => 'Ordre de tri',
+            ],
+            'warnings' => [
+                'not_published' => 'Les clients ne peuvent pas voir cet article : il n\'est pas publié.',
+                'internal_article' => 'Les clients ne peuvent pas voir cet article : il est interne.',
+                'internal_category' => 'Les clients ne peuvent pas voir cet article : sa catégorie est interne.',
+                'inactive_category' => 'Les clients ne peuvent pas voir cet article : sa catégorie est inactive.',
+                'deleted_category' => 'Les clients ne peuvent pas voir cet article : sa catégorie a été supprimée.',
+                'broken_category_tree' => 'Les clients ne peuvent pas voir cet article : son arborescence de catégories est rompue.',
+                'not_visible' => 'Les clients ne peuvent pas voir cet article.',
+            ],
+        ],
+        'assets' => [
+            'insert_image' => [
+                'label' => 'Insérer une image',
+                'modal' => [
+                    'heading' => 'Insérer une image',
+                    'tab_existing' => 'Dans cet article (:count)',
+                    'tab_upload' => 'Téléverser',
+                    'existing' => 'Images de cet article',
+                    'existing_help' => 'Images partagées et images de cette langue. Choisissez-en une, puis cliquez sur Insérer.',
+                    'submit' => 'Insérer',
+                    'file' => 'Ou téléversez une nouvelle image',
+                    'file_only' => 'Téléverser une image',
+                    'alt' => 'Texte alternatif',
+                    'alt_help' => 'Décrit l\'image, dans cette langue, pour les personnes qui ne peuvent pas la voir.',
+                ],
+            ],
+            'attach_file' => [
+                'label' => 'Joindre un fichier',
+                'modal' => [
+                    'heading' => 'Joindre un fichier',
+                    'tab_existing' => 'Dans cet article (:count)',
+                    'tab_upload' => 'Téléverser',
+                    'existing' => 'Fichiers de cet article',
+                    'existing_help' => 'Fichiers partagés et fichiers de cette langue. Choisissez-en un, puis cliquez sur Joindre.',
+                    'submit' => 'Joindre',
+                    'file' => 'Ou téléversez un nouveau fichier',
+                    'file_only' => 'Téléverser un fichier',
+                ],
+            ],
+            'scope' => [
+                'shared' => 'Partagé',
+            ],
+            'usage' => [
+                'used_in' => 'Utilisé en :languages',
+                'unused' => 'Inutilisé',
+            ],
+            'delete' => [
+                'used' => 'Cette ressource est encore utilisée en :languages.',
+                'unused' => 'Cette ressource n\'est utilisée nulle part.',
+            ],
+            'save_first' => [
+                'heading' => 'Ajoutez des images et des fichiers après l\'enregistrement',
+                'description' => 'Enregistrez d\'abord l\'article pour ajouter des images et des fichiers.',
+            ],
+            'broken' => [
+                'heading' => 'Le contenu fait référence à des ressources manquantes',
+                'message' => 'Une partie du contenu fait référence à des images ou des fichiers qui n\'existent plus (:details). Supprimez-les ou remplacez-les pour faire disparaître cet avertissement.',
+                'images' => '{1} 1 image supprimée|[2,*] :count images supprimées',
+                'badge' => 'Ressource manquante',
+            ],
+            'manager' => [
+                'title' => 'Ressources',
+                'preview' => 'Aperçu',
+                'name' => 'Nom',
+                'size' => 'Taille',
+                'scope' => 'Portée',
+                'usage' => 'Utilisation',
+                'upload' => 'Téléverser',
+                'file' => 'Fichier',
+                'kind' => 'Type',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Total des articles',
@@ -96,7 +206,24 @@ return [
                 'helpful_rate' => 'Taux d\'utilité',
             ],
         ],
+        'localization' => [
+            'language' => 'Langue',
+            'language_label' => ':language',
+            'version_status' => 'Statut de la version',
+            'version_status_helper' => 'La version de référence suit le statut de l\'article ; chacune des autres langues est publiée séparément.',
+            'flag_other_locales_outdated' => 'Marquer les autres langues comme obsolètes',
+            'flag_other_locales_outdated_helper' => 'Cochez si cette modification oblige à retraduire les autres langues.',
+            'outdated_filter' => 'Obsolète dans la langue',
+            'mark_up_to_date' => 'Marquer comme à jour',
+            'state' => [
+                'missing' => 'Manquante',
+                'draft' => 'Brouillon',
+                'published' => 'Publiée',
+                'outdated' => 'Obsolète',
+            ],
+        ],
     ],
+
     'user' => [
         'articles' => [
             'navigation_label' => 'Articles',
@@ -123,6 +250,7 @@ return [
             ],
         ],
     ],
+
     'guest' => [
         'articles' => [
             'navigation_label' => 'Articles',
@@ -144,4 +272,5 @@ return [
             ],
         ],
     ],
+
 ];
