@@ -10,7 +10,9 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\CategoryResource\Pages;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBasePlugin;
+use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
+use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 use JeffersonGoncalves\KnowledgeBase\Support\Locales;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
@@ -216,11 +218,8 @@ class CategoryResource extends Resource
                 Tables\Columns\TextColumn::make('visibility')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.categories.table.visibility'))
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'public' => 'success',
-                        'internal' => 'warning',
-                        default => 'gray',
-                    })
+                    ->color(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityColor($state))
+                    ->formatStateUsing(fn (ArticleVisibility|string|null $state): string => ArticleBadge::visibilityLabel($state))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('filament-knowledge-base::knowledge-base.common.created_at'))
