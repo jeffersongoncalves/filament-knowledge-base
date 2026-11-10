@@ -31,6 +31,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Slug Prefix
+    |--------------------------------------------------------------------------
+    |
+    | Prefix for the URLs and route names of this plugin's resources, e.g.
+    | 'knowledge-base' gives /admin/knowledge-base/categories. Set it when
+    | another plugin in the same panel also has a resource called
+    | categories or articles. Null keeps Filament's default slugs.
+    |
+    */
+
+    'slug_prefix' => null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Feature Toggles
     |--------------------------------------------------------------------------
     |

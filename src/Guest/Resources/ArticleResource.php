@@ -8,6 +8,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use JeffersonGoncalves\FilamentKnowledgeBase\Concerns\HasSlugPrefix;
 use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Resources\ArticleResource\Pages;
 use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseGuestPlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
@@ -16,6 +17,8 @@ use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class ArticleResource extends Resource
 {
+    use HasSlugPrefix;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?int $navigationSort = 0;
