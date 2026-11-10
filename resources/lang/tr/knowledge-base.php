@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'common' => [
         'created_at' => 'Oluşturulma tarihi',
         'updated_at' => 'Güncellenme tarihi',
@@ -9,6 +10,7 @@ return [
             'internal' => 'Dahili',
         ],
     ],
+
     'admin' => [
         'categories' => [
             'navigation_label' => 'Kategoriler',
@@ -39,6 +41,9 @@ return [
             'navigation_label' => 'Makaleler',
             'model_label' => 'Makale',
             'plural_model_label' => 'Makaleler',
+            'actions' => [
+                'view_on_site' => 'Sitede görüntüle',
+            ],
             'form' => [
                 'section_content' => 'İçerik',
                 'section_settings' => 'Ayarlar',
@@ -86,6 +91,74 @@ return [
                 ],
             ],
         ],
+        'collections' => [
+            'navigation_label' => 'Koleksiyonlar',
+            'model_label' => 'Koleksiyon',
+            'plural_model_label' => 'Koleksiyonlar',
+            'form' => [
+                'section_details' => 'Koleksiyon ayrıntıları',
+                'section_settings' => 'Ayarlar',
+                'name' => 'Ad',
+                'slug' => 'Slug',
+                'description' => 'Açıklama',
+                'is_active' => 'Aktif',
+                'sort_order' => 'Sıralama',
+                'articles_section' => 'Makaleler',
+                'articles_helper' => 'Makaleleri müşterilerin görmesi gereken sırayla ekleyin; yeniden sıralamak için sürükleyin.',
+                'article' => 'Makale',
+                'add_article' => 'Makale ekle',
+            ],
+            'table' => [
+                'name' => 'Ad',
+                'slug' => 'Slug',
+                'articles_count' => 'Makaleler',
+                'is_active' => 'Aktif',
+                'sort_order' => 'Sıralama',
+            ],
+            'warnings' => [
+                'not_published' => 'Müşteriler bu makaleyi göremez: yayınlanmamış.',
+                'internal_article' => 'Müşteriler bu makaleyi göremez: dahili.',
+                'internal_category' => 'Müşteriler bu makaleyi göremez: kategorisi dahili.',
+                'inactive_category' => 'Müşteriler bu makaleyi göremez: kategorisi etkin değil.',
+                'deleted_category' => 'Müşteriler bu makaleyi göremez: kategorisi silinmiş.',
+                'broken_category_tree' => 'Müşteriler bu makaleyi göremez: kategori ağacı bozuk.',
+                'not_visible' => 'Müşteriler bu makaleyi göremez.',
+            ],
+        ],
+        'assets' => [
+            'scope' => [
+                'shared' => 'Paylaşılan',
+            ],
+            'usage' => [
+                'used_in' => 'Kullanıldığı diller: :languages',
+                'unused' => 'Kullanılmıyor',
+            ],
+            'delete' => [
+                'used' => 'Bu varlık hâlâ şu dillerde kullanılıyor: :languages.',
+                'unused' => 'Bu varlık hiçbir yerde kullanılmıyor.',
+            ],
+            'save_first' => [
+                'heading' => 'Görselleri ve dosyaları kaydettikten sonra ekleyin',
+                'description' => 'Görsel ve dosya eklemek için önce makaleyi kaydedin.',
+            ],
+            'broken' => [
+                'heading' => 'İçerik eksik varlıklara başvuruyor',
+                'message' => 'İçeriğin bir kısmı artık var olmayan görsellere veya dosyalara başvuruyor (:details). Bu uyarıyı kaldırmak için onları silin ya da değiştirin.',
+                'images' => ':count silinmiş görsel',
+                'badge' => 'Eksik varlık',
+            ],
+            'manager' => [
+                'title' => 'Varlıklar',
+                'preview' => 'Önizleme',
+                'name' => 'Ad',
+                'size' => 'Boyut',
+                'scope' => 'Kapsam',
+                'usage' => 'Kullanım',
+                'upload' => 'Yükle',
+                'file' => 'Dosya',
+                'kind' => 'Tür',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Toplam makale',
@@ -96,7 +169,24 @@ return [
                 'helpful_rate' => 'Faydalılık oranı',
             ],
         ],
+        'localization' => [
+            'language' => 'Dil',
+            'language_label' => ':language',
+            'version_status' => 'Sürüm durumu',
+            'version_status_helper' => 'Asıl sürüm makalenin durumunu izler; diğer her dil ayrı olarak yayınlanır.',
+            'flag_other_locales_outdated' => 'Diğer dilleri güncel değil olarak işaretle',
+            'flag_other_locales_outdated_helper' => 'Bu değişiklik diğer dillerin yeniden çevrilmesini gerektiriyorsa işaretleyin.',
+            'outdated_filter' => 'Bu dilde güncel değil',
+            'mark_up_to_date' => 'Güncel olarak işaretle',
+            'state' => [
+                'missing' => 'Eksik',
+                'draft' => 'Taslak',
+                'published' => 'Yayınlandı',
+                'outdated' => 'Güncel değil',
+            ],
+        ],
     ],
+
     'user' => [
         'articles' => [
             'navigation_label' => 'Makaleler',
@@ -123,6 +213,7 @@ return [
             ],
         ],
     ],
+
     'guest' => [
         'articles' => [
             'navigation_label' => 'Makaleler',
@@ -144,4 +235,5 @@ return [
             ],
         ],
     ],
+
 ];

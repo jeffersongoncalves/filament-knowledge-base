@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'common' => [
         'created_at' => 'Creado el',
         'updated_at' => 'Actualizado el',
@@ -9,6 +10,7 @@ return [
             'internal' => 'Interno',
         ],
     ],
+
     'admin' => [
         'categories' => [
             'navigation_label' => 'Categorías',
@@ -39,6 +41,9 @@ return [
             'navigation_label' => 'Artículos',
             'model_label' => 'Artículo',
             'plural_model_label' => 'Artículos',
+            'actions' => [
+                'view_on_site' => 'Ver en el sitio',
+            ],
             'form' => [
                 'section_content' => 'Contenido',
                 'section_settings' => 'Configuración',
@@ -86,6 +91,74 @@ return [
                 ],
             ],
         ],
+        'collections' => [
+            'navigation_label' => 'Colecciones',
+            'model_label' => 'Colección',
+            'plural_model_label' => 'Colecciones',
+            'form' => [
+                'section_details' => 'Detalles de la colección',
+                'section_settings' => 'Configuración',
+                'name' => 'Nombre',
+                'slug' => 'Slug',
+                'description' => 'Descripción',
+                'is_active' => 'Activa',
+                'sort_order' => 'Orden',
+                'articles_section' => 'Artículos',
+                'articles_helper' => 'Añade los artículos en el orden en que los clientes deben verlos; arrastra para reordenar.',
+                'article' => 'Artículo',
+                'add_article' => 'Añadir artículo',
+            ],
+            'table' => [
+                'name' => 'Nombre',
+                'slug' => 'Slug',
+                'articles_count' => 'Artículos',
+                'is_active' => 'Activa',
+                'sort_order' => 'Orden',
+            ],
+            'warnings' => [
+                'not_published' => 'Los clientes no pueden ver este artículo: no está publicado.',
+                'internal_article' => 'Los clientes no pueden ver este artículo: es interno.',
+                'internal_category' => 'Los clientes no pueden ver este artículo: su categoría es interna.',
+                'inactive_category' => 'Los clientes no pueden ver este artículo: su categoría está inactiva.',
+                'deleted_category' => 'Los clientes no pueden ver este artículo: su categoría fue eliminada.',
+                'broken_category_tree' => 'Los clientes no pueden ver este artículo: su árbol de categorías está roto.',
+                'not_visible' => 'Los clientes no pueden ver este artículo.',
+            ],
+        ],
+        'assets' => [
+            'scope' => [
+                'shared' => 'Compartido',
+            ],
+            'usage' => [
+                'used_in' => 'Usado en :languages',
+                'unused' => 'Sin usar',
+            ],
+            'delete' => [
+                'used' => 'Este recurso todavía se usa en :languages.',
+                'unused' => 'Este recurso no se usa en ningún lugar.',
+            ],
+            'save_first' => [
+                'heading' => 'Añade imágenes y archivos después de guardar',
+                'description' => 'Guarda primero el artículo para añadir imágenes y archivos.',
+            ],
+            'broken' => [
+                'heading' => 'El contenido hace referencia a recursos que faltan',
+                'message' => 'Parte del contenido hace referencia a imágenes o archivos que ya no existen (:details). Elimínalos o reemplázalos para quitar este aviso.',
+                'images' => '{1} 1 imagen eliminada|[2,*] :count imágenes eliminadas',
+                'badge' => 'Recurso faltante',
+            ],
+            'manager' => [
+                'title' => 'Recursos',
+                'preview' => 'Vista previa',
+                'name' => 'Nombre',
+                'size' => 'Tamaño',
+                'scope' => 'Ámbito',
+                'usage' => 'Uso',
+                'upload' => 'Subir',
+                'file' => 'Archivo',
+                'kind' => 'Tipo',
+            ],
+        ],
         'widgets' => [
             'overview' => [
                 'total_articles' => 'Total de artículos',
@@ -96,7 +169,24 @@ return [
                 'helpful_rate' => 'Tasa de utilidad',
             ],
         ],
+        'localization' => [
+            'language' => 'Idioma',
+            'language_label' => ':language',
+            'version_status' => 'Estado de la versión',
+            'version_status_helper' => 'La versión de referencia sigue el estado del artículo; cada uno de los demás idiomas se publica por separado.',
+            'flag_other_locales_outdated' => 'Marcar los demás idiomas como desactualizados',
+            'flag_other_locales_outdated_helper' => 'Márcalo cuando este cambio obligue a volver a traducir los demás idiomas.',
+            'outdated_filter' => 'Desactualizado en el idioma',
+            'mark_up_to_date' => 'Marcar como actualizado',
+            'state' => [
+                'missing' => 'Falta',
+                'draft' => 'Borrador',
+                'published' => 'Publicado',
+                'outdated' => 'Desactualizado',
+            ],
+        ],
     ],
+
     'user' => [
         'articles' => [
             'navigation_label' => 'Artículos',
@@ -123,6 +213,7 @@ return [
             ],
         ],
     ],
+
     'guest' => [
         'articles' => [
             'navigation_label' => 'Artículos',
@@ -144,4 +235,5 @@ return [
             ],
         ],
     ],
+
 ];
