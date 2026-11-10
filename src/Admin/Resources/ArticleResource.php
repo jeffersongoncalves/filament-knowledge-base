@@ -8,6 +8,7 @@ use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -334,6 +335,13 @@ class ArticleResource extends Resource
         ];
     }
 
+    protected static function filteredCategory(HasTable $livewire): int|string|null
+    {
+        $category = $livewire->getTableFilterState('category_id')['value'] ?? null;
+
+        return filled($category) ? $category : null;
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -383,7 +391,11 @@ class ArticleResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('created_at', 'desc')
+            // One order per category: articles are ordered and reordered only while the list shows one category.
+            ->defaultSort(fn (Builder $query, HasTable $livewire): Builder => static::filteredCategory($livewire) === null
+                ? $query->orderByDesc('created_at')
+                : $query->orderBy('sort_order')->orderByDesc('created_at'))
+            ->reorderable('sort_order', fn (HasTable $livewire): bool => static::filteredCategory($livewire) !== null)
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.status'))
