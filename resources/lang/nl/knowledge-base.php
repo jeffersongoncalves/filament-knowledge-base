@@ -132,6 +132,8 @@ return [
                 'deleted_category' => 'Klanten kunnen dit artikel niet zien: de categorie is verwijderd.',
                 'broken_category_tree' => 'Klanten kunnen dit artikel niet zien: de categorieboom is beschadigd.',
                 'not_visible' => 'Klanten kunnen dit artikel niet zien.',
+                'customers_article' => 'Alleen ingelogde klanten kunnen dit artikel zien.',
+                'customers_category' => 'Alleen ingelogde klanten kunnen dit artikel zien: de categorie is voor ingelogde klanten.',
             ],
         ],
         'assets' => [
