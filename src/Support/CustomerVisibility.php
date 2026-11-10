@@ -41,6 +41,12 @@ class CustomerVisibility
 
     public const NOT_VISIBLE = 'not_visible';
 
+    /** Visible, but only to signed-in customers: the article is `customers`. */
+    public const CUSTOMERS_ARTICLE = 'customers_article';
+
+    /** Visible, but only to signed-in customers: a category in its chain is `customers`. */
+    public const CUSTOMERS_CATEGORY = 'customers_category';
+
     /**
      * The reason an article is not customer-visible, or null when it is.
      */
@@ -55,6 +61,8 @@ class CustomerVisibility
 
     /**
      * The first rule the article fails, in the order an editor would fix them.
+     * A reason that hides it from everyone wins over "signed-in customers
+     * only", which still leaves it readable in the User panel.
      */
     protected static function explain(Model $article): ?string
     {
@@ -62,11 +70,19 @@ class CustomerVisibility
             return self::NOT_PUBLISHED;
         }
 
-        if (static::value($article->getAttribute('visibility')) !== ArticleVisibility::Public->value) {
+        $visibility = static::value($article->getAttribute('visibility'));
+
+        if ($visibility !== ArticleVisibility::Public->value && $visibility !== ArticleVisibility::Customers->value) {
             return self::INTERNAL_ARTICLE;
         }
 
-        return static::categoryReason($article->getAttribute('category_id'));
+        $categoryReason = static::categoryReason($article->getAttribute('category_id'));
+
+        if ($categoryReason !== null && $categoryReason !== self::CUSTOMERS_CATEGORY) {
+            return $categoryReason;
+        }
+
+        return $visibility === ArticleVisibility::Customers->value ? self::CUSTOMERS_ARTICLE : $categoryReason;
     }
 
     public static function isVisible(Model $article): bool
@@ -109,6 +125,7 @@ class CustomerVisibility
         $categoryClass = ModelResolver::category();
         $usesSoftDeletes = in_array(SoftDeletes::class, class_uses_recursive($categoryClass), true);
         $seen = [];
+        $customersOnly = false;
 
         while ($categoryId !== null) {
             if (isset($seen[$categoryId])) {
@@ -134,7 +151,11 @@ class CustomerVisibility
                 return self::DELETED_CATEGORY;
             }
 
-            if (static::value($category->getAttribute('visibility')) !== ArticleVisibility::Public->value) {
+            $visibility = static::value($category->getAttribute('visibility'));
+
+            if ($visibility === ArticleVisibility::Customers->value) {
+                $customersOnly = true;
+            } elseif ($visibility !== ArticleVisibility::Public->value) {
                 return self::INTERNAL_CATEGORY;
             }
 
@@ -145,7 +166,7 @@ class CustomerVisibility
             $categoryId = $category->getAttribute('parent_id');
         }
 
-        return null;
+        return $customersOnly ? self::CUSTOMERS_CATEGORY : null;
     }
 
     protected static function value(mixed $attribute): ?string

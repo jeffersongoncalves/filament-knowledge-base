@@ -1,9 +1,11 @@
 <?php
 
 use Filament\Facades\Filament;
+use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\CategoryResource\Pages\CreateCategory;
 use JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\CategoryResource\Pages\ListCategories;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ArticleBadge;
 use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\User;
+use JeffersonGoncalves\KnowledgeBase\Models\Category;
 use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
 use Livewire\Livewire;
 
@@ -20,6 +22,19 @@ beforeEach(function () {
         'slug' => 'staff-procedures',
         'visibility' => 'internal',
     ]);
+});
+
+it('offers every visibility, signed-in customers included, in the category filter and form', function () {
+    $filter = Livewire::test(ListCategories::class)->instance()->getTable()->getFilter('visibility');
+
+    expect(array_keys($filter->getOptions()))->toBe(['public', 'customers', 'internal']);
+
+    Livewire::test(CreateCategory::class)
+        ->fillForm(['name' => 'My account', 'slug' => 'my-account', 'visibility' => 'customers'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect(Category::query()->where('slug', 'my-account')->value('visibility'))->toBe('customers');
 });
 
 it('shows the translated visibility label in the category table instead of the raw value', function () {

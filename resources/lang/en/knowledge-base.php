@@ -123,6 +123,8 @@ return [
                 'deleted_category' => 'Customers cannot see this article: its category is deleted.',
                 'broken_category_tree' => 'Customers cannot see this article: its category tree is broken.',
                 'not_visible' => 'Customers cannot see this article.',
+                'customers_article' => 'Only signed-in customers can see this article.',
+                'customers_category' => 'Only signed-in customers can see this article: its category is for signed-in customers.',
             ],
         ],
         'assets' => [

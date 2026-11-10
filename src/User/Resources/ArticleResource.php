@@ -12,6 +12,7 @@ use JeffersonGoncalves\FilamentKnowledgeBase\KnowledgeBaseUserPlugin;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\ContentAttachments;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\PublicVisibility;
 use JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\ArticleResource\Pages;
+use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
 class ArticleResource extends Resource
@@ -131,6 +132,6 @@ class ArticleResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return PublicVisibility::scopeArticles(parent::getEloquentQuery());
+        return PublicVisibility::scopeArticles(parent::getEloquentQuery(), ArticleVisibility::Customers);
     }
 }

@@ -6,6 +6,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\PublicVisibility;
+use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 
 class PopularArticlesWidget extends BaseWidget
 {
@@ -21,7 +22,7 @@ class PopularArticlesWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(PublicVisibility::popularArticlesQuery())
+            ->query(PublicVisibility::popularArticlesQuery(audience: ArticleVisibility::Customers))
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.title'))
