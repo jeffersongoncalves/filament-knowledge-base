@@ -67,6 +67,40 @@ it('reports an internal ancestor category', function () {
     expect(CustomerVisibility::reason($article))->toBe(CustomerVisibility::INTERNAL_CATEGORY);
 });
 
+it('reports a customers article as readable by signed-in customers only', function () {
+    $category = $this->service->createCategory(['name' => 'Public', 'slug' => 'public']);
+    $article = visibilityArticle($category, ['visibility' => 'customers']);
+
+    expect(CustomerVisibility::reason($article))->toBe(CustomerVisibility::CUSTOMERS_ARTICLE);
+});
+
+it('reports a public article in a customers category as readable by signed-in customers only', function () {
+    $parent = $this->service->createCategory(['name' => 'Accounts', 'slug' => 'accounts', 'visibility' => 'customers']);
+    $child = $this->service->createCategory(['name' => 'Child', 'slug' => 'child', 'parent_id' => $parent->id]);
+
+    expect(CustomerVisibility::reason(visibilityArticle($child)))->toBe(CustomerVisibility::CUSTOMERS_CATEGORY);
+});
+
+it('reports what hides a customers article from everyone before the customers-only notice', function () {
+    $internal = $this->service->createCategory(['name' => 'Internal', 'slug' => 'internal', 'visibility' => 'internal']);
+    $inactive = $this->service->createCategory(['name' => 'Inactive', 'slug' => 'inactive', 'is_active' => false]);
+    $customersUnderInactive = $this->service->createCategory([
+        'name' => 'Customers', 'slug' => 'customers', 'visibility' => 'customers', 'parent_id' => $inactive->id,
+    ]);
+
+    expect(CustomerVisibility::reason(visibilityArticle($internal, ['visibility' => 'customers'])))
+        ->toBe(CustomerVisibility::INTERNAL_CATEGORY)
+        ->and(CustomerVisibility::reason(visibilityArticle($customersUnderInactive, ['visibility' => 'customers'])))
+        ->toBe(CustomerVisibility::INACTIVE_CATEGORY)
+        ->and(CustomerVisibility::reason(visibilityArticle($internal, ['visibility' => 'customers', 'status' => 'draft'])))
+        ->toBe(CustomerVisibility::NOT_PUBLISHED);
+});
+
+it('has a warning sentence for the customers-only reasons', function (string $reason) {
+    expect(CustomerVisibility::label($reason))
+        ->not->toStartWith('filament-knowledge-base::');
+})->with([CustomerVisibility::CUSTOMERS_ARTICLE, CustomerVisibility::CUSTOMERS_CATEGORY]);
+
 it('translates a reason into a warning sentence', function () {
     expect(CustomerVisibility::label(CustomerVisibility::INTERNAL_CATEGORY))
         ->toBe(__('filament-knowledge-base::knowledge-base.admin.collections.warnings.internal_category'))

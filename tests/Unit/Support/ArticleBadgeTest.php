@@ -19,6 +19,8 @@ it('still accepts plain status strings', function () {
 it('accepts the visibility enum the core model casts to', function () {
     expect(ArticleBadge::visibilityColor(ArticleVisibility::Public))->toBe('success')
         ->and(ArticleBadge::visibilityColor(ArticleVisibility::Internal))->toBe('warning')
+        ->and(ArticleBadge::visibilityColor(ArticleVisibility::Customers))->toBe('info')
+        ->and(ArticleBadge::visibilityColor('customers'))->toBe('info')
         ->and(ArticleBadge::visibilityLabel(ArticleVisibility::Internal))->toBe(ArticleVisibility::Internal->label());
 });
 

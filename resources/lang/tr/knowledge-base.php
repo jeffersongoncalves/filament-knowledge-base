@@ -132,6 +132,8 @@ return [
                 'deleted_category' => 'Müşteriler bu makaleyi göremez: kategorisi silinmiş.',
                 'broken_category_tree' => 'Müşteriler bu makaleyi göremez: kategori ağacı bozuk.',
                 'not_visible' => 'Müşteriler bu makaleyi göremez.',
+                'customers_article' => 'Bu makaleyi yalnızca oturum açmış müşteriler görebilir.',
+                'customers_category' => 'Bu makaleyi yalnızca oturum açmış müşteriler görebilir: kategorisi oturum açmış müşteriler içindir.',
             ],
         ],
         'assets' => [
