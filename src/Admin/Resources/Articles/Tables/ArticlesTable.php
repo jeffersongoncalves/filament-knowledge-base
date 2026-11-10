@@ -5,6 +5,7 @@ namespace JeffersonGoncalves\FilamentKnowledgeBase\Admin\Resources\Articles\Tabl
 use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -70,7 +71,11 @@ class ArticlesTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('created_at', 'desc')
+            // One order per category: articles are ordered and reordered only while the list shows one category.
+            ->defaultSort(fn (Builder $query, HasTable $livewire): Builder => static::filteredCategory($livewire) === null
+                ? $query->orderByDesc('created_at')
+                : $query->orderBy('sort_order')->orderByDesc('created_at'))
+            ->reorderable('sort_order', fn (HasTable $livewire): bool => static::filteredCategory($livewire) !== null)
             ->filters([
                 SelectFilter::make('status')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.articles.table.status'))
@@ -103,6 +108,13 @@ class ArticlesTable
                     Actions\RestoreBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected static function filteredCategory(HasTable $livewire): int|string|null
+    {
+        $category = $livewire->getTableFilterState('category_id')['value'] ?? null;
+
+        return filled($category) ? $category : null;
     }
 
     /**
