@@ -42,6 +42,7 @@ class ArticleBadge
     {
         return match (static::visibility($state)) {
             ArticleVisibility::Public => 'success',
+            ArticleVisibility::Customers => 'info',
             ArticleVisibility::Internal => 'warning',
             default => 'gray',
         };

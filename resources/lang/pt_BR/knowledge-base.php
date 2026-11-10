@@ -123,6 +123,8 @@ return [
                 'deleted_category' => 'Os clientes não veem este artigo: a categoria foi excluída.',
                 'broken_category_tree' => 'Os clientes não veem este artigo: a árvore de categorias está quebrada.',
                 'not_visible' => 'Os clientes não veem este artigo.',
+                'customers_article' => 'Só clientes conectados podem ver este artigo.',
+                'customers_category' => 'Só clientes conectados podem ver este artigo: a categoria dele é para clientes conectados.',
             ],
         ],
         'assets' => [

@@ -1,12 +1,17 @@
 <?php
 
+use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Pages\KnowledgeBasePage as GuestKnowledgeBasePage;
 use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Resources\ArticleResource as GuestArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\Guest\Widgets\PopularArticlesWidget as GuestPopularArticlesWidget;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\PublicVisibility;
 use JeffersonGoncalves\FilamentKnowledgeBase\Tests\Fixtures\User;
+use JeffersonGoncalves\FilamentKnowledgeBase\User\Pages\KnowledgeBasePage as UserKnowledgeBasePage;
 use JeffersonGoncalves\FilamentKnowledgeBase\User\Resources\ArticleResource as UserArticleResource;
+use JeffersonGoncalves\FilamentKnowledgeBase\User\Widgets\PopularArticlesWidget as UserPopularArticlesWidget;
 use JeffersonGoncalves\KnowledgeBase\Models\Article;
 use JeffersonGoncalves\KnowledgeBase\Models\Category;
 use JeffersonGoncalves\KnowledgeBase\Services\KnowledgeBaseService;
+use Livewire\Livewire;
 
 /**
  * The Guest and User panels must show customers only what the core's public
@@ -130,6 +135,52 @@ it('counts only publicly visible articles on the category menu', function () {
     $category = PublicVisibility::rootCategories()->firstWhere('id', $this->public->id);
 
     expect($category->articles_count)->toBe(1);
+});
+
+it('shows a customers article to signed-in customers in the User panel only', function () {
+    $forCustomers = publishedPanelArticle(['slug' => 'account-limits', 'visibility' => 'customers']);
+
+    expect(userPanelIds())->toContain($forCustomers->id)
+        ->and(guestPanelIds())->not->toContain($forCustomers->id);
+});
+
+it('shows a customers category and its articles in the User panel only', function () {
+    $accounts = $this->service->createCategory(['name' => 'My account', 'slug' => 'my-account', 'visibility' => 'customers']);
+    $inside = publishedPanelArticle(['category_id' => $accounts->id, 'slug' => 'change-password']);
+
+    $userMenu = (new UserKnowledgeBasePage)->getCategories();
+    $guestMenu = (new GuestKnowledgeBasePage)->getCategories();
+
+    expect(userPanelIds())->toContain($inside->id)
+        ->and(guestPanelIds())->not->toContain($inside->id)
+        ->and($userMenu->pluck('id')->all())->toContain($accounts->id)
+        ->and($userMenu->firstWhere('id', $accounts->id)->articles_count)->toBe(1)
+        ->and($guestMenu->pluck('id')->all())->not->toContain($accounts->id);
+});
+
+it('finds customers articles in the User panel search only', function () {
+    $public = publishedPanelArticle(['slug' => 'account-public', 'title' => 'Account opening']);
+    $forCustomers = publishedPanelArticle(['slug' => 'account-customers', 'title' => 'Account limits', 'visibility' => 'customers']);
+    $internalArticle = publishedPanelArticle(['slug' => 'account-internal', 'title' => 'Account escalation', 'visibility' => 'internal']);
+
+    $user = new UserKnowledgeBasePage;
+    $user->search = 'Account';
+    $guest = new GuestKnowledgeBasePage;
+    $guest->search = 'Account';
+
+    expect($user->getSearchResults()->pluck('id')->all())
+        ->toContain($public->id, $forCustomers->id)
+        ->not->toContain($internalArticle->id)
+        ->and($guest->getSearchResults()->pluck('id')->all())
+        ->toContain($public->id)
+        ->not->toContain($forCustomers->id, $internalArticle->id);
+});
+
+it('lists customers articles among the popular ones in the User panel only', function () {
+    $forCustomers = publishedPanelArticle(['slug' => 'popular-customers', 'visibility' => 'customers']);
+
+    Livewire::test(UserPopularArticlesWidget::class)->assertCanSeeTableRecords([$forCustomers]);
+    Livewire::test(GuestPopularArticlesWidget::class)->assertCanNotSeeTableRecords([$forCustomers]);
 });
 
 it('does not show an article customers cannot see as popular', function () {

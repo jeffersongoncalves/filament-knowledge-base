@@ -178,11 +178,10 @@ class CategoryResource extends Resource
                 ->maxLength(255),
             Forms\Components\Select::make('visibility')
                 ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.visibility'))
-                ->options([
-                    'public' => __('filament-knowledge-base::knowledge-base.common.visibility.public'),
-                    'internal' => __('filament-knowledge-base::knowledge-base.common.visibility.internal'),
-                ])
-                ->default('public')
+                ->options(collect(ArticleVisibility::cases())->mapWithKeys(fn (ArticleVisibility $visibility) => [
+                    $visibility->value => $visibility->label(),
+                ]))
+                ->default(ArticleVisibility::Public->value)
                 ->required(),
             Forms\Components\Toggle::make('is_active')
                 ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.is_active'))
@@ -237,10 +236,9 @@ class CategoryResource extends Resource
                     ->label(__('filament-knowledge-base::knowledge-base.admin.categories.table.is_active')),
                 Tables\Filters\SelectFilter::make('visibility')
                     ->label(__('filament-knowledge-base::knowledge-base.admin.categories.table.visibility'))
-                    ->options([
-                        'public' => __('filament-knowledge-base::knowledge-base.common.visibility.public'),
-                        'internal' => __('filament-knowledge-base::knowledge-base.common.visibility.internal'),
-                    ]),
+                    ->options(collect(ArticleVisibility::cases())->mapWithKeys(fn (ArticleVisibility $visibility) => [
+                        $visibility->value => $visibility->label(),
+                    ])),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

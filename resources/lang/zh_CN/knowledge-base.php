@@ -123,6 +123,8 @@ return [
                 'deleted_category' => '客户无法看到这篇文章：它的分类已被删除。',
                 'broken_category_tree' => '客户无法看到这篇文章：它的分类树已损坏。',
                 'not_visible' => '客户无法看到这篇文章。',
+                'customers_article' => '只有已登录客户可以看到这篇文章。',
+                'customers_category' => '只有已登录客户可以看到这篇文章：它的分类仅面向已登录客户。',
             ],
         ],
         'assets' => [

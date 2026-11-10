@@ -123,6 +123,8 @@ return [
                 'deleted_category' => 'Müştərilər bu məqaləni görə bilməz: kateqoriyası silinib.',
                 'broken_category_tree' => 'Müştərilər bu məqaləni görə bilməz: kateqoriya ağacı pozulub.',
                 'not_visible' => 'Müştərilər bu məqaləni görə bilməz.',
+                'customers_article' => 'Bu məqaləni yalnız daxil olmuş müştərilər görə bilər.',
+                'customers_category' => 'Bu məqaləni yalnız daxil olmuş müştərilər görə bilər: kateqoriyası daxil olmuş müştərilər üçündür.',
             ],
         ],
         'assets' => [
