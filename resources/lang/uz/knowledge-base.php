@@ -132,6 +132,8 @@ return [
                 'deleted_category' => 'Mijozlar bu maqolani koʻra olmaydi: uning toifasi oʻchirilgan.',
                 'broken_category_tree' => 'Mijozlar bu maqolani koʻra olmaydi: uning toifalar daraxti buzilgan.',
                 'not_visible' => 'Mijozlar bu maqolani koʻra olmaydi.',
+                'customers_article' => 'Bu maqolani faqat tizimga kirgan mijozlar koʻra oladi.',
+                'customers_category' => 'Bu maqolani faqat tizimga kirgan mijozlar koʻra oladi: uning toifasi tizimga kirgan mijozlar uchun.',
             ],
         ],
         'assets' => [

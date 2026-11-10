@@ -132,6 +132,8 @@ return [
                 'deleted_category' => 'Los clientes no pueden ver este artículo: su categoría fue eliminada.',
                 'broken_category_tree' => 'Los clientes no pueden ver este artículo: su árbol de categorías está roto.',
                 'not_visible' => 'Los clientes no pueden ver este artículo.',
+                'customers_article' => 'Solo los clientes con sesión iniciada pueden ver este artículo.',
+                'customers_category' => 'Solo los clientes con sesión iniciada pueden ver este artículo: su categoría es para clientes con sesión iniciada.',
             ],
         ],
         'assets' => [

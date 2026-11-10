@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use JeffersonGoncalves\FilamentKnowledgeBase\Support\TranslationForm;
+use JeffersonGoncalves\KnowledgeBase\Enums\ArticleVisibility;
 use JeffersonGoncalves\KnowledgeBase\Support\Locales;
 use JeffersonGoncalves\KnowledgeBase\Support\ModelResolver;
 
@@ -144,11 +145,10 @@ class CategoryForm
                 ->maxLength(255),
             Select::make('visibility')
                 ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.visibility'))
-                ->options([
-                    'public' => __('filament-knowledge-base::knowledge-base.common.visibility.public'),
-                    'internal' => __('filament-knowledge-base::knowledge-base.common.visibility.internal'),
-                ])
-                ->default('public')
+                ->options(collect(ArticleVisibility::cases())->mapWithKeys(fn (ArticleVisibility $visibility) => [
+                    $visibility->value => $visibility->label(),
+                ]))
+                ->default(ArticleVisibility::Public->value)
                 ->required(),
             Toggle::make('is_active')
                 ->label(__('filament-knowledge-base::knowledge-base.admin.categories.form.is_active'))
